@@ -1,0 +1,60 @@
+{
+  "suite": "val192",
+  "config": {
+    "seed": 20261121,
+    "batch": 32,
+    "allow_wait": true,
+    "graph_sha256": "a5a5257e6becd3670a456fc33e8a4b21da5bccc09da3c36ee484a98fcaf05d8d",
+    "rewards": {
+      "progress_per_m": 0.08,
+      "gate": 1.0,
+      "success": 6.0,
+      "time_per_s": 0.1,
+      "near_miss": 0.04,
+      "risk_radius_m": 0.3,
+      "collision": -8.0,
+      "bounds": -8.0,
+      "missed_gate": -5.0,
+      "timeout": -4.0
+    },
+    "ppo": {
+      "learning_rate": 0.0003,
+      "gamma": 0.99,
+      "gae_lambda": 0.95,
+      "clip": 0.2,
+      "entropy_coefficient": 0.01,
+      "minibatch": 512
+    },
+    "rule_prior_scale": 1.5
+  },
+  "checkpoint_update": 24,
+  "checkpoint_sha256": "1b694c085fe51f0ea68da6d29ef06b6a174d26eb4bf3e9d41df130f1e2d10c5d",
+  "ppo": {
+    "cases": 192,
+    "initial_contact": 36,
+    "valid_start_outcomes": {
+      "collision": 48,
+      "success": 101,
+      "timeout": 7
+    },
+    "waiting_cases": 0
+  },
+  "rule": {
+    "cases": 192,
+    "initial_contact": 36,
+    "valid_start_outcomes": {
+      "collision": 53,
+      "success": 97,
+      "timeout": 6
+    },
+    "waiting_cases": 0
+  },
+  "paired_transitions": {
+    "collision->collision": 47,
+    "collision->success": 5,
+    "collision->timeout": 1,
+    "success->collision": 1,
+    "success->success": 96,
+    "timeout->timeout": 6
+  }
+}

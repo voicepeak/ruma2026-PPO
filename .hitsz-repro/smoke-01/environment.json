@@ -1,0 +1,20 @@
+{
+  "repo_commit": "b9ba99692e7505ffd4ceed6044759a080b9751f3",
+  "repo_status": [
+    "M .gitignore",
+    " M \"PPO\\350\\256\\255\\347\\273\\203\\350\\257\\264\\346\\230\\216.md\"",
+    "?? scripts/"
+  ],
+  "hitsz_commit": "9ac9657334817ad0bac6db3520bca59e5f864bf3",
+  "python": "3.11.16",
+  "torch": "2.6.0+cu118",
+  "numpy": "1.26.4",
+  "onnxruntime": "1.32.0",
+  "gpu": "NVIDIA GeForce RTX 4090",
+  "quadsim_cuda_sha256": "7dd148dbd37840304225784f272b1373703c0544bcd98d7164a43634edff0ec2",
+  "v12_sha256": "8e997b5215152c8f63797ba1319b8ad8abd7d7bd5e4e57b9e667d71e9604a86d",
+  "profile": "smoke",
+  "batch": 8,
+  "updates": 1,
+  "eval_every": 25
+}

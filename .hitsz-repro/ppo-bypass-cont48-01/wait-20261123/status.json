@@ -1,0 +1,30 @@
+{
+  "update": 48,
+  "updates": 48,
+  "decisions": 64377,
+  "level": 3,
+  "scene_seed": 658039829,
+  "batch_sha256": "b8f75631a0db65633fa036a15b4ad5ef612a7cc6ebb796d0aebed53c956b0dce",
+  "action_counts": [
+    450,
+    195,
+    289,
+    123,
+    71,
+    68
+  ],
+  "cases": 32,
+  "initial_contact": 6,
+  "valid_start_outcomes": {
+    "collision": 12,
+    "success": 12,
+    "timeout": 2
+  },
+  "waiting_cases": 20,
+  "PPO/policy_loss": 0.00015796507068444043,
+  "PPO/value_loss": 8.930917739868164,
+  "PPO/entropy": 1.0701647996902466,
+  "PPO/approx_KL": 4.450121195986867e-05,
+  "PPO/clip_fraction": 0.0,
+  "Train/episode_reward": 1.46188223361969
+}

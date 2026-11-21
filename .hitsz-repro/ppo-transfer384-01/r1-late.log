@@ -1,0 +1,8 @@
+TRANSFER_GROUP r1-late 2 rule {'cases': 48, 'initial_contact': 4, 'valid_start_outcomes': {'collision': 11, 'success': 33}, 'waiting_cases': 0}
+TRANSFER_GROUP r1-late 2 ppo-20261121 {'cases': 48, 'initial_contact': 4, 'valid_start_outcomes': {'collision': 12, 'success': 32}, 'waiting_cases': 0}
+TRANSFER_GROUP r1-late 2 ppo-20261122 {'cases': 48, 'initial_contact': 4, 'valid_start_outcomes': {'collision': 11, 'success': 33}, 'waiting_cases': 0}
+TRANSFER_GROUP r1-late 2 ppo-20261123 {'cases': 48, 'initial_contact': 4, 'valid_start_outcomes': {'collision': 11, 'success': 33}, 'waiting_cases': 0}
+TRANSFER_GROUP r1-late 3 rule {'cases': 48, 'initial_contact': 10, 'valid_start_outcomes': {'collision': 18, 'success': 16, 'timeout': 4}, 'waiting_cases': 0}
+TRANSFER_GROUP r1-late 3 ppo-20261121 {'cases': 48, 'initial_contact': 10, 'valid_start_outcomes': {'collision': 19, 'success': 15, 'timeout': 4}, 'waiting_cases': 0}
+TRANSFER_GROUP r1-late 3 ppo-20261122 {'cases': 48, 'initial_contact': 10, 'valid_start_outcomes': {'collision': 18, 'success': 16, 'timeout': 4}, 'waiting_cases': 0}
+TRANSFER_GROUP r1-late 3 ppo-20261123 {'cases': 48, 'initial_contact': 10, 'valid_start_outcomes': {'collision': 19, 'success': 15, 'timeout': 4}, 'waiting_cases': 0}

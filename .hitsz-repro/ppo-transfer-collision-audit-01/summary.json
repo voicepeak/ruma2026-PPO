@@ -1,0 +1,96 @@
+{
+  "rule_airborne": {
+    "moving_vehicle": {
+      "cases": 60,
+      "median_ego_mps": 4.905340671539307,
+      "median_obstacle_mps": 7.839870167379007,
+      "stopped_ego": 2,
+      "ego_below_1_mps": 2,
+      "median_hit_time_s": 1.8900000000000001,
+      "no_speed_limit_last_half_second": 14,
+      "no_speed_limit_entire_episode": 10,
+      "centerline_already_blocked": 41,
+      "endpoint_contact": 59
+    },
+    "route_obstacle": {
+      "cases": 56,
+      "median_ego_mps": 5.411567211151123,
+      "median_obstacle_mps": 0.0,
+      "stopped_ego": 1,
+      "ego_below_1_mps": 3,
+      "median_hit_time_s": 0.55,
+      "no_speed_limit_last_half_second": 5,
+      "no_speed_limit_entire_episode": 4,
+      "centerline_already_blocked": 38,
+      "endpoint_contact": 56
+    }
+  },
+  "ppo_seed22_airborne": {
+    "moving_vehicle": {
+      "cases": 57,
+      "median_ego_mps": 4.917770862579346,
+      "median_obstacle_mps": 7.760404703058498,
+      "stopped_ego": 2,
+      "ego_below_1_mps": 2,
+      "median_hit_time_s": 1.85,
+      "no_speed_limit_last_half_second": 13,
+      "no_speed_limit_entire_episode": 10,
+      "centerline_already_blocked": 38,
+      "endpoint_contact": 57
+    },
+    "route_obstacle": {
+      "cases": 56,
+      "median_ego_mps": 5.411567211151123,
+      "median_obstacle_mps": 0.0,
+      "stopped_ego": 1,
+      "ego_below_1_mps": 2,
+      "median_hit_time_s": 0.55,
+      "no_speed_limit_last_half_second": 5,
+      "no_speed_limit_entire_episode": 4,
+      "centerline_already_blocked": 38,
+      "endpoint_contact": 56
+    }
+  },
+  "four_policy_common_airborne": {
+    "moving_vehicle": {
+      "cases": 55,
+      "median_ego_mps": 4.917770862579346,
+      "median_obstacle_mps": 7.760404703058498,
+      "stopped_ego": 2,
+      "ego_below_1_mps": 2,
+      "median_hit_time_s": 1.82,
+      "no_speed_limit_last_half_second": 13,
+      "no_speed_limit_entire_episode": 10,
+      "centerline_already_blocked": 38,
+      "endpoint_contact": 55
+    },
+    "route_obstacle": {
+      "cases": 54,
+      "median_ego_mps": 5.594059228897095,
+      "median_obstacle_mps": 0.0,
+      "stopped_ego": 0,
+      "ego_below_1_mps": 1,
+      "median_hit_time_s": 0.535,
+      "no_speed_limit_last_half_second": 5,
+      "no_speed_limit_entire_episode": 4,
+      "centerline_already_blocked": 36,
+      "endpoint_contact": 54
+    }
+  },
+  "paired_rule_vs_ppo22": {
+    "same_type": 108,
+    "same_voxel": 106,
+    "same_tick": 102,
+    "same_voxel_and_tick": 102
+  },
+  "common_segment_type": {
+    "r1-early/moving_vehicle": 15,
+    "r1-early/route_obstacle": 9,
+    "r1-late/moving_vehicle": 9,
+    "r1-late/route_obstacle": 20,
+    "r2-climb/moving_vehicle": 18,
+    "r2-climb/route_obstacle": 8,
+    "r3-descent/moving_vehicle": 13,
+    "r3-descent/route_obstacle": 17
+  }
+}

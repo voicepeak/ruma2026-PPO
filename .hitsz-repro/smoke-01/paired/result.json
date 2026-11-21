@@ -1,0 +1,75 @@
+{
+  "models": {
+    "v12": {
+      "sha256": "8e997b5215152c8f63797ba1319b8ad8abd7d7bd5e4e57b9e667d71e9604a86d"
+    },
+    "ppo_1": {
+      "sha256": "87b803dfc3b39a4c8727459bbe8e1ffa9da3d5784657bda9c55dd17eb4bcc283",
+      "update": 1
+    }
+  },
+  "protocol": {
+    "dev": [
+      [
+        2,
+        50731
+      ],
+      [
+        3,
+        50753
+      ]
+    ],
+    "fresh": [
+      [
+        2,
+        350791
+      ],
+      [
+        3,
+        730919
+      ]
+    ]
+  },
+  "results": {
+    "dev_2": {
+      "ppo_1": {
+        "hitsz": 17,
+        "ours": 18,
+        "hitsz_only": 12,
+        "ours_only": 13,
+        "both": 5,
+        "neither": 18
+      }
+    },
+    "dev_3": {
+      "ppo_1": {
+        "hitsz": 15,
+        "ours": 12,
+        "hitsz_only": 8,
+        "ours_only": 5,
+        "both": 7,
+        "neither": 28
+      }
+    },
+    "fresh_2": {
+      "ppo_1": {
+        "hitsz": 19,
+        "ours": 22,
+        "hitsz_only": 7,
+        "ours_only": 10,
+        "both": 12,
+        "neither": 19
+      }
+    },
+    "fresh_3": {
+      "ppo_1": {
+        "hitsz": 14,
+        "ours": 11,
+        "hitsz_only": 12,
+        "ours_only": 9,
+        "both": 2,
+        "neither": 25
+      }
+    }
+  }
+}

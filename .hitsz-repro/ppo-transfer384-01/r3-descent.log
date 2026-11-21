@@ -1,0 +1,8 @@
+TRANSFER_GROUP r3-descent 2 rule {'cases': 48, 'initial_contact': 4, 'valid_start_outcomes': {'collision': 14, 'success': 28, 'timeout': 2}, 'waiting_cases': 0}
+TRANSFER_GROUP r3-descent 2 ppo-20261121 {'cases': 48, 'initial_contact': 4, 'valid_start_outcomes': {'collision': 14, 'success': 28, 'timeout': 2}, 'waiting_cases': 0}
+TRANSFER_GROUP r3-descent 2 ppo-20261122 {'cases': 48, 'initial_contact': 4, 'valid_start_outcomes': {'collision': 14, 'success': 28, 'timeout': 2}, 'waiting_cases': 0}
+TRANSFER_GROUP r3-descent 2 ppo-20261123 {'cases': 48, 'initial_contact': 4, 'valid_start_outcomes': {'collision': 15, 'success': 27, 'timeout': 2}, 'waiting_cases': 0}
+TRANSFER_GROUP r3-descent 3 rule {'cases': 48, 'initial_contact': 8, 'valid_start_outcomes': {'collision': 18, 'success': 21, 'timeout': 1}, 'waiting_cases': 0}
+TRANSFER_GROUP r3-descent 3 ppo-20261121 {'cases': 48, 'initial_contact': 8, 'valid_start_outcomes': {'collision': 17, 'success': 21, 'timeout': 2}, 'waiting_cases': 0}
+TRANSFER_GROUP r3-descent 3 ppo-20261122 {'cases': 48, 'initial_contact': 8, 'valid_start_outcomes': {'collision': 16, 'success': 23, 'timeout': 1}, 'waiting_cases': 0}
+TRANSFER_GROUP r3-descent 3 ppo-20261123 {'cases': 48, 'initial_contact': 8, 'valid_start_outcomes': {'collision': 18, 'success': 21, 'timeout': 1}, 'waiting_cases': 0}

@@ -1,0 +1,142 @@
+{
+  "batch_per_group": 48,
+  "unique_scenes": 384,
+  "segments": [
+    {
+      "id": "r1-early",
+      "route": "path_point/1-3_2_training.yaml",
+      "route_sha256": "3563e7a1b4619f51e3d0a0c126dda97f2ee755de09cb0f86b5acc2ee63e8a57b",
+      "gate_graph_sha256": "6f1e7b6127feed7e6046ddc43bc1161c0237f5a5aa672eefe96732016aafb7b1",
+      "start_m": 99.5,
+      "gate_ids": [
+        10,
+        11,
+        12
+      ],
+      "gate_stations_m": [
+        107.5,
+        110.1,
+        129.0
+      ],
+      "heading_span_deg": 11.665,
+      "climb_m": -2.352,
+      "groups": [
+        {
+          "level": 2,
+          "seed": 83001
+        },
+        {
+          "level": 3,
+          "seed": 83002
+        }
+      ]
+    },
+    {
+      "id": "r1-late",
+      "route": "path_point/1-3_2_training.yaml",
+      "route_sha256": "3563e7a1b4619f51e3d0a0c126dda97f2ee755de09cb0f86b5acc2ee63e8a57b",
+      "gate_graph_sha256": "4b02f04f43472173b364ad82fdd9ffa0d4f5d7104020d4d45fb6627313f4e06c",
+      "start_m": 532.1,
+      "gate_ids": [
+        51,
+        52,
+        53
+      ],
+      "gate_stations_m": [
+        540.1,
+        559.0,
+        561.6
+      ],
+      "heading_span_deg": 6.388,
+      "climb_m": -1.306,
+      "groups": [
+        {
+          "level": 2,
+          "seed": 83003
+        },
+        {
+          "level": 3,
+          "seed": 83004
+        }
+      ]
+    },
+    {
+      "id": "r2-climb",
+      "route": "path_point/3-5_1_training.yaml",
+      "route_sha256": "ae06520a34bd9c591315f839b8560ad53dcd83018f52779383ed23bdcc369f20",
+      "gate_graph_sha256": "4f1773c2631ad6c859dead2ba42e7332dcd90819934012dc24a96aeff3ffc8b0",
+      "start_m": 317.1,
+      "gate_ids": [
+        31,
+        32,
+        33
+      ],
+      "gate_stations_m": [
+        325.1,
+        344.0,
+        346.6
+      ],
+      "heading_span_deg": 17.66,
+      "climb_m": 12.849,
+      "groups": [
+        {
+          "level": 2,
+          "seed": 83005
+        },
+        {
+          "level": 3,
+          "seed": 83006
+        }
+      ]
+    },
+    {
+      "id": "r3-descent",
+      "route": "path_point/5-8_2_training.yaml",
+      "route_sha256": "c5e8003fdb1c9db5b75bea16754b8763d31aeaa1a945111d68884ea9bca1357b",
+      "gate_graph_sha256": "f281b7bf48b166660a2de3c046fbadec3a0831c53591d1cef4f2b3f77af92756",
+      "start_m": 142.5,
+      "gate_ids": [
+        14,
+        15,
+        16
+      ],
+      "gate_stations_m": [
+        150.5,
+        153.1,
+        172.0
+      ],
+      "heading_span_deg": 17.221,
+      "climb_m": -11.046,
+      "groups": [
+        {
+          "level": 2,
+          "seed": 83007
+        },
+        {
+          "level": 3,
+          "seed": 83008
+        }
+      ]
+    }
+  ],
+  "weights": [
+    {
+      "seed": 20261121,
+      "path": "/home/featurize/work/projects/ruma2026-PPO/.hitsz-repro/ppo-bypass/wait-20261121/latest.pt",
+      "sha256": "1b694c085fe51f0ea68da6d29ef06b6a174d26eb4bf3e9d41df130f1e2d10c5d",
+      "update": 24
+    },
+    {
+      "seed": 20261122,
+      "path": "/home/featurize/work/projects/ruma2026-PPO/.hitsz-repro/ppo-bypass/wait-20261122/latest.pt",
+      "sha256": "a43904707c3ec1dd9ee9ce4266371841cab6daf38d5a1ccf12b249ed739bdcda",
+      "update": 24
+    },
+    {
+      "seed": 20261123,
+      "path": "/home/featurize/work/projects/ruma2026-PPO/.hitsz-repro/ppo-bypass/wait-20261123/latest.pt",
+      "sha256": "51166aa6c5b6714d5bcb98f199f0d302d758ba858cdbc16a0a47aa3bd3f06f98",
+      "update": 24
+    }
+  ]
+}

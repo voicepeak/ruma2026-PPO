@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/home/featurize/work/projects/ruma2026-PPO/.hitsz-repro/ppo-bypass/smoke-check.py", line 54, in <module>
+    main()
+  File "/home/featurize/work/envs/py311_rmua/lib/python3.11/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/featurize/work/projects/ruma2026-PPO/.hitsz-repro/ppo-bypass/smoke-check.py", line 44, in main
+    assert env.hold_locked.all() and not env.progress.done.any(), env.waiting_s
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: tensor([1.5500, 1.3200, 3.0000, 3.0000], device='cuda:0')

@@ -1,0 +1,289 @@
+{
+  "unique_scenes": 384,
+  "segments": {
+    "r1-early": {
+      "rule": {
+        "cases": 96,
+        "initial_contact": 12,
+        "valid_start_outcomes": {
+          "collision": 26,
+          "success": 58
+        },
+        "waiting_cases": 0
+      },
+      "ppo-20261121": {
+        "cases": 96,
+        "initial_contact": 12,
+        "valid_start_outcomes": {
+          "collision": 27,
+          "success": 57
+        },
+        "waiting_cases": 0,
+        "vs_rule": {
+          "collision->collision": 26,
+          "success->collision": 1,
+          "success->success": 57
+        }
+      },
+      "ppo-20261122": {
+        "cases": 96,
+        "initial_contact": 12,
+        "valid_start_outcomes": {
+          "collision": 26,
+          "success": 58
+        },
+        "waiting_cases": 0,
+        "vs_rule": {
+          "collision->collision": 25,
+          "collision->success": 1,
+          "success->collision": 1,
+          "success->success": 57
+        }
+      },
+      "ppo-20261123": {
+        "cases": 96,
+        "initial_contact": 12,
+        "valid_start_outcomes": {
+          "collision": 26,
+          "success": 58
+        },
+        "waiting_cases": 0,
+        "vs_rule": {
+          "collision->collision": 24,
+          "collision->success": 2,
+          "success->collision": 2,
+          "success->success": 56
+        }
+      }
+    },
+    "r1-late": {
+      "rule": {
+        "cases": 96,
+        "initial_contact": 14,
+        "valid_start_outcomes": {
+          "collision": 29,
+          "success": 49,
+          "timeout": 4
+        },
+        "waiting_cases": 0
+      },
+      "ppo-20261121": {
+        "cases": 96,
+        "initial_contact": 14,
+        "valid_start_outcomes": {
+          "collision": 31,
+          "success": 47,
+          "timeout": 4
+        },
+        "waiting_cases": 0,
+        "vs_rule": {
+          "collision->collision": 29,
+          "success->collision": 2,
+          "success->success": 47,
+          "timeout->timeout": 4
+        }
+      },
+      "ppo-20261122": {
+        "cases": 96,
+        "initial_contact": 14,
+        "valid_start_outcomes": {
+          "collision": 29,
+          "success": 49,
+          "timeout": 4
+        },
+        "waiting_cases": 0,
+        "vs_rule": {
+          "collision->collision": 29,
+          "success->success": 49,
+          "timeout->timeout": 4
+        }
+      },
+      "ppo-20261123": {
+        "cases": 96,
+        "initial_contact": 14,
+        "valid_start_outcomes": {
+          "collision": 30,
+          "success": 48,
+          "timeout": 4
+        },
+        "waiting_cases": 0,
+        "vs_rule": {
+          "collision->collision": 29,
+          "success->collision": 1,
+          "success->success": 48,
+          "timeout->timeout": 4
+        }
+      }
+    },
+    "r2-climb": {
+      "rule": {
+        "cases": 96,
+        "initial_contact": 14,
+        "valid_start_outcomes": {
+          "collision": 29,
+          "success": 45,
+          "timeout": 8
+        },
+        "waiting_cases": 0
+      },
+      "ppo-20261121": {
+        "cases": 96,
+        "initial_contact": 14,
+        "valid_start_outcomes": {
+          "collision": 29,
+          "success": 47,
+          "timeout": 6
+        },
+        "waiting_cases": 0,
+        "vs_rule": {
+          "collision->collision": 28,
+          "collision->success": 1,
+          "success->success": 45,
+          "timeout->collision": 1,
+          "timeout->success": 1,
+          "timeout->timeout": 6
+        }
+      },
+      "ppo-20261122": {
+        "cases": 96,
+        "initial_contact": 14,
+        "valid_start_outcomes": {
+          "collision": 28,
+          "success": 46,
+          "timeout": 8
+        },
+        "waiting_cases": 0,
+        "vs_rule": {
+          "collision->collision": 28,
+          "collision->success": 1,
+          "success->success": 45,
+          "timeout->timeout": 8
+        }
+      },
+      "ppo-20261123": {
+        "cases": 96,
+        "initial_contact": 14,
+        "valid_start_outcomes": {
+          "collision": 27,
+          "success": 48,
+          "timeout": 7
+        },
+        "waiting_cases": 0,
+        "vs_rule": {
+          "collision->collision": 26,
+          "collision->success": 2,
+          "collision->timeout": 1,
+          "success->success": 45,
+          "timeout->collision": 1,
+          "timeout->success": 1,
+          "timeout->timeout": 6
+        }
+      }
+    },
+    "r3-descent": {
+      "rule": {
+        "cases": 96,
+        "initial_contact": 12,
+        "valid_start_outcomes": {
+          "collision": 32,
+          "success": 49,
+          "timeout": 3
+        },
+        "waiting_cases": 0
+      },
+      "ppo-20261121": {
+        "cases": 96,
+        "initial_contact": 12,
+        "valid_start_outcomes": {
+          "collision": 31,
+          "success": 49,
+          "timeout": 4
+        },
+        "waiting_cases": 0,
+        "vs_rule": {
+          "collision->collision": 30,
+          "collision->success": 2,
+          "success->collision": 1,
+          "success->success": 47,
+          "success->timeout": 1,
+          "timeout->timeout": 3
+        }
+      },
+      "ppo-20261122": {
+        "cases": 96,
+        "initial_contact": 12,
+        "valid_start_outcomes": {
+          "collision": 30,
+          "success": 51,
+          "timeout": 3
+        },
+        "waiting_cases": 0,
+        "vs_rule": {
+          "collision->collision": 30,
+          "collision->success": 2,
+          "success->success": 49,
+          "timeout->timeout": 3
+        }
+      },
+      "ppo-20261123": {
+        "cases": 96,
+        "initial_contact": 12,
+        "valid_start_outcomes": {
+          "collision": 33,
+          "success": 48,
+          "timeout": 3
+        },
+        "waiting_cases": 0,
+        "vs_rule": {
+          "collision->collision": 30,
+          "collision->success": 2,
+          "success->collision": 3,
+          "success->success": 46,
+          "timeout->timeout": 3
+        }
+      }
+    }
+  },
+  "aggregate": {
+    "rule": {
+      "cases": 384,
+      "initial_contact": 52,
+      "valid_start_outcomes": {
+        "collision": 116,
+        "success": 201,
+        "timeout": 15
+      },
+      "waiting_cases": 0
+    },
+    "ppo-20261121": {
+      "cases": 384,
+      "initial_contact": 52,
+      "valid_start_outcomes": {
+        "collision": 118,
+        "success": 200,
+        "timeout": 14
+      },
+      "waiting_cases": 0
+    },
+    "ppo-20261122": {
+      "cases": 384,
+      "initial_contact": 52,
+      "valid_start_outcomes": {
+        "collision": 113,
+        "success": 204,
+        "timeout": 15
+      },
+      "waiting_cases": 0
+    },
+    "ppo-20261123": {
+      "cases": 384,
+      "initial_contact": 52,
+      "valid_start_outcomes": {
+        "collision": 116,
+        "success": 202,
+        "timeout": 14
+      },
+      "waiting_cases": 0
+    }
+  }
+}

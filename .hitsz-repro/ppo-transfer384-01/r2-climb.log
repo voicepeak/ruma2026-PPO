@@ -1,0 +1,8 @@
+TRANSFER_GROUP r2-climb 2 rule {'cases': 48, 'initial_contact': 4, 'valid_start_outcomes': {'collision': 11, 'success': 27, 'timeout': 6}, 'waiting_cases': 0}
+TRANSFER_GROUP r2-climb 2 ppo-20261121 {'cases': 48, 'initial_contact': 4, 'valid_start_outcomes': {'collision': 12, 'success': 28, 'timeout': 4}, 'waiting_cases': 0}
+TRANSFER_GROUP r2-climb 2 ppo-20261122 {'cases': 48, 'initial_contact': 4, 'valid_start_outcomes': {'collision': 11, 'success': 27, 'timeout': 6}, 'waiting_cases': 0}
+TRANSFER_GROUP r2-climb 2 ppo-20261123 {'cases': 48, 'initial_contact': 4, 'valid_start_outcomes': {'collision': 11, 'success': 28, 'timeout': 5}, 'waiting_cases': 0}
+TRANSFER_GROUP r2-climb 3 rule {'cases': 48, 'initial_contact': 10, 'valid_start_outcomes': {'collision': 18, 'success': 18, 'timeout': 2}, 'waiting_cases': 0}
+TRANSFER_GROUP r2-climb 3 ppo-20261121 {'cases': 48, 'initial_contact': 10, 'valid_start_outcomes': {'collision': 17, 'success': 19, 'timeout': 2}, 'waiting_cases': 0}
+TRANSFER_GROUP r2-climb 3 ppo-20261122 {'cases': 48, 'initial_contact': 10, 'valid_start_outcomes': {'collision': 17, 'success': 19, 'timeout': 2}, 'waiting_cases': 0}
+TRANSFER_GROUP r2-climb 3 ppo-20261123 {'cases': 48, 'initial_contact': 10, 'valid_start_outcomes': {'collision': 16, 'success': 20, 'timeout': 2}, 'waiting_cases': 0}

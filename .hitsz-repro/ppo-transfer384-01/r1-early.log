@@ -1,0 +1,8 @@
+TRANSFER_GROUP r1-early 2 rule {'cases': 48, 'initial_contact': 6, 'valid_start_outcomes': {'collision': 10, 'success': 32}, 'waiting_cases': 0}
+TRANSFER_GROUP r1-early 2 ppo-20261121 {'cases': 48, 'initial_contact': 6, 'valid_start_outcomes': {'collision': 11, 'success': 31}, 'waiting_cases': 0}
+TRANSFER_GROUP r1-early 2 ppo-20261122 {'cases': 48, 'initial_contact': 6, 'valid_start_outcomes': {'collision': 10, 'success': 32}, 'waiting_cases': 0}
+TRANSFER_GROUP r1-early 2 ppo-20261123 {'cases': 48, 'initial_contact': 6, 'valid_start_outcomes': {'collision': 10, 'success': 32}, 'waiting_cases': 0}
+TRANSFER_GROUP r1-early 3 rule {'cases': 48, 'initial_contact': 6, 'valid_start_outcomes': {'collision': 16, 'success': 26}, 'waiting_cases': 0}
+TRANSFER_GROUP r1-early 3 ppo-20261121 {'cases': 48, 'initial_contact': 6, 'valid_start_outcomes': {'collision': 16, 'success': 26}, 'waiting_cases': 0}
+TRANSFER_GROUP r1-early 3 ppo-20261122 {'cases': 48, 'initial_contact': 6, 'valid_start_outcomes': {'collision': 16, 'success': 26}, 'waiting_cases': 0}
+TRANSFER_GROUP r1-early 3 ppo-20261123 {'cases': 48, 'initial_contact': 6, 'valid_start_outcomes': {'collision': 16, 'success': 26}, 'waiting_cases': 0}

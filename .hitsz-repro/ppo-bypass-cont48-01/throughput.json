@@ -1,0 +1,26 @@
+{
+  "single": {
+    "phase": "single",
+    "jobs": 1,
+    "seconds": 28.603167014000064,
+    "decisions": 4135,
+    "decisions_per_second": 144.56441127571955,
+    "errors": []
+  },
+  "dual": {
+    "phase": "dual",
+    "jobs": 2,
+    "seconds": 25.087577763999434,
+    "decisions": 7749,
+    "decisions_per_second": 308.87796633438967,
+    "errors": []
+  },
+  "aggregate_gain": 2.1366113804128744,
+  "selected_slots": 2,
+  "target_update": 48,
+  "seeds": [
+    20261121,
+    20261122,
+    20261123
+  ]
+}
