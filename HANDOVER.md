@@ -39,6 +39,7 @@
 - 交接前的历史提交：`b9ba996`（`origin/main`）。本次交接提交之后，以 `git log` 为准。
 - 所有复现产物（权重、CSV、报告、日志、`v12.onnx`）已放在 `.hitsz-repro/` 并纳入版本控制，约 20 MB。**新实例不需要旧服务器即可继续**。
 - 旧服务器：Featurize，`featurize@workspace.featurize.cn`，交接时端口 `14409`，密钥 `~/.ssh/id_ed25519_featurize`（密钥不在仓库内）。实例可能已被关闭；如果还能登录，路径为 `~/work/projects/ruma2026-PPO`。
+- 服务器 `.hitsz-repro` 已与本地逐文件对齐；唯一服务器端新增是 `rmua-handoff-results.tar.gz` 汇总包，解包内容与已归档文件逐项一致。**确认后可以关闭实例。**
 - 本地 Windows 只能读代码/数据，不能跑 HITSZ 仿真。训练/评测必须在 Linux + NVIDIA GPU 上。
 
 ### 2.1 新实例配置
@@ -358,6 +359,7 @@ python -m scripts.eval_pwm_wind --out .hitsz-repro/pwm-wind-new
 | `.hitsz-repro/pwm-wind-ab48-01/` | 风场回归 |
 | `.hitsz-repro/v12.onnx` | v12 基线（CPU ONNX Runtime） |
 | `.hitsz-repro/gates-r1.json` | R1 门图快照 |
+| `.hitsz-repro/rmua-handoff-results.tar.gz` | 上一手会话的服务器汇总包（内容与上述目录一致） |
 | `.hitsz-repro/*.tar.gz` | 各阶段源码/报告快照（历史追溯） |
 
 ## 11. 交接清单
