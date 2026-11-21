@@ -1,0 +1,165 @@
+{
+  "paired_scenes": 48,
+  "gate_graph_sha256": "a5a5257e6becd3670a456fc33e8a4b21da5bccc09da3c36ee484a98fcaf05d8d",
+  "geometry": "original gate frames with randomized obstacles removed",
+  "checks": {
+    "calm_equals_zero_wind": true,
+    "crosswind_accel_check_mps2": 0.36574894189834595,
+    "wind_trace_reproducible": true,
+    "gust_rollout_reproducible": true
+  },
+  "profiles": [
+    {
+      "level": 2,
+      "seed": 85001,
+      "mode": "calm",
+      "steady_ned_mps": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "gust_ned_mps": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "gust_start_s": 0.0,
+      "gust_duration_s": 1.0,
+      "turbulence_std_mps": 0.0,
+      "turbulence_timescale_s": 0.5
+    },
+    {
+      "level": 2,
+      "seed": 85001,
+      "mode": "steady",
+      "steady_ned_mps": [
+        -5.876246686008713,
+        -1.2123221045463182,
+        0.0
+      ],
+      "gust_ned_mps": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "gust_start_s": 0.0,
+      "gust_duration_s": 1.0,
+      "turbulence_std_mps": 0.0,
+      "turbulence_timescale_s": 0.5
+    },
+    {
+      "level": 2,
+      "seed": 85001,
+      "mode": "gust_and_turbulence",
+      "steady_ned_mps": [
+        -5.876246686008713,
+        -1.2123221045463182,
+        0.0
+      ],
+      "gust_ned_mps": [
+        -4.8968722383405945,
+        -1.010268420455265,
+        0.0
+      ],
+      "gust_start_s": 1.0,
+      "gust_duration_s": 2.0,
+      "turbulence_std_mps": 0.6,
+      "turbulence_timescale_s": 0.5
+    },
+    {
+      "level": 3,
+      "seed": 85002,
+      "mode": "calm",
+      "steady_ned_mps": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "gust_ned_mps": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "gust_start_s": 0.0,
+      "gust_duration_s": 1.0,
+      "turbulence_std_mps": 0.0,
+      "turbulence_timescale_s": 0.5
+    },
+    {
+      "level": 3,
+      "seed": 85002,
+      "mode": "steady",
+      "steady_ned_mps": [
+        5.876246686008713,
+        1.2123221045463182,
+        -0.0
+      ],
+      "gust_ned_mps": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "gust_start_s": 0.0,
+      "gust_duration_s": 1.0,
+      "turbulence_std_mps": 0.0,
+      "turbulence_timescale_s": 0.5
+    },
+    {
+      "level": 3,
+      "seed": 85002,
+      "mode": "gust_and_turbulence",
+      "steady_ned_mps": [
+        5.876246686008713,
+        1.2123221045463182,
+        -0.0
+      ],
+      "gust_ned_mps": [
+        4.8968722383405945,
+        1.010268420455265,
+        -0.0
+      ],
+      "gust_start_s": 1.0,
+      "gust_duration_s": 2.0,
+      "turbulence_std_mps": 0.6,
+      "turbulence_timescale_s": 0.5
+    }
+  ],
+  "metrics": {
+    "calm": {
+      "outcomes": {
+        "success": 48
+      },
+      "mean_success_s": 5.737454395833333,
+      "peak_horizontal_m_p50_p95_max": [
+        0.11878672987222672,
+        0.3332168027758598,
+        0.3646652102470398
+      ],
+      "min_gateframe_clearance_m": 2.629478
+    },
+    "steady": {
+      "outcomes": {
+        "success": 48
+      },
+      "mean_success_s": 5.765059791666666,
+      "peak_horizontal_m_p50_p95_max": [
+        0.21125561743974686,
+        0.3365982130169868,
+        0.414345920085907
+      ],
+      "min_gateframe_clearance_m": 2.608878
+    },
+    "gust_and_turbulence": {
+      "outcomes": {
+        "success": 48
+      },
+      "mean_success_s": 5.771118229166667,
+      "peak_horizontal_m_p50_p95_max": [
+        0.33654218912124634,
+        0.4158916398882866,
+        0.4610832631587982
+      ],
+      "min_gateframe_clearance_m": 2.612788
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "seed": 50731,
+  "obstacle_level": 1,
+  "route": "path_point/1-3_2_training.yaml",
+  "gate": 38,
+  "graph_sha256": "9984dbe69808dcef83bb90c6986cf4714552d52f8e98f97bcc45ed274161aa3e",
+  "scene_sha256": "0e752130bdc4ea85e3eeba7349b60c1ba1e6da919c74c595e63622e6fd3e9635",
+  "control_hz": 100,
+  "hover_drift_m": 0.0,
+  "step_force_per_motor_n": 2.3592138290405273,
+  "brake_speed_mps_at_1s": 0.3081043064594269,
+  "flight_with_sensors_ticks_per_wall_second": 287.56,
+  "replay_ticks_per_wall_second": 466.8,
+  "replay_identical": true,
+  "sensor_frames_released": 23,
+  "first_lidar_returns": 13259,
+  "gates": 1,
+  "outcome": "success",
+  "flight_s": 2.234459,
+  "min_clearance_m": 2.422893,
+  "near_miss": false,
+  "failure_ned": null
+}
+WIND_GROUP 2 85001 calm {'success': 24}
+WIND_GROUP 2 85001 steady {'success': 24}
+WIND_GROUP 2 85001 gust_and_turbulence {'success': 24}
+WIND_GROUP 3 85002 calm {'success': 24}
+WIND_GROUP 3 85002 steady {'success': 24}
+WIND_GROUP 3 85002 gust_and_turbulence {'success': 24}
+WIND_DONE {"calm": {"outcomes": {"success": 48}, "mean_success_s": 5.737454395833333, "peak_horizontal_m_p50_p95_max": [0.11878672987222672, 0.3332168027758598, 0.3646652102470398], "min_gateframe_clearance_m": 2.629478}, "steady": {"outcomes": {"success": 48}, "mean_success_s": 5.765059791666666, "peak_horizontal_m_p50_p95_max": [0.21125561743974686, 0.3365982130169868, 0.414345920085907], "min_gateframe_clearance_m": 2.608878}, "gust_and_turbulence": {"outcomes": {"success": 48}, "mean_success_s": 5.771118229166667, "peak_horizontal_m_p50_p95_max": [0.33654218912124634, 0.4158916398882866, 0.4610832631587982], "min_gateframe_clearance_m": 2.612788}}
+WIND_VALIDATION_OK

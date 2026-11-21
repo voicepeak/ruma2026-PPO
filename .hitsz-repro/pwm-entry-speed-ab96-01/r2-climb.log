@@ -1,0 +1,4 @@
+r2-climb 2 original {'collision': 2, 'timeout': 2, 'success': 16}
+r2-climb 2 entry-4mps {'collision': 5, 'timeout': 1, 'success': 14}
+r2-climb 3 original {'timeout': 1, 'success': 16, 'collision': 4}
+r2-climb 3 entry-4mps {'timeout': 2, 'success': 13, 'collision': 6}

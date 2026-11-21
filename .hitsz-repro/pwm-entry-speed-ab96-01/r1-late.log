@@ -1,0 +1,4 @@
+r1-late 2 original {'success': 15, 'collision': 4, 'timeout': 1}
+r1-late 2 entry-4mps {'success': 16, 'collision': 3, 'timeout': 1}
+r1-late 3 original {'collision': 7, 'success': 12, 'timeout': 1}
+r1-late 3 entry-4mps {'success': 12, 'collision': 6, 'timeout': 2}
