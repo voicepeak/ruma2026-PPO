@@ -1,0 +1,11 @@
+{
+  "update": 3313,
+  "decisions": 6152241,
+  "batch": 256,
+  "gpu": "NVIDIA GeForce RTX 4090",
+  "train_completed": 87,
+  "level": 3,
+  "seconds": 1.3,
+  "pid": 4786,
+  "mean_episode_reward": 2.2186739444732666
+}
