@@ -1,0 +1,11 @@
+Held-out oracle and rule {'A': {'complete_rate': 0.45499998331069946, 'choice_success_given_feasible': 0.469072163105011, 'mean_gates': 1.909999966621399, 'short_pass': 1.0, 'mean_seconds_on_completions': 4.147712707519531}, 'oracle': {'complete_rate': 0.9699999690055847, 'choice_success_given_feasible': 1.0, 'mean_gates': 2.93999981880188, 'short_pass': 1.0, 'mean_seconds_on_completions': 4.088266372680664}}
+B-7 {'complete_rate': 0.515625, 'choice_success_given_feasible': 0.531572163105011, 'mean_gates': 2.03125, 'short_pass': 1.0, 'mean_seconds_on_completions': 4.759221076965332}
+B-23 {'complete_rate': 0.5099999904632568, 'choice_success_given_feasible': 0.5257731676101685, 'mean_gates': 2.0199999809265137, 'short_pass': 1.0, 'mean_seconds_on_completions': 4.797324180603027}
+B-61 {'complete_rate': 0.5475000143051147, 'choice_success_given_feasible': 0.5644329786300659, 'mean_gates': 2.0950000286102295, 'short_pass': 1.0, 'mean_seconds_on_completions': 4.7927165031433105}
+C-7 {'complete_rate': 0.96875, 'choice_success_given_feasible': 0.998711347579956, 'mean_gates': 2.9337499141693115, 'short_pass': 0.9962499737739563, 'mean_seconds_on_completions': 4.774105072021484}
+C-23 {'complete_rate': 0.9668749570846558, 'choice_success_given_feasible': 0.9967783689498901, 'mean_gates': 2.926874876022339, 'short_pass': 0.9931249618530273, 'mean_seconds_on_completions': 4.7890238761901855}
+C-61 {'complete_rate': 0.9681249856948853, 'choice_success_given_feasible': 0.9980670213699341, 'mean_gates': 2.9306249618530273, 'short_pass': 0.9943749904632568, 'mean_seconds_on_completions': 4.7664690017700195}
+D-7 {'complete_rate': 0.5137500166893005, 'choice_success_given_feasible': 0.5296391844749451, 'mean_gates': 2.0274999141693115, 'short_pass': 1.0, 'mean_seconds_on_completions': 4.671396255493164}
+D-23 {'complete_rate': 0.5131250023841858, 'choice_success_given_feasible': 0.5289948582649231, 'mean_gates': 2.026249885559082, 'short_pass': 1.0, 'mean_seconds_on_completions': 4.5931501388549805}
+D-61 {'complete_rate': 0.512499988079071, 'choice_success_given_feasible': 0.5283505320549011, 'mean_gates': 2.0249998569488525, 'short_pass': 1.0, 'mean_seconds_on_completions': 4.6571455001831055}
+Done result

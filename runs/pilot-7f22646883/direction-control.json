@@ -1,0 +1,65 @@
+{
+  "split_seed": 44017,
+  "families": 400,
+  "training": "frozen",
+  "metrics": {
+    "A": {
+      "complete_rate": 0.453125,
+      "choice_success_given_feasible": 0.46713918447494507,
+      "mean_gates": 1.9049999713897705,
+      "short_pass": 0.9987499713897705,
+      "mean_seconds_on_completions": 4.175305366516113
+    },
+    "geometry_turn": {
+      "complete_rate": 0.9124999642372131,
+      "choice_success_given_feasible": 0.9407216310501099,
+      "mean_gates": 2.788749933242798,
+      "short_pass": 0.9637500047683716,
+      "mean_seconds_on_completions": 4.43850564956665
+    },
+    "oracle": {
+      "complete_rate": 0.9699999690055847,
+      "choice_success_given_feasible": 1.0,
+      "mean_gates": 2.93999981880188,
+      "short_pass": 1.0,
+      "mean_seconds_on_completions": 4.096181392669678
+    },
+    "C-7": {
+      "complete_rate": 0.9699999690055847,
+      "choice_success_given_feasible": 1.0,
+      "mean_gates": 2.9362499713897705,
+      "short_pass": 0.9962499737739563,
+      "mean_seconds_on_completions": 4.779893398284912
+    },
+    "C-23": {
+      "complete_rate": 0.9699999690055847,
+      "choice_success_given_feasible": 1.0,
+      "mean_gates": 2.934375047683716,
+      "short_pass": 0.9943749904632568,
+      "mean_seconds_on_completions": 4.800245761871338
+    },
+    "C-61": {
+      "complete_rate": 0.9699999690055847,
+      "choice_success_given_feasible": 1.0,
+      "mean_gates": 2.934375047683716,
+      "short_pass": 0.9943749904632568,
+      "mean_seconds_on_completions": 4.778207302093506
+    }
+  },
+  "paired": {
+    "C-geometry_turn": {
+      "delta_pp": 5.75,
+      "family_bootstrap_95_pp": [
+        4.25,
+        7.375
+      ]
+    },
+    "geometry_turn-A": {
+      "delta_pp": 45.9375,
+      "family_bootstrap_95_pp": [
+        43.625,
+        48.25
+      ]
+    }
+  }
+}

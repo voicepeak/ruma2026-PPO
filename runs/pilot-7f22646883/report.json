@@ -1,0 +1,198 @@
+{
+  "scope": "Planar synthetic full-state proxy; one candidate decision per episode, shared continuation controller.",
+  "families": [
+    800,
+    200,
+    400
+  ],
+  "split_seeds": [
+    11003,
+    22003,
+    33013
+  ],
+  "network_seeds": [
+    7,
+    23,
+    61
+  ],
+  "epochs": 32,
+  "device": "NVIDIA GeForce RTX 4090",
+  "torch_version": "2.6.0+cu118",
+  "python": "3.11.16",
+  "platform": "Linux-5.15.0-102-generic-x86_64-with-glibc2.35",
+  "dt": 0.05,
+  "candidates": [
+    [
+      -3.6,
+      0.72
+    ],
+    [
+      -2.3,
+      0.72
+    ],
+    [
+      0.0,
+      0.72
+    ],
+    [
+      2.3,
+      0.72
+    ],
+    [
+      3.6,
+      0.72
+    ],
+    [
+      -3.6,
+      1.0
+    ],
+    [
+      -2.3,
+      1.0
+    ],
+    [
+      0.0,
+      1.0
+    ],
+    [
+      2.3,
+      1.0
+    ],
+    [
+      3.6,
+      1.0
+    ]
+  ],
+  "metrics": {
+    "A": {
+      "complete_rate": 0.45499998331069946,
+      "choice_success_given_feasible": 0.469072163105011,
+      "mean_gates": 1.909999966621399,
+      "short_pass": 1.0,
+      "mean_seconds_on_completions": 4.147712707519531
+    },
+    "oracle": {
+      "complete_rate": 0.9699999690055847,
+      "choice_success_given_feasible": 1.0,
+      "mean_gates": 2.93999981880188,
+      "short_pass": 1.0,
+      "mean_seconds_on_completions": 4.088266372680664
+    },
+    "B-7": {
+      "complete_rate": 0.515625,
+      "choice_success_given_feasible": 0.531572163105011,
+      "mean_gates": 2.03125,
+      "short_pass": 1.0,
+      "mean_seconds_on_completions": 4.759221076965332
+    },
+    "B-23": {
+      "complete_rate": 0.5099999904632568,
+      "choice_success_given_feasible": 0.5257731676101685,
+      "mean_gates": 2.0199999809265137,
+      "short_pass": 1.0,
+      "mean_seconds_on_completions": 4.797324180603027
+    },
+    "B-61": {
+      "complete_rate": 0.5475000143051147,
+      "choice_success_given_feasible": 0.5644329786300659,
+      "mean_gates": 2.0950000286102295,
+      "short_pass": 1.0,
+      "mean_seconds_on_completions": 4.7927165031433105
+    },
+    "C-7": {
+      "complete_rate": 0.96875,
+      "choice_success_given_feasible": 0.998711347579956,
+      "mean_gates": 2.9337499141693115,
+      "short_pass": 0.9962499737739563,
+      "mean_seconds_on_completions": 4.774105072021484
+    },
+    "C-23": {
+      "complete_rate": 0.9668749570846558,
+      "choice_success_given_feasible": 0.9967783689498901,
+      "mean_gates": 2.926874876022339,
+      "short_pass": 0.9931249618530273,
+      "mean_seconds_on_completions": 4.7890238761901855
+    },
+    "C-61": {
+      "complete_rate": 0.9681249856948853,
+      "choice_success_given_feasible": 0.9980670213699341,
+      "mean_gates": 2.9306249618530273,
+      "short_pass": 0.9943749904632568,
+      "mean_seconds_on_completions": 4.7664690017700195
+    },
+    "D-7": {
+      "complete_rate": 0.5137500166893005,
+      "choice_success_given_feasible": 0.5296391844749451,
+      "mean_gates": 2.0274999141693115,
+      "short_pass": 1.0,
+      "mean_seconds_on_completions": 4.671396255493164
+    },
+    "D-23": {
+      "complete_rate": 0.5131250023841858,
+      "choice_success_given_feasible": 0.5289948582649231,
+      "mean_gates": 2.026249885559082,
+      "short_pass": 1.0,
+      "mean_seconds_on_completions": 4.5931501388549805
+    },
+    "D-61": {
+      "complete_rate": 0.512499988079071,
+      "choice_success_given_feasible": 0.5283505320549011,
+      "mean_gates": 2.0249998569488525,
+      "short_pass": 1.0,
+      "mean_seconds_on_completions": 4.6571455001831055
+    }
+  },
+  "selected_epochs": {
+    "B-7": 3,
+    "B-23": 11,
+    "B-61": 1,
+    "C-7": 27,
+    "C-23": 15,
+    "C-61": 17,
+    "D-7": 32,
+    "D-23": 32,
+    "D-61": 31
+  },
+  "sources": {
+    "course.py": "63446152372bce9b619cb5b16d5a2ae429d52c86456804581c29023d26c2c3b6",
+    "experiment.py": "feb812f605d2326d37cf50c0891076a54e746ef411ac6c2dedb97d49fb04f2b4"
+  },
+  "paired": {
+    "oracle-A": {
+      "delta_pp": 51.5,
+      "family_bootstrap_95_pp": [
+        49.75,
+        53.25
+      ]
+    },
+    "C-A": {
+      "delta_pp": 51.29166666666667,
+      "family_bootstrap_95_pp": [
+        49.54166666666667,
+        53.02083333333333
+      ]
+    },
+    "C-B": {
+      "delta_pp": 44.35416666666667,
+      "family_bootstrap_95_pp": [
+        43.0625,
+        45.520833333333336
+      ]
+    },
+    "C-D": {
+      "delta_pp": 45.47916666666667,
+      "family_bootstrap_95_pp": [
+        44.083333333333336,
+        46.70833333333333
+      ]
+    },
+    "oracle-C": {
+      "delta_pp": 0.20833333333333337,
+      "family_bootstrap_95_pp": [
+        0.020833333333333336,
+        0.4583333333333333
+      ]
+    }
+  },
+  "turn_blind_oracle_rate": 0.5424999594688416
+}
