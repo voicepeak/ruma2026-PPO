@@ -1,0 +1,6 @@
+export RMUA_REPO="$HOME/work/projects/ruma2026-PPO"
+export RMUA_RUNTIME="$HOME/rmua-training"
+export CUDA_HOME="$HOME/work/envs/py311_rmua"
+export HITSZ_ROOT="$RMUA_RUNTIME/rmua_rl"
+export PATH="$RMUA_RUNTIME/venv/bin:$PATH"
+export PYTHONPATH="$HITSZ_ROOT/Env/src${PYTHONPATH:+:$PYTHONPATH}"

@@ -1,0 +1,35 @@
+CLEAR_BATCH 2 61001 {'success': 48}
+CLEAR_BATCH 2 61002 {'success': 48}
+CLEAR_BATCH 3 61001 {'success': 48}
+CLEAR_BATCH 3 61002 {'success': 48}
+{
+  "cases": 192,
+  "outcomes": {
+    "success": 192
+  },
+  "original_outcomes": {
+    "success": 66,
+    "collision": 126
+  },
+  "formerly_start_contact_now_success": 36,
+  "formerly_airborne_collision_now_success": 90,
+  "mean_success_s": 5.712452375000001,
+  "success_time_range_s": [
+    5.370745,
+    5.954808
+  ],
+  "peak_horizontal_m_p50_p95_max": [
+    0.13876384496688843,
+    0.3352388262748718,
+    0.36233630776405334
+  ],
+  "peak_vertical_m_max": 0.32294464111328125,
+  "min_gateframe_clearance_m": 2.572896,
+  "settings": {
+    "original_initial_states_verified": true,
+    "retained_geometry": "HITSZ gate frames",
+    "controller": "pwm_geometric",
+    "reference_speed_mps": 4.0,
+    "limit_s": 10
+  }
+}

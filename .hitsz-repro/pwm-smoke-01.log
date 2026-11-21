@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/home/featurize/work/projects/ruma2026-PPO/scripts/smoke_pwm.py", line 160, in <module>
+    main()
+  File "/home/featurize/work/envs/py311_rmua/lib/python3.11/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/home/featurize/work/projects/ruma2026-PPO/scripts/smoke_pwm.py", line 117, in main
+    motors = verify_motor_response(course, follower)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/featurize/work/projects/ruma2026-PPO/scripts/smoke_pwm.py", line 65, in verify_motor_response
+    raise AssertionError(f"Brake ended at {brake_speed:.3f} m/s from 3 m/s")
+AssertionError: Brake ended at 1.008 m/s from 3 m/s

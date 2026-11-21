@@ -1,0 +1,40 @@
+{
+  "suite": "val192",
+  "reproduced_scenes": 192,
+  "collisions": 126,
+  "initial": {
+    "route_obstacle": 29,
+    "moving_vehicle": 7
+  },
+  "airborne": {
+    "route_obstacle": 53,
+    "moving_vehicle": 37
+  },
+  "airborne_by_gate_count_and_type": {
+    "0/moving_vehicle": 10,
+    "0/route_obstacle": 20,
+    "1/moving_vehicle": 7,
+    "1/route_obstacle": 2,
+    "2/moving_vehicle": 20,
+    "2/route_obstacle": 31
+  },
+  "airborne_endpoint_contacts": 90,
+  "airborne_time_aligned_contacts": 90,
+  "airborne_same_box_intersects_centerline_margin": 62,
+  "airborne_centerline_contacts_by_type": {
+    "moving_vehicle": 24,
+    "route_obstacle": 38
+  },
+  "median_airborne_impact_speed_mps": 4.924030780792236,
+  "median_airborne_offset_m": 0.10084361210465431,
+  "representative_trajectories": [
+    "airborne-after-0-moving_vehicle-l2-s61001-r12.npz",
+    "airborne-after-0-route_obstacle-l2-s61001-r26.npz",
+    "airborne-after-1-moving_vehicle-l2-s61001-r15.npz",
+    "airborne-after-1-route_obstacle-l3-s61001-r13.npz",
+    "airborne-after-2-moving_vehicle-l2-s61001-r10.npz",
+    "airborne-after-2-route_obstacle-l2-s61001-r1.npz",
+    "initial-moving_vehicle-l2-s61001-r24.npz",
+    "initial-route_obstacle-l2-s61001-r5.npz"
+  ]
+}
