@@ -1,0 +1,131 @@
+{
+  "route": "path_point/1-3_2_training.yaml",
+  "start": 400.5,
+  "seeds": [
+    [
+      2,
+      80819
+    ],
+    [
+      3,
+      91513
+    ]
+  ],
+  "candidates": [
+    [
+      -3.6,
+      0.72
+    ],
+    [
+      -2.3,
+      0.72
+    ],
+    [
+      0.0,
+      0.72
+    ],
+    [
+      2.3,
+      0.72
+    ],
+    [
+      3.6,
+      0.72
+    ],
+    [
+      -3.6,
+      1.0
+    ],
+    [
+      -2.3,
+      1.0
+    ],
+    [
+      0.0,
+      1.0
+    ],
+    [
+      2.3,
+      1.0
+    ],
+    [
+      3.6,
+      1.0
+    ],
+    [
+      -1.8,
+      0.72
+    ],
+    [
+      -1.15,
+      0.72
+    ],
+    [
+      1.15,
+      0.72
+    ],
+    [
+      1.8,
+      0.72
+    ],
+    [
+      -1.8,
+      1.0
+    ],
+    [
+      -1.15,
+      1.0
+    ],
+    [
+      1.15,
+      1.0
+    ],
+    [
+      1.8,
+      1.0
+    ]
+  ],
+  "levels": [
+    {
+      "level": 2,
+      "n": 48,
+      "original": 25,
+      "half": 28,
+      "both": 25,
+      "original_only": 0,
+      "half_only": 3,
+      "neither": 20,
+      "centre": 20,
+      "initial_contact": 3,
+      "initial_clear_total": 45,
+      "original_if_clear": 25,
+      "half_if_clear": 28
+    },
+    {
+      "level": 3,
+      "n": 48,
+      "original": 25,
+      "half": 31,
+      "both": 25,
+      "original_only": 0,
+      "half_only": 6,
+      "neither": 17,
+      "centre": 16,
+      "initial_contact": 8,
+      "initial_clear_total": 40,
+      "original_if_clear": 25,
+      "half_if_clear": 31
+    }
+  ],
+  "initial_hash": {
+    "2": "5c8c96fc648bcb631fc9a82400128753a91c4e1cc31c58b23a5d3a55516cd4f6",
+    "3": "3d6d9f97c3aa3ecca7359d8153d7e65165e2a1c85048e25e46445016cd584c44"
+  },
+  "outcome_codes": [
+    "timeout",
+    "collision",
+    "bounds_including_possible_contact",
+    "missed_gate",
+    "three_gates"
+  ]
+}
