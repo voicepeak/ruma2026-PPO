@@ -53,11 +53,11 @@ def digest(tensors):
     return h.hexdigest()
 
 
-def reset(env, value, level):
+def reset(env, value, level, *, start=START):
     seed(value)
     env.set_curriculum_levels(2, level, True)
     e = env.env
-    station = torch.full((env.num_envs,), START, device=e.device)
+    station = torch.full((env.num_envs,), float(start), device=e.device)
     pos, direction, segment = e.get_state_by_s(station, e.env_traj_ids)
     e.p.copy_(pos)
     e.p_old.copy_(pos)
@@ -71,12 +71,13 @@ def reset(env, value, level):
     return obs, state_hash
 
 
-def station(e):
+def station(e, position=None):
+    p = e.p if position is None else position
     nodes = e.trajectories[0]
     edge = nodes[1:] - nodes[:-1]
-    t = ((e.p[:,None]-nodes[:-1])*edge).sum(-1) / edge.square().sum(-1).clamp_min(1e-8)
+    t = ((p[:,None]-nodes[:-1])*edge).sum(-1) / edge.square().sum(-1).clamp_min(1e-8)
     t = t.clamp(0, 1)
-    k = (nodes[:-1]+t[...,None]*edge-e.p[:,None]).square().sum(-1).argmin(1)
+    k = (nodes[:-1]+t[...,None]*edge-p[:,None]).square().sum(-1).argmin(1)
     row = torch.arange(len(k),device=e.device)
     return e.traj_s[0,k]+t[row,k]*edge[k].norm(dim=-1)
 

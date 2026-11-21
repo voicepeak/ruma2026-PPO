@@ -41,21 +41,23 @@ class ActorCritic(nn.Module):
 
 
 class Course:
-    def __init__(self, batch):
+    def __init__(self, batch, *, route=ROUTE, start=START, first_gate=NEXT_GATE):
         cfg = yaml.safe_load((UP/"RL/configs/config_env.yaml").read_text())
         train = yaml.safe_load((UP/"RL/configs/config_rl.yaml").read_text())
-        cfg["trajectory"]["paths"] = [str(UP / ROUTE)]
+        cfg["trajectory"]["paths"] = [str(UP / route)]
         cfg["env"]["batch_size"] = batch
         train["env"] = cfg["env"]
         assert cfg["env"]["dynamics"] == "full"
         self.env = BranchEnv(train, make_env(cfg, DEVICE))
         self.e = self.env.env
         self.batch = batch
+        self.start_m = start
+        self.first_gate = first_gate
         self.table = torch.tensor(ACTIONS, device=DEVICE)
 
     def start(self, level, scene_seed, training):
-        self.obs, fingerprint = reset(self.env, scene_seed, level)
-        self.first = torch.full((self.batch,), NEXT_GATE, device=DEVICE, dtype=torch.long)
+        self.obs, fingerprint = reset(self.env, scene_seed, level, start=self.start_m)
+        self.first = torch.full((self.batch,), self.first_gate, device=DEVICE, dtype=torch.long)
         if training:
             # Half the rows practise the studied bend. The rest start at random gate groups.
             rows = torch.arange(self.batch//2, self.batch, device=DEVICE)
@@ -163,15 +165,15 @@ def collect(course, net, level, scene_seed, mode):
     return data, gates, fingerprint
 
 
-def update(net,opt,rows):
+def update(net,opt,rows,*,gamma=0.99,gae_lambda=0.95,clip=0.2,entropy_coefficient=0.012,minibatch=512):
     # Every row is a complete episode; terminated slots never enter the loss.
     img,state,act,oldlog,val,rew,cont,valid=[torch.stack(col) for col in zip(*rows)]
     advantage=torch.zeros_like(val)
     carry=torch.zeros_like(val[0])
     next_v=torch.zeros_like(carry)
     for t in reversed(range(len(rows))):
-        delta=rew[t]+0.99*cont[t]*next_v-val[t]
-        carry=delta+0.99*0.95*cont[t]*carry
+        delta=rew[t]+gamma*cont[t]*next_v-val[t]
+        carry=delta+gamma*gae_lambda*cont[t]*carry
         advantage[t]=carry
         next_v=val[t]
     ret=(advantage+val)[valid]
@@ -180,18 +182,18 @@ def update(net,opt,rows):
     sums=torch.zeros(5,device=DEVICE)
     samples=0
     for _ in range(4):
-        for i in torch.randperm(len(act),device=DEVICE).split(512):
+        for i in torch.randperm(len(act),device=DEVICE).split(minibatch):
             logits,v=net(img[i],state[i])
             d=Categorical(logits=logits)
             ratio=(d.log_prob(act[i])-oldlog[i]).exp()
-            pg=-torch.minimum(adv[i]*ratio,adv[i]*ratio.clamp(0.8,1.2)).mean()
+            pg=-torch.minimum(adv[i]*ratio,adv[i]*ratio.clamp(1-clip,1+clip)).mean()
             value_loss=(v-ret[i]).square().mean()
             entropy=d.entropy().mean()
-            loss=pg+0.5*value_loss-0.012*entropy
+            loss=pg+0.5*value_loss-entropy_coefficient*entropy
             with torch.no_grad():
                 log_ratio=d.log_prob(act[i])-oldlog[i]
                 approx_kl=(ratio-1-log_ratio).mean()
-                clip_fraction=((ratio-1).abs()>0.2).float().mean()
+                clip_fraction=((ratio-1).abs()>clip).float().mean()
                 sums+=len(i)*torch.stack((pg,value_loss,entropy,approx_kl,clip_fraction))
                 samples+=len(i)
             if not loss.isfinite(): raise RuntimeError("Nonfinite PPO loss")
