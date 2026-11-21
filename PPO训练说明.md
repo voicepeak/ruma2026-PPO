@@ -1,6 +1,81 @@
 # HITSZ 三维候选策略 · 持续 PPO 训练
 
-服务器作业目录为 `/home/featurize/work/projects/rmua-branch-research/hitsz-ppo-01`。训练文件在该目录的 `training/` 下。桌面 runs/hitsz-ppo-01 下的文件是取回时的快照。
+## 新服务器复现
+
+使用 Ubuntu 22.04、NVIDIA 驱动 ≥535、RTX 4090 和 CUDA Toolkit 11.8。需要能执行 `nvidia-smi`、`nvcc --version` 和 `g++ --version`。将本目录同步到训练机后，在仓库根目录运行以下命令。在装有 Conda 的机器上首次建立 Python 环境可运行 `conda create -n py311_rmua python=3.11 -y`。
+
+```bash
+conda activate py311_rmua
+python scripts/hitsz_repro.py setup
+python scripts/hitsz_repro.py smoke --out .hitsz-repro/smoke-01
+```
+
+`setup` 安装 PyTorch 2.6.0 + cu118，默认在 `.hitsz-repro/rmua_rl` 签出固定版本的 HITSZ，编译 `quadsim_cuda`，并从同一提交提取 v12。可用 `HITSZ_ROOT` 指定已有的固定版本签出，用 `CUDA_HOME` 指定 Toolkit 11.8。`python scripts/hitsz_repro.py check` 可单独复检 GPU、扩展导入和 v12 CPU 推理。冒烟检查执行 1 轮 PPO 并使用新权重与 v12 配对评测。 [Issue #1 §6–§7](https://github.com/voicepeak/ruma2026-PPO/issues/1)
+
+冒烟通过后可在 SSH 会话中启动完整复现。输出目录每次需用新名称。
+
+```bash
+nohup python -u scripts/hitsz_repro.py baseline --out .hitsz-repro/baseline-01 \
+  > .hitsz-repro/baseline-01.log 2>&1 </dev/null &
+```
+
+`environment.json` 记录环境、提交与权重来源。`bend/report.json` 对应历史候选实验的 44/96，`amplitude/report.json` 对应原幅与半幅的 50/96 和 59/96。`ppo/` 保存 3000 轮复现的训练日志、权重和验证结果，启动后可读 `ppo/status.json` 跟踪进度。`paired/paired.csv` 和 `paired/result.json` 保存旧口径的 dev96 与 fresh96 逐局对照。Issue #1 的 `test384` 属于后续评测协议。 [Issue #1 §6](https://github.com/voicepeak/ruma2026-PPO/issues/1)
+
+## P0 仿真与评测
+
+激活训练环境并设置 `HITSZ_ROOT` 后，在仓库根目录执行。门图基于 `path_point` 的 HITSZ 合成门，采用 NED 世界坐标和 6×3 m 研究判定孔径。相机提供有遮挡关系的合成 RGB-D，LiDAR 提供最多 20,000 个有序射线样本和有效返回标记。两者共享采样时刻，可配置帧延迟、测距噪声和丢点。PWM 以 HITSZ 电机顺序输入四个 0–1 值，每条命令推进 10 ms。 [Issue #1 §5](https://github.com/voicepeak/ruma2026-PPO/issues/1)
+
+```bash
+python -m maps.gate_graph "$HITSZ_ROOT/path_point/1-3_2_training.yaml" --out .hitsz-repro/gates-r1.json
+python -m scripts.smoke_pwm --out .hitsz-repro/pwm-smoke-01
+python -m evaluation.harness --suite val192 --verify-repeat \
+  --v12 .hitsz-repro/v12.onnx --out .hitsz-repro/pwm-val192-01
+```
+
+冒烟保存第一帧传感器数据和逐拍 PWM、位姿。脚本从保存的 PWM 回放，逐拍验证位姿与结果一致。评测器默认对照状态反馈 PWM 控制器与 v12，传入 `--ppo <权重>` 可换成旧 PPO。每局记录场景哈希、过门数、首次失败位置、用时和最小净空。净空是当前体素姿态下沿该控制步取三个点计算的到实体盒面距离，扣除机体余量。越界单列。配对报告使用精确 McNemar 检验及按难度分层的场景组 bootstrap。完成 `val192` 复跑后，最终候选使用未用过的留出协议（新种子或 Issue #1 的 `test384-MR`）评测；P0 阶段已经用过一次 `test384`。
+
+### 雷达前视制动
+
+`--lidar-brake` 用 10 Hz 的合成 LiDAR 量测前方 16 m 路线上的障碍，按反应时间和制动距离计算速度上限，再把速度和前视距离交给 100 Hz PWM 控制器。恢复速度前，要求连续两帧观测到原障碍点附近的射线已经穿过原占据位置。逐局 CSV 的 `brake_s` 记录速度上限生效的时长。这一版沿原门序和中心线行驶，等待堵塞解除。
+
+```bash
+python -m evaluation.harness --suite val192 --lidar-brake \
+  --v12 .hitsz-repro/v12.onnx --out .hitsz-repro/pwm-lidar-brake-val192-01
+```
+
+### 雷达局部绕行
+
+`--lidar-bypass` 每帧比较中心线及左右各两档横移的路线，用点云估计每条路线能安全前进多远，再兼顾偏移幅度和切换代价。横移参考随前向距离逐步变化，偏移上限按当前三门场景设为 2.05 m。速度仍由选中路线上的第一处障碍约束，逐局 CSV 同时记录 `brake_s` 和 `detour_s`。
+
+```bash
+python -m evaluation.harness --suite val192 --lidar-bypass \
+  --v12 .hitsz-repro/v12.onnx --out .hitsz-repro/pwm-lidar-bypass-val192-01
+```
+
+### PPO 高层选路
+
+每 0.1 秒选一次绕行轨迹。开启 `--wait` 时，第六个动作先把速度降到零，并在速度低于 0.3 m/s 后锁定停靠位置。网络读取三帧五候选净空、当前速度、横向偏差、门位姿、剩余时间和上一动作。策略从现有规则排序出发，学习修正各动作分数。限速与 PWM 跟踪沿用 P0 逻辑。训练种子与验证场景分开。每轮保存 `latest.pt` 和 `status.json`，重启时可用相同参数和 `--resume` 续训。
+
+```bash
+python -m scripts.train_bypass_ppo train --seed 20261121 --batch 32 --updates 24 \
+  --out .hitsz-repro/ppo-bypass/five-20261121
+python -m scripts.train_bypass_ppo eval \
+  --checkpoint .hitsz-repro/ppo-bypass/five-20261121/latest.pt \
+  --baseline .hitsz-repro/pwm-lidar-bypass-val192-01/paired.csv \
+  --out .hitsz-repro/ppo-bypass/five-20261121/val192
+```
+
+### 冻结权重跨赛段评测
+
+`scripts.eval_bypass_transfer` 的 `freeze` 会记录四个 HITSZ 门组、八组场景种子和三个 24 轮六动作检查点的哈希。每个门组跑两档难度，每档 48 局。`anchor` 可用原 `val192` 配对表复核原弯道的 48 局。随后用 `segment` 分别评测四段，最后用 `combine` 汇总逐段结果。所有策略共用 10 秒时限和同一批初始场景，起点接触单列。
+
+### PWM 风场回归
+
+`PWMEnv` 的可选 `WindField` 以 NED 坐标提供常值风、平滑阵风和有时间相关性的随机湍流。刚体积分沿用 HITSZ 形式，阻力按相对风速计算。`python -m scripts.eval_pwm_wind --out .hitsz-repro/pwm-wind-new` 同场景对照无风、6 m/s 持续横风和带阵风的横风，保留门框以隔离轨迹跟踪，并校验随机风和飞行结果可复现。
+
+## 历史 featurize 作业
+
+原服务器作业目录为 `/home/featurize/work/projects/rmua-branch-research/hitsz-ppo-01`。下文所用的 `training/` 是该作业的输出目录。[runs/hitsz-ppo-01](runs/hitsz-ppo-01) 保存取回时的快照。
 
 ## 当前策略
 
