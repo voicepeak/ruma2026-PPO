@@ -1,0 +1,21 @@
+2 0 0
+2 1 0
+2 2 19
+2 3 9
+2 4 0
+2 5 0
+2 6 0
+2 7 19
+2 8 15
+2 9 0
+3 0 0
+3 1 0
+3 2 14
+3 3 6
+3 4 0
+3 5 0
+3 6 1
+3 7 16
+3 8 10
+3 9 0
+{"gpu": "NVIDIA GeForce RTX 4090", "torch": "2.6.0+cu118", "route": "path_point/1-3_2_training.yaml", "start_s_m": 400.5, "gate_ids_zero_based": [38, 39, 40], "native_extension_sha256": "77ee1e688538c781b3db7aeb0267cd850c0baffd0cb50c74a95201091bfeda11", "upstream_commit": "9ac9657334817ad0bac6db3520bca59e5f864bf3", "candidates": [[-3.6, 0.72], [-2.3, 0.72], [0.0, 0.72], [2.3, 0.72], [3.6, 0.72], [-3.6, 1.0], [-2.3, 1.0], [0.0, 1.0], [2.3, 1.0], [3.6, 1.0]], "levels": [2, 3], "seeds": [30817, 69073], "batch": 48, "same_start_hash": {"2": "6851e6da602690cf90ace358761eafeebbcb3444dafa2ecece3368ebcf37b35f", "3": "e1a755f7135fbd6a9ce378b499c003825c76d90da25b82327e1cce6e2cf9f18d"}, "center_replay_passed": true, "success_by_level_candidate": [[0, 0, 19, 9, 0, 0, 0, 19, 15, 0], [0, 0, 14, 6, 0, 0, 1, 16, 10, 0]], "any_success": [26, 18], "all_success": [0, 0], "none_success": [22, 30], "center_full_rescued": [7, 2], "success_histogram": [52, 9, 15, 10, 10, 0, 0, 0, 0, 0, 0], "outcomes": {"timeout": 0, "collision": 517, "bounds_including_possible_contact": 312, "missed_gate": 22, "three_gates": 109}}
