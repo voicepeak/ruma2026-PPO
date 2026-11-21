@@ -1,0 +1,111 @@
+{
+  "models": {
+    "v12": {
+      "sha256": "8e997b5215152c8f63797ba1319b8ad8abd7d7bd5e4e57b9e667d71e9604a86d"
+    },
+    "ppo_2500": {
+      "sha256": "608be81f7ce971dd315d7a285029e7d50e344f38f2782c9fc8f1b819817a352e",
+      "update": 2500
+    },
+    "ppo_2605": {
+      "sha256": "f0299039f16398675c2561af4a61d05a0a279c065d63e1e156fb4ca351ec4d0a",
+      "update": 2605
+    }
+  },
+  "protocol": {
+    "dev": [
+      [
+        2,
+        50731
+      ],
+      [
+        3,
+        50753
+      ]
+    ],
+    "fresh": [
+      [
+        2,
+        350791
+      ],
+      [
+        3,
+        730919
+      ]
+    ]
+  },
+  "results": {
+    "dev_2": {
+      "ppo_2500": {
+        "hitsz": 17,
+        "ours": 27,
+        "hitsz_only": 6,
+        "ours_only": 16,
+        "both": 11,
+        "neither": 15
+      },
+      "ppo_2605": {
+        "hitsz": 17,
+        "ours": 25,
+        "hitsz_only": 6,
+        "ours_only": 14,
+        "both": 11,
+        "neither": 17
+      }
+    },
+    "dev_3": {
+      "ppo_2500": {
+        "hitsz": 15,
+        "ours": 22,
+        "hitsz_only": 3,
+        "ours_only": 10,
+        "both": 12,
+        "neither": 23
+      },
+      "ppo_2605": {
+        "hitsz": 15,
+        "ours": 22,
+        "hitsz_only": 4,
+        "ours_only": 11,
+        "both": 11,
+        "neither": 22
+      }
+    },
+    "fresh_2": {
+      "ppo_2500": {
+        "hitsz": 19,
+        "ours": 25,
+        "hitsz_only": 7,
+        "ours_only": 13,
+        "both": 12,
+        "neither": 16
+      },
+      "ppo_2605": {
+        "hitsz": 19,
+        "ours": 25,
+        "hitsz_only": 6,
+        "ours_only": 12,
+        "both": 13,
+        "neither": 17
+      }
+    },
+    "fresh_3": {
+      "ppo_2500": {
+        "hitsz": 14,
+        "ours": 14,
+        "hitsz_only": 8,
+        "ours_only": 8,
+        "both": 6,
+        "neither": 26
+      },
+      "ppo_2605": {
+        "hitsz": 14,
+        "ours": 15,
+        "hitsz_only": 8,
+        "ours_only": 9,
+        "both": 6,
+        "neither": 25
+      }
+    }
+  }
+}
