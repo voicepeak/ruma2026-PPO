@@ -1,0 +1,72 @@
+{
+  "pwm-val192-01": {
+    "outcomes_from_clear_start": {
+      "success": 66,
+      "collision": 90
+    },
+    "baseline_airborne_contacts_by_type": {
+      "moving_vehicle": {
+        "collision": 37
+      },
+      "route_obstacle": {
+        "collision": 53
+      }
+    },
+    "paired_transitions": {
+      "collision->collision": 90,
+      "success->success": 66
+    }
+  },
+  "pwm-lidar-brake-val192-01": {
+    "outcomes_from_clear_start": {
+      "success": 53,
+      "collision": 83,
+      "timeout": 20
+    },
+    "baseline_airborne_contacts_by_type": {
+      "moving_vehicle": {
+        "collision": 36,
+        "success": 1
+      },
+      "route_obstacle": {
+        "collision": 44,
+        "timeout": 9
+      }
+    },
+    "paired_transitions": {
+      "collision->collision": 80,
+      "collision->success": 1,
+      "collision->timeout": 9,
+      "success->collision": 3,
+      "success->success": 52,
+      "success->timeout": 11
+    }
+  },
+  "pwm-lidar-brake-val192-02": {
+    "outcomes_from_clear_start": {
+      "timeout": 45,
+      "collision": 65,
+      "success": 46
+    },
+    "baseline_airborne_contacts_by_type": {
+      "moving_vehicle": {
+        "collision": 35,
+        "success": 1,
+        "timeout": 1
+      },
+      "route_obstacle": {
+        "timeout": 28,
+        "collision": 25
+      }
+    },
+    "paired_transitions": {
+      "collision->collision": 60,
+      "collision->success": 1,
+      "collision->timeout": 29,
+      "success->collision": 5,
+      "success->success": 45,
+      "success->timeout": 16
+    }
+  },
+  "initial_contacts": 36
+}

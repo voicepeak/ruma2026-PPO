@@ -1,0 +1,143 @@
+{
+  "suite": "val192",
+  "route": "1-3_2_training",
+  "gate_ids": [
+    38,
+    39,
+    40
+  ],
+  "gate_graph_sha256": "a5a5257e6becd3670a456fc33e8a4b21da5bccc09da3c36ee484a98fcaf05d8d",
+  "scenes_sha256": "c34084789996f890b297490cfc881af05c20fbabedd2b8f4f18374a9819fe73a",
+  "models": {
+    "v12": {
+      "name": "v12",
+      "sha256": "8e997b5215152c8f63797ba1319b8ad8abd7d7bd5e4e57b9e667d71e9604a86d"
+    },
+    "candidate": {
+      "name": "pwm_lidar_bypass",
+      "speed_mps": 4.0,
+      "brake": {
+        "lookahead_m": 16.0,
+        "path_segments": 16,
+        "corridor_radius_m": 0.72,
+        "stand_off_m": 0.85,
+        "deceleration_mps2": 2.5,
+        "reaction_s": 0.25,
+        "release_samples": 2
+      },
+      "sensors": {
+        "cameras": [
+          {
+            "yaw_deg": 0.0,
+            "offset_m": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "yaw_deg": 90,
+            "offset_m": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "yaw_deg": 180,
+            "offset_m": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "yaw_deg": -90,
+            "offset_m": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        ],
+        "lidar": {
+          "yaw_deg": 0.0,
+          "offset_m": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "image_hw": [
+          48,
+          80
+        ],
+        "lidar_hw": [
+          20,
+          1000
+        ],
+        "camera_hfov_deg": 94.0,
+        "range_m": 50.0,
+        "sample_every_ticks": 10,
+        "latency_ticks": 0,
+        "range_noise_m": 0.0,
+        "dropout": 0.0
+      },
+      "bypass": {
+        "lateral_offsets_m": [
+          0.0,
+          -1.1,
+          1.1,
+          -2.05,
+          2.05
+        ],
+        "merge_distance_m": 3.1,
+        "scoring_horizon_m": 9.0,
+        "offset_cost": 0.45,
+        "switch_cost": 0.4
+      }
+    }
+  },
+  "repeat_verified": false,
+  "candidate": {
+    "cases": 192,
+    "outcomes": {
+      "collision": 89,
+      "success": 97,
+      "timeout": 6
+    },
+    "three_gate_rate": 0.5052083333333334,
+    "mean_gates": 1.875,
+    "near_miss_count": 37,
+    "mean_success_s": 5.81769037113402,
+    "minimum_clearance_m": -0.834545,
+    "braked_cases": 74,
+    "mean_brake_s_when_active": 1.2718918918918922,
+    "detour_cases": 115
+  },
+  "v12": {
+    "cases": 192,
+    "outcomes": {
+      "collision": 50,
+      "missed_gate": 78,
+      "success": 64
+    },
+    "three_gate_rate": 0.3333333333333333,
+    "mean_gates": 1.7604166666666667,
+    "near_miss_count": 49,
+    "mean_success_s": 3.8642510625,
+    "minimum_clearance_m": -0.834545
+  },
+  "paired": {
+    "candidate_only": 52,
+    "v12_only": 19,
+    "both": 45,
+    "neither": 76,
+    "mcnemar_exact_p": 0.00011226864689498799,
+    "gain": 0.171875,
+    "group_bootstrap_95_ci": [
+      0.10416666666666667,
+      0.23958333333333334
+    ]
+  }
+}

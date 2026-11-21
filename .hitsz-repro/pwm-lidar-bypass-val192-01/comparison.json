@@ -1,0 +1,37 @@
+{
+  "shared_initial_contacts": 36,
+  "outcomes_valid_start": {
+    "pwm-val192-01": {
+      "success": 66,
+      "collision": 90
+    },
+    "pwm-lidar-brake-val192-02": {
+      "timeout": 45,
+      "collision": 65,
+      "success": 46
+    },
+    "pwm-lidar-bypass-val192-01": {
+      "success": 97,
+      "collision": 53,
+      "timeout": 6
+    },
+    "pwm-lidar-bypass-val192-02": {
+      "success": 91,
+      "collision": 58,
+      "timeout": 7
+    }
+  },
+  "brake_to_bypass": {
+    "collision->collision": 43,
+    "collision->success": 21,
+    "collision->timeout": 1,
+    "success->success": 46,
+    "timeout->collision": 10,
+    "timeout->success": 30,
+    "timeout->timeout": 5
+  },
+  "from_collisions_with_moving_vehicle_in_geometric_baseline": {
+    "collision": 27,
+    "success": 10
+  }
+}

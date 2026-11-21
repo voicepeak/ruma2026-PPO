@@ -1,0 +1,29 @@
+BRAKE_GEOMETRY_OK
+{
+  "seed": 50731,
+  "obstacle_level": 1,
+  "route": "path_point/1-3_2_training.yaml",
+  "gate": 38,
+  "graph_sha256": "9984dbe69808dcef83bb90c6986cf4714552d52f8e98f97bcc45ed274161aa3e",
+  "scene_sha256": "0e752130bdc4ea85e3eeba7349b60c1ba1e6da919c74c595e63622e6fd3e9635",
+  "control_hz": 100,
+  "hover_drift_m": 0.0,
+  "step_force_per_motor_n": 2.3592138290405273,
+  "brake_speed_mps_at_1s": 0.3081043064594269,
+  "flight_with_sensors_ticks_per_wall_second": 293.51,
+  "replay_ticks_per_wall_second": 469.54,
+  "replay_identical": true,
+  "sensor_frames_released": 23,
+  "first_lidar_returns": 13259,
+  "gates": 1,
+  "outcome": "success",
+  "flight_s": 2.234459,
+  "min_clearance_m": 2.422893,
+  "near_miss": false,
+  "failure_ned": null
+}
+val192 level=2 seed=61001 cases=48
+val192 level=2 seed=61002 cases=96
+val192 level=3 seed=61001 cases=144
+val192 level=3 seed=61002 cases=192
+BRAKE_VAL_OK

@@ -1,0 +1,129 @@
+{
+  "suite": "val192",
+  "route": "1-3_2_training",
+  "gate_ids": [
+    38,
+    39,
+    40
+  ],
+  "gate_graph_sha256": "a5a5257e6becd3670a456fc33e8a4b21da5bccc09da3c36ee484a98fcaf05d8d",
+  "scenes_sha256": "c34084789996f890b297490cfc881af05c20fbabedd2b8f4f18374a9819fe73a",
+  "models": {
+    "v12": {
+      "name": "v12",
+      "sha256": "8e997b5215152c8f63797ba1319b8ad8abd7d7bd5e4e57b9e667d71e9604a86d"
+    },
+    "candidate": {
+      "name": "pwm_lidar_brake",
+      "speed_mps": 4.0,
+      "brake": {
+        "lookahead_m": 16.0,
+        "path_segments": 16,
+        "corridor_radius_m": 0.72,
+        "stand_off_m": 0.85,
+        "deceleration_mps2": 2.5,
+        "reaction_s": 0.25,
+        "release_samples": 2
+      },
+      "sensors": {
+        "cameras": [
+          {
+            "yaw_deg": 0.0,
+            "offset_m": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "yaw_deg": 90,
+            "offset_m": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "yaw_deg": 180,
+            "offset_m": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          {
+            "yaw_deg": -90,
+            "offset_m": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          }
+        ],
+        "lidar": {
+          "yaw_deg": 0.0,
+          "offset_m": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        },
+        "image_hw": [
+          48,
+          80
+        ],
+        "lidar_hw": [
+          20,
+          1000
+        ],
+        "camera_hfov_deg": 94.0,
+        "range_m": 50.0,
+        "sample_every_ticks": 10,
+        "latency_ticks": 0,
+        "range_noise_m": 0.0,
+        "dropout": 0.0
+      }
+    }
+  },
+  "repeat_verified": false,
+  "candidate": {
+    "cases": 192,
+    "outcomes": {
+      "collision": 101,
+      "success": 46,
+      "timeout": 45
+    },
+    "three_gate_rate": 0.23958333333333334,
+    "mean_gates": 1.3697916666666667,
+    "near_miss_count": 28,
+    "mean_success_s": 5.815852347826087,
+    "minimum_clearance_m": -0.834545,
+    "braked_cases": 120,
+    "mean_brake_s_when_active": 4.2275
+  },
+  "v12": {
+    "cases": 192,
+    "outcomes": {
+      "collision": 50,
+      "missed_gate": 78,
+      "success": 64
+    },
+    "three_gate_rate": 0.3333333333333333,
+    "mean_gates": 1.7604166666666667,
+    "near_miss_count": 49,
+    "mean_success_s": 3.8642510625,
+    "minimum_clearance_m": -0.834545
+  },
+  "paired": {
+    "candidate_only": 20,
+    "v12_only": 38,
+    "both": 26,
+    "neither": 108,
+    "mcnemar_exact_p": 0.024746035842440797,
+    "gain": -0.09375,
+    "group_bootstrap_95_ci": [
+      -0.14583333333333334,
+      -0.041666666666666664
+    ]
+  }
+}
