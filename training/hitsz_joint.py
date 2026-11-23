@@ -1,8 +1,10 @@
 """Gate-conditioned HITSZ PPO and optional supervised vehicle forecasting."""
 
+from copy import deepcopy
 from dataclasses import dataclass
 from math import prod
 from pathlib import Path
+import random
 
 import torch
 from torch import nn
@@ -16,6 +18,14 @@ from rsl_rl.modules import CustomVisionActorCritic
 from rsl_rl.runners.on_policy_runner import OnPolicyRunner
 from rsl_rl.storage import RolloutStorage
 from rsl_rl.utils import unpad_trajectories
+
+
+CURRICULUM_STATE = (
+    "curriculum_phase", "speed_level", "obstacle_level", "good_success_epochs",
+    "curriculum_epoch_steps", "epoch_window_successes", "epoch_window_failures",
+    "curriculum_successes", "curriculum_failures", "curriculum_success_rate_ema",
+    "last_epoch_success_rate",
+)
 
 
 @dataclass(frozen=True)
@@ -281,6 +291,8 @@ class HitszRunner(OnPolicyRunner):
         self.out = out
         self.recipe = recipe
         self.occupancy = occupancy
+        self.restored_update = 0
+        self.restored_environment_steps = 0
         super().__init__(env, cfg, str(out), device)
 
     def _construct_algorithm(self, obs):
@@ -299,15 +311,26 @@ class HitszRunner(OnPolicyRunner):
         algorithm = OccupancyPPO if self.occupancy is not None else PPO
         return algorithm(policy, storage, device=self.device, **self.alg_cfg)
 
+    def environment_steps(self, completed):
+        steps_per_update = self.env.num_envs * self.cfg["num_steps_per_env"]
+        return self.restored_environment_steps + (completed - self.restored_update) * steps_per_update
+
     def save(self, path, infos=None):
         completed = self.current_learning_iteration + 1
-        environment_steps = completed * self.env.num_envs * self.cfg["num_steps_per_env"]
+        environment_steps = self.environment_steps(completed)
         checkpoint = {
             "recipe": self.recipe,
             "update": completed,
             "environment_steps": environment_steps,
             "model_state_dict": self.alg.policy.state_dict(),
             "optimizer_state_dict": self.alg.optimizer.state_dict(),
+            "learning_rate": self.alg.learning_rate,
+            "curriculum": {key: getattr(self.env, key) for key in CURRICULUM_STATE},
+            "rng": {
+                "python": random.getstate(),
+                "torch": torch.get_rng_state(),
+                "cuda": torch.cuda.get_rng_state(self.device),
+            },
         }
         path = Path(path)
         save(path, checkpoint)
@@ -323,3 +346,29 @@ class HitszRunner(OnPolicyRunner):
             "peak_cuda_allocated_mib": round(torch.cuda.max_memory_allocated(self.device) / 2**20, 1),
             "peak_cuda_reserved_mib": round(torch.cuda.max_memory_reserved(self.device) / 2**20, 1),
         })
+
+    def restore(self, path, *, allow_batch_change=False):
+        ckpt = torch.load(path, map_location="cpu", weights_only=True)
+        saved_recipe = ckpt["recipe"]
+        comparison_recipe = deepcopy(saved_recipe)
+        if allow_batch_change:
+            comparison_recipe["environment"]["env"]["batch_size"] = self.env.num_envs
+        if comparison_recipe != self.recipe:
+            raise ValueError("Resume settings differ from the checkpoint")
+        self.alg.policy.load_state_dict(ckpt["model_state_dict"])
+        self.alg.optimizer.load_state_dict(ckpt["optimizer_state_dict"])
+        self.alg.learning_rate = ckpt["learning_rate"]
+        self.current_learning_iteration = ckpt["update"]
+        self.restored_update = ckpt["update"]
+        original_steps_per_update = (saved_recipe["environment"]["env"]["batch_size"]
+                                     * saved_recipe["train"]["num_steps_per_env"])
+        self.restored_environment_steps = ckpt.get(
+            "environment_steps", self.restored_update * original_steps_per_update
+        )
+        for key, value in ckpt["curriculum"].items():
+            setattr(self.env, key, value)
+        random.setstate(ckpt["rng"]["python"])
+        torch.set_rng_state(ckpt["rng"]["torch"])
+        torch.cuda.set_rng_state(ckpt["rng"]["cuda"], self.device)
+        self.env._apply_obstacle_level()
+        self.env._reset_envs(torch.arange(self.env.num_envs, device=self.device))

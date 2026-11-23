@@ -40,6 +40,8 @@ def train(args, hitsz):
     envs, seed = env_cfg["env"]["batch_size"], train_cfg["seed"]
     if updates < 1 or train_cfg["save_interval"] < 1 or not 0 <= seed < 2**32:
         raise ValueError("Use positive update and save counts and a uint32 seed")
+    if args.target_env_steps is not None and args.target_env_steps < 1:
+        raise ValueError("The environment step target must be positive")
     minibatches = train_cfg["algorithm"]["num_mini_batches"]
     if envs < minibatches or envs % minibatches:
         raise ValueError(f"Environment count must be a positive multiple of {minibatches}")
@@ -54,7 +56,10 @@ def train(args, hitsz):
         "additions": addition,
     }
     device = f"cuda:{env_cfg['runtime']['gpu_id']}"
-    args.out.mkdir(parents=True)
+    checkpoint = args.out / "latest.pt" if args.resume else args.resume_from
+    if checkpoint is not None and not checkpoint.is_file():
+        raise FileNotFoundError(checkpoint)
+    args.out.mkdir(parents=True, exist_ok=args.resume)
     with (args.out / "trainer.lock").open("a") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         random.seed(seed)
@@ -68,19 +73,35 @@ def train(args, hitsz):
         actual_cfg = deepcopy(train_cfg)
         actual_cfg["policy"]["base_model_path"] = str(hitsz / train_cfg["policy"]["base_model_path"])
         runner = HitszRunner(env, actual_cfg, args.out, device, recipe, occupancy)
+        if checkpoint is not None:
+            runner.restore(checkpoint, allow_batch_change=args.resume_from is not None)
+        steps_per_update = envs * train_cfg["num_steps_per_env"]
+        steps_done = runner.environment_steps(runner.current_learning_iteration)
+        if args.target_env_steps is not None:
+            steps_left = max(0, args.target_env_steps - steps_done)
+            updates = runner.current_learning_iteration + (steps_left + steps_per_update - 1) // steps_per_update
+        remaining = updates - runner.current_learning_iteration
+        if remaining <= 0:
+            print(f"Target already reached at update {runner.current_learning_iteration}", flush=True)
+            return
+
         import quadsim_cuda
 
-        atomic_json(args.out / "config.json", recipe)
-        atomic_json(args.out / "environment.json", {
-            "repo_commit": git(ROOT, "rev-parse", "HEAD"),
-            "repo_status": git(ROOT, "status", "--porcelain").splitlines(),
-            "gpu": torch.cuda.get_device_name(device),
-            "torch": str(torch.__version__),
-            "quadsim_cuda_sha256": sha256(Path(quadsim_cuda.__file__).read_bytes()).hexdigest(),
-            "steps_per_update": envs * train_cfg["num_steps_per_env"],
-        })
-        print(f"Training {args.variant}: {envs} environments, {updates} updates, seed {seed}", flush=True)
-        runner.learn(updates, init_at_random_ep_len=True)
+        if not args.resume:
+            atomic_json(args.out / "config.json", recipe)
+            atomic_json(args.out / "environment.json", {
+                "repo_commit": git(ROOT, "rev-parse", "HEAD"),
+                "repo_status": git(ROOT, "status", "--porcelain").splitlines(),
+                "gpu": torch.cuda.get_device_name(device),
+                "torch": str(torch.__version__),
+                "quadsim_cuda_sha256": sha256(Path(quadsim_cuda.__file__).read_bytes()).hexdigest(),
+                "steps_per_update": steps_per_update,
+                "resume_from": str(checkpoint.resolve()) if checkpoint else None,
+                "initial_environment_steps": steps_done,
+            })
+        print(f"Training {args.variant}: {envs} environments, updates "
+              f"{runner.current_learning_iteration + 1}–{updates}, seed {seed}", flush=True)
+        runner.learn(remaining, init_at_random_ep_len=checkpoint is None)
 
 
 def main():
@@ -89,8 +110,13 @@ def main():
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
     parser.add_argument("--envs", type=int, help="Override the upstream 4096 environments")
-    parser.add_argument("--updates", type=int, help="Total PPO updates")
+    budget = parser.add_mutually_exclusive_group()
+    budget.add_argument("--updates", type=int, help="Total updates including any checkpoint progress")
+    budget.add_argument("--target-env-steps", type=int, help="Total environment steps across all devices")
     parser.add_argument("--seed", type=int, help="Override the upstream training seed")
+    resume = parser.add_mutually_exclusive_group()
+    resume.add_argument("--resume", action="store_true", help="Continue in the same output directory")
+    resume.add_argument("--resume-from", type=Path, help="Continue from a checkpoint in a new directory")
     args = parser.parse_args()
     hitsz = Path(os.environ.get("HITSZ_ROOT", CACHE / "rmua_rl")).resolve()
     verify_checkout(hitsz)
