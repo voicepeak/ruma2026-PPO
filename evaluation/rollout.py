@@ -14,6 +14,17 @@ OUTCOMES = ("running", "collision", "bounds", "missed_gate", "success", "timeout
 REFERENCE_LOOKAHEAD_M = 1.3
 
 
+def gate_crossing(before, end, center, basis, half_aperture):
+    """Intersect a forward control step with a gate plane in its local frame."""
+    a = ((before - center)[:, None] @ basis).squeeze(1)
+    b = ((end - center)[:, None] @ basis).squeeze(1)
+    cross = (a[:, 0] < 0) & (b[:, 0] >= 0)
+    fraction = (-a[:, 0] / (b[:, 0] - a[:, 0]).clamp_min(1e-8)).clamp(0, 1)
+    hit = torch.lerp(a[:, 1:], b[:, 1:], fraction[:, None])
+    inside = (hit.abs() <= half_aperture).all(dim=-1)
+    return cross, inside, fraction
+
+
 class Progress:
     def __init__(self, env, graph, limit_s=10.0):
         if not graph.gates:
@@ -50,12 +61,7 @@ class Progress:
 
         index = self.gates.clamp_max(len(self.center) - 1)
         center, basis = self.center[index], self.basis[index]
-        a = ((before - center)[:, None] @ basis).squeeze(1)
-        b = ((end - center)[:, None] @ basis).squeeze(1)
-        cross = (a[:, 0] < 0) & (b[:, 0] >= 0)
-        fraction = (-a[:, 0] / (b[:, 0] - a[:, 0]).clamp_min(1e-8)).clamp(0, 1)
-        hit = torch.lerp(a[:, 1:], b[:, 1:], fraction[:, None])
-        inside = (hit.abs() <= self.half_aperture[index]).all(dim=-1)
+        cross, inside, fraction = gate_crossing(before, end, center, basis, self.half_aperture[index])
         contact = near < 0
         valid_cross = active & cross & ~contact & ~bounds
         self.gates += (valid_cross & inside).long()
