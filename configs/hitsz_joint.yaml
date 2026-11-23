@@ -1,0 +1,7 @@
+# The native PPO, environment, route and curriculum defaults are loaded
+# from the pinned HITSZ checkout. These settings are additions to that recipe.
+gate:
+  aperture_m: [6.0, 3.0]
+  pass_reward: 5.0
+  three_gate_reward: 15.0
+checkpoint_interval: 100
