@@ -1,5 +1,55 @@
 # HITSZ 三维候选策略 · 持续 PPO 训练
 
+## 原生连续速度 PPO 与车辆预测
+
+新入口从固定版本的 HITSZ 读取原始网络、PPO 参数、六条训练路线、速度和障碍课程。默认每轮 4096 个环境各采样 20 步，每局最多 150 步，训练上限 15000 轮。三组实验沿用 HITSZ 的三轴连续速度输出和速度 PI。
+
+| `--variant` | 训练内容 |
+|---|---|
+| `hitsz` | 原始 HITSZ PPO 配方 |
+| `gate` | 增加下一门信息。每次按序过门 +5，连续过三门额外 +15 |
+| `joint` | 使用 `gate` 的飞行奖励，增加 0.5 s 和 1.0 s 的车辆占位预测。预测特征进入 Actor |
+
+新增奖励和预测参数在 [共用策略配置](configs/hitsz_joint.yaml)。当前门奖励使用 6 × 3 m 研究孔径。训练仍按 HITSZ 的碰撞、越界和回合时限终止，穿越窗口外会清掉连续过门计数，飞机继续训练后续路段。车辆标签由当前场景按仿真车速推演，栅格采用当前航向坐标系下的车辆包围盒。Actor 在训练和评测都读取预测头输出。
+
+先按下节准备 Python 3.11、CUDA 11.8 和固定 HITSZ 签出。环境检查后，用 4096 环境跑一个独立的短作业，按日志里的 `Steps per second` 和 `status.json` 里的峰值显存量核对机器余量。
+
+```bash
+python scripts/hitsz_repro.py check
+python -m scripts.train_hitsz_joint --variant joint --updates 5 \
+  --out runs/native-ppo-4090-probe
+```
+
+正式作业用不同的新目录，默认从上游基础检查点初始化。同一轮对照的 `hitsz`、`gate`、`joint` 使用相同的种子和环境步数预算。
+
+```bash
+python -m scripts.train_hitsz_joint --variant joint --seed 20261121 \
+  --envs 4096 --updates 1338 --out runs/native-ppo-joint-20261121
+```
+
+检查点和 `status.json` 会记录累计更新轮数、环境步数和当前显存峰值。续训使用相同的目录和参数并加 `--resume`。训练器会恢复模型、优化器、学习率和课程进度，从新的回合继续采样。`--updates` 表示包含之前进度的总轮数。
+
+以上命令复现 RTX 4090 归档的 1,338 次更新，共 109,608,960 个环境步。下面的 RTX 3060 命令用 768 个并行环境追加 400 次更新，将累计预算扩到 115,752,960 步。公开权重的归档目标为 Hugging Face 模型仓库 `voicepeak/ruma2026-hitsz-joint-ppo`。
+
+换机器时，用 `--resume-from` 指向已保存的检查点，并指定新输出目录和目标机器能容纳的 `--envs`。用 `--target-env-steps` 保持原总采样预算。训练器会按检查点记录的既有环境步数和新并行规模计算剩余更新轮数。
+
+```bash
+python -m scripts.train_hitsz_joint --variant joint --seed 20261121 \
+  --envs 768 --target-env-steps 115752960 \
+  --resume-from runs/native-ppo-joint-20261121/latest.pt \
+  --out runs/native-ppo-joint-20261121-local
+```
+
+用训练机本地复跑的开发场景做对照，先用 `--lidar-bypass` 记录本机规则结果，再评新权重。两个输出目录的 `scenes.json` 可用来核对场景哈希。做策略消融时，分别以 `hitsz`、`gate` 和 `joint` 训练，从同一预算取 checkpoint，逐个用 `--native-ppo` 在同一批场景评测。原冻结 `test384` 已用于 P0 的一次性评测。
+
+```bash
+python -m evaluation.harness --suite val192 --lidar-bypass \
+  --v12 .hitsz-repro/v12.onnx --out runs/native-eval-rule
+python -m evaluation.harness --suite val192 \
+  --native-ppo runs/native-ppo-joint-20261121/latest.pt \
+  --v12 .hitsz-repro/v12.onnx --out runs/native-eval-joint-20261121
+```
+
 ## 新服务器复现
 
 使用 Ubuntu 22.04、NVIDIA 驱动 ≥535、RTX 4090 和 CUDA Toolkit 11.8。需要能执行 `nvidia-smi`、`nvcc --version` 和 `g++ --version`。将本目录同步到训练机后，在仓库根目录运行以下命令。在装有 Conda 的机器上首次建立 Python 环境可运行 `conda create -n py311_rmua python=3.11 -y`。
