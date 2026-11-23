@@ -1,10 +1,12 @@
-"""Gate-conditioned HITSZ PPO."""
+"""Gate-conditioned HITSZ PPO and optional supervised vehicle forecasting."""
 
 from dataclasses import dataclass
+from math import prod
 from pathlib import Path
 
 import torch
 from torch import nn
+import torch.nn.functional as F
 
 from evaluation.rollout import gate_crossing
 from hitsz_ppo import atomic_json, save
@@ -13,6 +15,7 @@ from rsl_rl.algorithms import PPO
 from rsl_rl.modules import CustomVisionActorCritic
 from rsl_rl.runners.on_policy_runner import OnPolicyRunner
 from rsl_rl.storage import RolloutStorage
+from rsl_rl.utils import unpad_trajectories
 
 
 @dataclass(frozen=True)
@@ -20,6 +23,19 @@ class GateConfig:
     aperture_m: tuple
     pass_reward: float
     three_gate_reward: float
+
+
+@dataclass(frozen=True)
+class OccupancyConfig:
+    horizons_s: tuple
+    grid_shape: tuple
+    grid_bounds_m: tuple
+    loss_weight: float
+    positive_weight: float
+
+    @property
+    def output_size(self):
+        return len(self.horizons_s) * prod(self.grid_shape)
 
 
 def gate_features(position, yaw, center, basis, active):
@@ -83,15 +99,65 @@ class OrderedGates:
         return passed, completed, visited & ~inside
 
 
+class VehicleOccupancy:
+    """Rasterize future vehicle boxes in the current yaw-aligned frame."""
+
+    def __init__(self, env, config):
+        self.env = env
+        self.config = config
+        self.horizons = env.p.new_tensor(config.horizons_s)
+        self.bounds = env.p.new_tensor(config.grid_bounds_m)
+        shape = env.p.new_tensor(config.grid_shape)
+        self.half_cell = self.bounds.diff(dim=-1).squeeze(-1) / (2 * shape)
+        centers = [low + (2 * torch.arange(n, device=env.device) + 1) * half
+                   for (low, _), n, half in zip(self.bounds, config.grid_shape, self.half_cell)]
+        self.cells = torch.cartesian_prod(*centers)
+
+    def targets(self, yaw):
+        e = self.env
+        n = e.active_num_cars
+        out = torch.zeros((e.batch_size, len(self.horizons), len(self.cells)), dtype=torch.uint8, device=e.device)
+        routes = e.env_traj_ids
+        future_s = (e.car_s[:, :n, None] - e.car_v[:, :n, None] * self.horizons
+                    ) % e.traj_lengths[routes, None, None]
+        for route in range(e.num_trajectories):
+            rows = (routes == route).nonzero().squeeze(-1)
+            if rows.numel() == 0:
+                continue
+            s = future_s[rows].contiguous()
+            station = e.traj_s[route]
+            j = torch.searchsorted(station, s).clamp_min(1).minimum(e.traj_num_points[route] - 1)
+            fraction = (s - station[j - 1]) / (station[j] - station[j - 1]).clamp_min(1e-6)
+            points = e.trajectories[route]
+            basis = e.traj_R[route, j - 1]
+            position = torch.lerp(points[j - 1], points[j], fraction[..., None])
+            position += (basis[..., 1] * e.car_lat_offset[rows, :n, None]
+                         + basis[..., 2] * e.car_vert_offset[rows, :n, None])
+            yaw_rows = yaw[rows, None, None]
+            center = ((position - e.p[rows, None, None])[..., None, :] @ yaw_rows).squeeze(-2)
+            # Enclosing AABB in the current frame provides a conservative coarse label.
+            half = (yaw_rows.transpose(-1, -2) @ basis).abs() @ e.voxel_size
+            near = ((center + half >= self.bounds[:, 0]) & (center - half <= self.bounds[:, 1])).all(-1)
+            row, car, horizon = near.nonzero(as_tuple=True)
+            hit = ((self.cells - center[row, car, horizon, None]).abs()
+                   <= half[row, car, horizon, None] + self.half_cell).all(-1)
+            hit_row, cell = hit.nonzero(as_tuple=True)
+            out[rows[row[hit_row]], horizon[hit_row], cell] = 1
+        return out.flatten(1)
+
+
 class GateEnv(RLQuadEnv):
-    def __init__(self, cfg, env_cuda, gate):
+    def __init__(self, cfg, env_cuda, gate, occupancy=None):
         super().__init__(cfg, env_cuda)
         self.gate_cfg = gate
         self.gates = OrderedGates(self.env, gate.aperture_m)
+        self.occupancy = VehicleOccupancy(self.env, occupancy) if occupancy else None
 
     def get_observations(self):
         obs = super().get_observations()
         obs["gate"] = self.gates.features(self._current_R_yaw)
+        if self.occupancy is not None:
+            obs["vehicle_target"] = self.occupancy.targets(self._current_R_yaw)
         return obs
 
     def step(self, actions):
@@ -122,20 +188,34 @@ def zero_projection(input_size, output_size):
 
 
 class GateActorCritic(CustomVisionActorCritic):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, occupancy=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.actor_gate = zero_projection(6, self.actor_encoder.output_dim)
         self.critic_gate = zero_projection(6, self.critic_encoder.output_dim)
+        self.occupancy = occupancy
+        if occupancy is not None:
+            hidden = self.memory_a.hidden_dim
+            self.forecast = nn.Sequential(nn.Linear(hidden, 128), nn.LeakyReLU(0.05),
+                                          nn.Linear(128, occupancy.output_size))
+            self.forecast_velocity = zero_projection(occupancy.output_size, self.actor_head.out_features)
 
     def encode(self, obs, encoder, gate):
         depth = obs["depth"].reshape(-1, 1, encoder.img_height, encoder.img_width)
         visual = encoder.stem(depth).reshape(*obs.batch_size, encoder.output_dim)
         return encoder.act(visual + encoder.v_proj(obs["state"]) + gate(obs["gate"]))
 
-    def _actor_mean(self, obs, masks=None, hidden_state=None):
+    def actor_outputs(self, obs, masks=None, hidden_state=None):
         features = self.encode(obs, self.actor_encoder, self.actor_gate)
         hidden = self.memory_a(features, masks, hidden_state).squeeze(0)
-        return self.actor_head(self.act_fn(hidden))
+        actions = self.actor_head(self.act_fn(hidden))
+        if self.occupancy is None:
+            return actions, None
+        forecast = self.forecast(hidden)
+        actions = actions + self.forecast_velocity(forecast.detach().sigmoid())
+        return actions, forecast
+
+    def _actor_mean(self, obs, masks=None, hidden_state=None):
+        return self.actor_outputs(obs, masks, hidden_state)[0]
 
     def evaluate(self, obs, masks=None, hidden_state=None):
         features = self.encode(obs, self.critic_encoder, self.critic_gate)
@@ -143,10 +223,64 @@ class GateActorCritic(CustomVisionActorCritic):
         return self.critic_head(self.act_fn(hidden))
 
 
+class OccupancyPPO(PPO):
+    """Native recurrent PPO update with a supervised term in the same backward pass."""
+
+    def update(self):
+        policy = self.policy
+        cfg = policy.occupancy
+        totals = torch.zeros(6, device=self.device)
+        batch_iter = self.storage.recurrent_mini_batch_generator(self.num_mini_batches, self.num_learning_epochs)
+        for obs, actions, values, advantages, returns, old_log, old_mean, old_std, hidden, masks in batch_iter:
+            if self.normalize_advantage_per_mini_batch:
+                advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
+            mean, forecast = policy.actor_outputs(obs, masks, hidden[0])
+            policy._update_distribution(mean)
+            value = policy.evaluate(obs, masks, hidden[1])
+            std = policy.action_std
+            entropy = policy.entropy.mean()
+            with torch.no_grad():
+                kl = (torch.log(std / old_std + 1e-5) + (old_std.square() + (old_mean - mean).square())
+                      / (2 * std.square()) - 0.5).sum(-1).mean()
+                if self.desired_kl is not None and self.schedule == "adaptive":
+                    if kl > self.desired_kl * 2:
+                        self.learning_rate = max(1e-5, self.learning_rate / 1.5)
+                    elif 0 < kl < self.desired_kl / 2:
+                        self.learning_rate = min(1e-2, self.learning_rate * 1.5)
+                    for group in self.optimizer.param_groups:
+                        group["lr"] = self.learning_rate
+
+            ratio = (policy.get_actions_log_prob(actions) - old_log.squeeze(-1)).exp()
+            adv = advantages.squeeze(-1)
+            policy_loss = torch.maximum(-adv * ratio, -adv * ratio.clamp(1 - self.clip_param,
+                                                                         1 + self.clip_param)).mean()
+            value_error = (value - returns).square()
+            if self.use_clipped_value_loss:
+                clipped = values + (value - values).clamp(-self.clip_param, self.clip_param)
+                value_error = torch.maximum(value_error, (clipped - returns).square())
+            value_loss = value_error.mean()
+            target = unpad_trajectories(obs["vehicle_target"], masks).to(forecast.dtype)
+            prediction_loss = F.binary_cross_entropy_with_logits(
+                forecast, target, pos_weight=forecast.new_tensor(cfg.positive_weight)
+            )
+            loss = policy_loss + self.value_loss_coef * value_loss - self.entropy_coef * entropy
+            loss = loss + cfg.loss_weight * prediction_loss
+            self.optimizer.zero_grad()
+            loss.backward()
+            nn.utils.clip_grad_norm_(policy.parameters(), self.max_grad_norm, error_if_nonfinite=True)
+            self.optimizer.step()
+            totals += torch.stack((value_loss, policy_loss, entropy, kl, prediction_loss, target.mean())).detach()
+
+        self.storage.clear()
+        names = ("value", "surrogate", "entropy", "kl", "occupancy_bce", "occupancy_target_fraction")
+        return dict(zip(names, (totals / (self.num_mini_batches * self.num_learning_epochs)).tolist()))
+
+
 class HitszRunner(OnPolicyRunner):
-    def __init__(self, env, cfg, out, device, recipe):
+    def __init__(self, env, cfg, out, device, recipe, occupancy):
         self.out = out
         self.recipe = recipe
+        self.occupancy = occupancy
         super().__init__(env, cfg, str(out), device)
 
     def _construct_algorithm(self, obs):
@@ -158,11 +292,12 @@ class HitszRunner(OnPolicyRunner):
         self.alg_cfg.setdefault("rnd_cfg", None)
         self.alg_cfg.setdefault("symmetry_cfg", None)
         policy = GateActorCritic(
-            obs, self.cfg["obs_groups"], self.env.num_actions, **self.policy_cfg
+            obs, self.cfg["obs_groups"], self.env.num_actions, occupancy=self.occupancy, **self.policy_cfg
         )
         storage = RolloutStorage("rl", self.env.num_envs, self.cfg["num_steps_per_env"], obs,
                                  [self.env.num_actions], self.device)
-        return PPO(policy, storage, device=self.device, **self.alg_cfg)
+        algorithm = OccupancyPPO if self.occupancy is not None else PPO
+        return algorithm(policy, storage, device=self.device, **self.alg_cfg)
 
     def save(self, path, infos=None):
         completed = self.current_learning_iteration + 1

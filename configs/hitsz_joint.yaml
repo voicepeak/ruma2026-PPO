@@ -4,4 +4,10 @@ gate:
   aperture_m: [6.0, 3.0]
   pass_reward: 5.0
   three_gate_reward: 15.0
+occupancy:
+  horizons_s: [0.5, 1.0]
+  grid_shape: [8, 8, 2]
+  grid_bounds_m: [[0.0, 16.0], [-8.0, 8.0], [-4.0, 4.0]]
+  loss_weight: 0.1
+  positive_weight: 8.0
 checkpoint_interval: 100

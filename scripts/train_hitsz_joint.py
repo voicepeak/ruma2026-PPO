@@ -1,4 +1,4 @@
-"""Train the native HITSZ PPO, with optional gate conditioning."""
+"""Train the native HITSZ PPO, with optional gates and vehicle occupancy."""
 
 import argparse
 from copy import deepcopy
@@ -21,7 +21,7 @@ def train(args, hitsz):
     from Env.utils import load_yaml, make_env
     from RL.rl_env_wrapper import RLQuadEnv
     from hitsz_ppo import atomic_json
-    from training.hitsz_joint import GateConfig, GateEnv, HitszRunner
+    from training.hitsz_joint import GateConfig, GateEnv, HitszRunner, OccupancyConfig
 
     if not torch.cuda.is_available():
         raise ValueError("HITSZ training requires a working CUDA GPU")
@@ -45,6 +45,7 @@ def train(args, hitsz):
         raise ValueError(f"Environment count must be a positive multiple of {minibatches}")
 
     gate = GateConfig(**addition["gate"]) if args.variant != "hitsz" else None
+    occupancy = OccupancyConfig(**addition["occupancy"]) if args.variant == "joint" else None
     recipe = {
         "variant": args.variant,
         "hitsz_commit": git(hitsz, "rev-parse", "HEAD"),
@@ -63,10 +64,10 @@ def train(args, hitsz):
         torch.cuda.reset_peak_memory_stats(device)
         sim = make_env(env_cfg, device=torch.device(device))
         cfg = {**train_cfg, "env": env_cfg["env"]}
-        env = RLQuadEnv(cfg, sim) if gate is None else GateEnv(cfg, sim, gate)
+        env = RLQuadEnv(cfg, sim) if gate is None else GateEnv(cfg, sim, gate, occupancy)
         actual_cfg = deepcopy(train_cfg)
         actual_cfg["policy"]["base_model_path"] = str(hitsz / train_cfg["policy"]["base_model_path"])
-        runner = HitszRunner(env, actual_cfg, args.out, device, recipe)
+        runner = HitszRunner(env, actual_cfg, args.out, device, recipe, occupancy)
         import quadsim_cuda
 
         atomic_json(args.out / "config.json", recipe)
@@ -84,7 +85,7 @@ def train(args, hitsz):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--variant", required=True, choices=("hitsz", "gate"))
+    parser.add_argument("--variant", required=True, choices=("hitsz", "gate", "joint"))
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
     parser.add_argument("--envs", type=int, help="Override the upstream 4096 environments")
