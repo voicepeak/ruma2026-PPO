@@ -55,6 +55,53 @@ class LegacyPolicy:
         return self.dt
 
 
+class NativePPOPolicy(LegacyPolicy):
+    def __init__(self, course, policy, gate_input=None):
+        super().__init__(course)
+        self.policy = policy
+        self.gate_input = gate_input
+
+    def step(self, tick, progress):
+        if tick == 0:
+            self.policy.reset()
+        course = self.course
+        obs = course.obs
+        if self.gate_input is not None:
+            index = progress.gates.clamp_max(len(progress.center) - 1)
+            obs["gate"] = self.gate_input(
+                course.e.p, course.env._current_R_yaw, progress.center[index],
+                progress.basis[index], ~progress.done,
+            )
+        course.obs, _, _, _ = course.env.step(self.policy.act_inference(obs))
+        return self.dt
+
+
+def load_native_ppo(path, course):
+    from rsl_rl.modules import CustomVisionActorCritic
+    from scripts.hitsz_repro import git
+    from training.hitsz_joint import GateActorCritic, OccupancyConfig, gate_features
+
+    checkpoint = torch.load(path, map_location="cpu", weights_only=True)
+    recipe = checkpoint["recipe"]
+    if recipe["hitsz_commit"] != git(UP, "rev-parse", "HEAD"):
+        raise ValueError("Native PPO checkpoint and evaluation HITSZ commits differ")
+    cfg = recipe["train"]["policy"].copy()
+    cfg.pop("class_name")
+    cfg["base_model_path"] = None
+    variant = recipe["variant"]
+    if variant == "hitsz":
+        model = CustomVisionActorCritic(None, recipe["train"]["obs_groups"], course.env.num_actions, **cfg)
+    else:
+        occupancy = OccupancyConfig(**recipe["additions"]["occupancy"]) if variant == "joint" else None
+        model = GateActorCritic(None, recipe["train"]["obs_groups"], course.env.num_actions,
+                                occupancy=occupancy, **cfg)
+    model.load_state_dict(checkpoint["model_state_dict"])
+    model = model.to(DEVICE).eval()
+    policy = NativePPOPolicy(course, model, gate_input=None if variant == "hitsz" else gate_features)
+    return policy, {"name": f"native_{variant}_{checkpoint['update']}",
+                    "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}
+
+
 def run_suite(suite, graph, candidate, reference, pwm):
     cases = []
     graph_hash = graph.sha256
@@ -180,6 +227,7 @@ def main():
     parser.add_argument("--v12", type=Path, required=True)
     candidate_args = parser.add_mutually_exclusive_group()
     candidate_args.add_argument("--ppo", type=Path, help="use a frozen legacy PPO candidate instead of the PWM follower")
+    candidate_args.add_argument("--native-ppo", type=Path, help="score a checkpoint from train_hitsz_joint")
     candidate_args.add_argument("--lidar-brake", action="store_true", help="apply the LiDAR stopping-distance rule")
     candidate_args.add_argument("--lidar-bypass", action="store_true", help="score lateral paths and brake using LiDAR")
     parser.add_argument("--out", type=Path, required=True)
@@ -198,6 +246,8 @@ def main():
         candidate = LegacyPolicy(course, network)
         names["candidate"] = {"name": f"ppo_{checkpoint['update']}",
                               "sha256": hashlib.sha256(args.ppo.read_bytes()).hexdigest()}
+    elif args.native_ppo:
+        candidate, names["candidate"] = load_native_ppo(args.native_ppo, course)
     elif args.lidar_brake or args.lidar_bypass:
         candidate = LidarBypassFollower(course.e) if args.lidar_bypass else LidarBrakeFollower(course.e)
         name = "pwm_lidar_bypass" if args.lidar_bypass else "pwm_lidar_brake"
