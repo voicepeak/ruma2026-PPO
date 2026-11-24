@@ -31,7 +31,7 @@ python -m scripts.train_hitsz_joint --variant joint --seed 20261121 \
 
 以上命令复现 RTX 4090 归档的 1,338 次更新，共 109,608,960 个环境步。下面的 RTX 3060 命令用 768 个并行环境追加 400 次更新，将累计预算扩到 115,752,960 步。
 
-公开仓库提供两个完整检查点 `joint-4090-u1338.pt` 和 `joint-3060-u1738.pt`。下载后用 `sha256sum -c SHA256SUMS` 核对文件，将所选路径传给 `--native-ppo` 评测或 `--resume-from` 续训。实验对照和指标记录在 GitHub Issue。 [Hugging Face 权重与校验文件](https://huggingface.co/Vociepeak/ruma2026-hitsz-joint-ppo) · [GitHub Issue #2](https://github.com/voicepeak/ruma2026-PPO/issues/2)
+公开仓库提供三个完整检查点 `joint-4090-u1338.pt`、`joint-3060-u1738.pt` 和 `joint-3060-u2501.pt`（u2501 在 val192 上对 v12 为 63.0% vs 31.8%）。下载后用 `sha256sum -c SHA256SUMS` 核对文件，将所选路径传给 `--native-ppo` 评测或 `--resume-from` 续训。实验对照和指标记录在 GitHub Issue。 [Hugging Face 权重与校验文件](https://huggingface.co/Vociepeak/ruma2026-hitsz-joint-ppo) · [GitHub Issue #2](https://github.com/voicepeak/ruma2026-PPO/issues/2)
 
 换机器时，用 `--resume-from` 指向已保存的检查点，并指定新输出目录和目标机器能容纳的 `--envs`。用 `--target-env-steps` 保持原总采样预算。训练器会按检查点记录的既有环境步数和新并行规模计算剩余更新轮数。
 

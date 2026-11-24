@@ -3,9 +3,9 @@
 ## TL;DR
 
 - 代码收敛在单分支 `feat/ppo-fullbatch-stable`（已包含功能、重构、评测和进度提交），已推送到 GitHub。
-- 当前最好权重是 3060 全样本续训的 `u2501`，不是公开的 `u1338`。
+- 当前最好权重是 3060 全样本续训的 `u2501`，已发布到 HuggingFace：`joint-3060-u2501.pt`。
 - 在 4090 上从 `u2501` 续训，恢复 4096×20 的原 4090 吞吐；推荐原始 `adaptive` LR，起始 0.0038。
-- 先搬 `checkpoint_u2501.pt` 到 4090，跑 smoke，再启动长训练。
+- 4090 先从 HuggingFace 下载 `joint-3060-u2501.pt`，跑 smoke，再启动长训练。
 
 ## 分支与提交
 
@@ -17,18 +17,18 @@
 
 | 权重 | 路径/来源 | sha256 | 状态 |
 |---|---|---|---|
-| u2501（最好） | 本地 `runs/native-joint-20261121-local-fullbatch-1024x80-ga8-stable/backups/checkpoint_u2501.pt` | `30a169914591566dffc3ca163dd3350b816b5906010cf9c9b2596878e0997ec7` | 需要 scp/上传，尚未进 HF |
+| u2501（最好） | HF `joint-3060-u2501.pt`（本地备份 `runs/native-joint-20261121-local-fullbatch-1024x80-ga8-stable/backups/checkpoint_u2501.pt`） | `30a169914591566dffc3ca163dd3350b816b5906010cf9c9b2596878e0997ec7` | 已发布 |
 | u1338（4090 原始） | HF `joint-4090-u1338.pt` | `2575179ac7d5fb446742173435fff6ac65459d30ec78dee5f8693ea516fb631e` | 公开，可作为回退 |
 | u2301（3060 seed） | 本地 `...-stable/seed_u2301.pt` | `7eeefb2877a3309eb1a68c4050c18ca1f124502b1c765993572426d1dc6ccb99` | 可选保留 |
 
 `u2501` 记录：update 2501，累计环境步数 204,881,920；训练配方 1024 envs × 80 steps、32 micro-batch、8 步梯度累积、stable LR；课程 phase 1，speed 3/3，obstacle 3/4，success EMA 0.551。
 
-传输：
+下载：
 
 ```bash
-scp runs/native-joint-20261121-local-fullbatch-1024x80-ga8-stable/backups/checkpoint_u2501.pt \
-  <user>@<4090-host>:/data/checkpoints/
-sha256sum /data/checkpoints/checkpoint_u2501.pt
+curl -L --fail -o /data/checkpoints/joint-3060-u2501.pt \
+  https://huggingface.co/Vociepeak/ruma2026-hitsz-joint-ppo/resolve/main/joint-3060-u2501.pt
+sha256sum /data/checkpoints/joint-3060-u2501.pt
 # 期望 30a169914591566dffc3ca163dd3350b816b5906010cf9c9b2596878e0997ec7
 ```
 
@@ -64,7 +64,7 @@ python -m scripts.train_joint --variant joint --seed 20261121 \
   --envs 4096 --num-steps-per-env 20 --num-mini-batches 4 \
   --grad-accum-steps 1 --lr-schedule adaptive --learning-rate 0.0038 \
   --updates 100000000 \
-  --resume-from /data/checkpoints/checkpoint_u2501.pt \
+  --resume-from /data/checkpoints/joint-3060-u2501.pt \
   --out /data/runs/native-joint-20261124-4090-u2501
 ```
 
@@ -80,7 +80,7 @@ python -m scripts.train_joint --variant joint --seed 20261121 \
 
 ```bash
 python -m ruma_ppo.evaluation.harness --suite val192 \
-  --native-ppo /data/checkpoints/checkpoint_u2501.pt \
+  --native-ppo /data/checkpoints/joint-3060-u2501.pt \
   --v12 .hitsz-repro/v12.onnx \
   --out /data/reports/val192-u2501
 ```
@@ -103,6 +103,6 @@ python -m ruma_ppo.evaluation.harness --suite val192 \
 ## 注意
 
 - 本地 3060 训练已停止，u2501 已保存；u2501 之后的 2502–2559 未存盘，已丢失。
-- u2501 没有上传 HuggingFace；请先 scp 或用自己的 token 上传。
+- u2501 已发布到 HuggingFace（`joint-3060-u2501.pt`），`SHA256SUMS` 和 `HANDOVER-u2501.md` 已更新；4090 可直接 curl 下载。
 - 旧 768 run（u2101）、fixed 1024 run（u2301）、原 4090 u1338 和公开权重都保留，可按需回退。
 - 新服务器首次训练前先跑 `python -m scripts.hitsz_repro check` 和 2 轮 smoke。

@@ -5,9 +5,23 @@
   "checkpoint": "runs/native-joint-20261121-local-fullbatch-1024x80-ga8-stable/backups/checkpoint_u2501.pt",
   "checkpoint_sha256": "30a169914591566dffc3ca163dd3350b816b5906010cf9c9b2596878e0997ec7",
   "v12_sha256": "8e997b5215152c8f63797ba1319b8ad8abd7d7bd5e4e57b9e667d71e9604a86d",
-  "candidate_success": [121, 192],
-  "v12_success": [61, 192],
-  "candidate_collision": [40, 192],
-  "v12_collision": [52, 192],
-  "note": "val192 validation suite; test384 remains held out"
+  "candidate_success": [
+    121,
+    192
+  ],
+  "v12_success": [
+    61,
+    192
+  ],
+  "candidate_collision": [
+    40,
+    192
+  ],
+  "v12_collision": [
+    52,
+    192
+  ],
+  "note": "val192 validation suite; test384 remains held out",
+  "hf_file": "joint-3060-u2501.pt",
+  "hf_url": "https://huggingface.co/Vociepeak/ruma2026-hitsz-joint-ppo/resolve/main/joint-3060-u2501.pt"
 }
