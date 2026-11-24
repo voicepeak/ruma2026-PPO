@@ -40,8 +40,14 @@ def train(args, hitsz):
         train_cfg["num_steps_per_env"] = args.num_steps_per_env
     if args.num_mini_batches is not None:
         train_cfg["algorithm"]["num_mini_batches"] = args.num_mini_batches
+    if args.lr_schedule is not None:
+        train_cfg["algorithm"]["schedule"] = args.lr_schedule
+    if args.learning_rate is not None:
+        train_cfg["algorithm"]["learning_rate"] = args.learning_rate
     if train_cfg["num_steps_per_env"] < 1 or train_cfg["algorithm"]["num_mini_batches"] < 1:
         raise ValueError("Use positive rollout step and mini-batch counts")
+    if train_cfg["algorithm"]["learning_rate"] <= 0:
+        raise ValueError("The learning rate must be positive")
     updates = args.updates if args.updates is not None else train_cfg["max_iterations"]
     envs, seed = env_cfg["env"]["batch_size"], train_cfg["seed"]
     if updates < 1 or train_cfg["save_interval"] < 1 or not 0 <= seed < 2**32:
@@ -87,6 +93,10 @@ def train(args, hitsz):
             runner.alg.accum_steps = args.grad_accum_steps
         if checkpoint is not None:
             runner.restore(checkpoint, allow_optimization_change=args.resume_from is not None)
+        if args.learning_rate is not None:
+            runner.alg.learning_rate = args.learning_rate
+            for group in runner.alg.optimizer.param_groups:
+                group["lr"] = args.learning_rate
         steps_per_update = envs * train_cfg["num_steps_per_env"]
         steps_done = runner.environment_steps(runner.current_learning_iteration)
         if args.target_env_steps is not None:
@@ -125,6 +135,8 @@ def main():
     parser.add_argument("--num-steps-per-env", type=int, help="Override rollout steps per update")
     parser.add_argument("--num-mini-batches", type=int, help="Override PPO mini-batches per epoch")
     parser.add_argument("--grad-accum-steps", type=int, help="Accumulate this many micro-batches per optimizer step")
+    parser.add_argument("--lr-schedule", choices=("adaptive", "fixed", "stable"), help="Override the PPO learning-rate schedule")
+    parser.add_argument("--learning-rate", type=float, help="Override the initial learning rate")
     budget = parser.add_mutually_exclusive_group()
     budget.add_argument("--updates", type=int, help="Total updates including any checkpoint progress")
     budget.add_argument("--target-env-steps", type=int, help="Total environment steps across all devices")

@@ -236,6 +236,16 @@ class GateActorCritic(CustomVisionActorCritic):
 class OccupancyPPO(PPO):
     """Native recurrent PPO update with a supervised term in the same backward pass."""
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.kl_ema = self.desired_kl if self.desired_kl is not None else 0.01
+        self.kl_ema_alpha = 0.9
+        self.kl_low = 0.006
+        self.kl_high = 0.018
+        self.lr_factor = 1.2
+        self.lr_min = 1e-4
+        self.lr_max = 0.006
+
     def _adapt_learning_rate(self, kl_mean):
         if self.desired_kl is not None and self.schedule == "adaptive":
             if kl_mean > self.desired_kl * 2:
@@ -244,6 +254,15 @@ class OccupancyPPO(PPO):
                 self.learning_rate = min(1e-2, self.learning_rate * 1.5)
             for group in self.optimizer.param_groups:
                 group["lr"] = self.learning_rate
+
+    def _adapt_stable(self, kl_mean):
+        self.kl_ema = self.kl_ema_alpha * self.kl_ema + (1.0 - self.kl_ema_alpha) * kl_mean
+        if self.kl_ema > self.kl_high:
+            self.learning_rate = max(self.lr_min, self.learning_rate / self.lr_factor)
+        elif self.kl_ema < self.kl_low:
+            self.learning_rate = min(self.lr_max, self.learning_rate * self.lr_factor)
+        for group in self.optimizer.param_groups:
+            group["lr"] = self.learning_rate
 
     def update(self):
         policy = self.policy
@@ -287,7 +306,8 @@ class OccupancyPPO(PPO):
             totals += torch.stack((value_loss, policy_loss, entropy, kl, prediction_loss, target.mean())).detach()
 
             if grouped == accum:
-                self._adapt_learning_rate(grouped_kl / grouped)
+                if self.schedule == "adaptive":
+                    self._adapt_learning_rate(grouped_kl / grouped)
                 nn.utils.clip_grad_norm_(policy.parameters(), self.max_grad_norm, error_if_nonfinite=True)
                 self.optimizer.step()
                 self.optimizer.zero_grad()
@@ -295,10 +315,15 @@ class OccupancyPPO(PPO):
                 grouped_kl = 0.0
 
         if grouped:
-            self._adapt_learning_rate(grouped_kl / grouped)
+            if self.schedule == "adaptive":
+                self._adapt_learning_rate(grouped_kl / grouped)
             nn.utils.clip_grad_norm_(policy.parameters(), self.max_grad_norm, error_if_nonfinite=True)
             self.optimizer.step()
             self.optimizer.zero_grad()
+
+        if self.schedule == "stable":
+            kl_avg = (totals[3] / (self.num_mini_batches * self.num_learning_epochs)).item()
+            self._adapt_stable(kl_avg)
 
         self.storage.clear()
         names = ("value", "surrogate", "entropy", "kl", "occupancy_bce", "occupancy_target_fraction")
@@ -374,6 +399,8 @@ class HitszRunner(OnPolicyRunner):
             comparison_recipe["environment"]["env"]["batch_size"] = self.env.num_envs
             comparison_recipe["train"]["num_steps_per_env"] = self.cfg["num_steps_per_env"]
             comparison_recipe["train"]["algorithm"]["num_mini_batches"] = self.cfg["algorithm"]["num_mini_batches"]
+            comparison_recipe["train"]["algorithm"]["schedule"] = self.cfg["algorithm"]["schedule"]
+            comparison_recipe["train"]["algorithm"]["learning_rate"] = self.cfg["algorithm"]["learning_rate"]
         if comparison_recipe != self.recipe:
             raise ValueError("Resume settings differ from the checkpoint")
         self.alg.policy.load_state_dict(ckpt["model_state_dict"])
