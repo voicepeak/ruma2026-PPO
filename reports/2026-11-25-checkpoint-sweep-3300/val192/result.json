@@ -1,0 +1,60 @@
+{
+  "suite": "val192",
+  "route": "1-3_2_training",
+  "gate_ids": [
+    38,
+    39,
+    40
+  ],
+  "gate_graph_sha256": "6937cf9118c1378e7906e5b5a47ae1832f02f52002022c4ec58ff96d72ffa200",
+  "scenes_sha256": "c2a5302287710f2f75f12cf8e5cec29d896da818618f460581f93a8eaae7a45d",
+  "models": {
+    "v12": {
+      "name": "v12",
+      "sha256": "8e997b5215152c8f63797ba1319b8ad8abd7d7bd5e4e57b9e667d71e9604a86d"
+    },
+    "candidate": {
+      "name": "native_joint_3301",
+      "sha256": "0eea6ee79885a15493d8e69398efe52d27e9da6d951901e51ba90f46624b4602"
+    }
+  },
+  "repeat_verified": false,
+  "candidate": {
+    "cases": 192,
+    "outcomes": {
+      "collision": 42,
+      "missed_gate": 18,
+      "success": 132
+    },
+    "three_gate_rate": 0.6875,
+    "mean_gates": 2.28125,
+    "near_miss_count": 43,
+    "mean_success_s": 3.4436140303030305,
+    "minimum_clearance_m": -0.834545
+  },
+  "v12": {
+    "cases": 192,
+    "outcomes": {
+      "collision": 52,
+      "missed_gate": 79,
+      "success": 61
+    },
+    "three_gate_rate": 0.3177083333333333,
+    "mean_gates": 1.75,
+    "near_miss_count": 45,
+    "mean_success_s": 3.904279442622951,
+    "minimum_clearance_m": -0.834545
+  },
+  "paired": {
+    "candidate_only": 73,
+    "v12_only": 2,
+    "both": 59,
+    "neither": 58,
+    "mcnemar_exact_p": 1.5093068328887564e-19,
+    "gain": 0.3697916666666667,
+    "group_bootstrap_95_ci": [
+      0.3541666666666667,
+      0.3854166666666667
+    ]
+  }
+}
