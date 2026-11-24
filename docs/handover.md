@@ -1,7 +1,7 @@
 # 交接文档：RMUA 2026 P0/P1 现状与下一步
 
 > 交接时间：2026-11-21 夜（本地）。上一手会话因额度中断，本文档记录当前代码、结果、已知坑和下一步。
-> 新接手请先完整读 [Issue #1](https://github.com/voicepeak/ruma2026-PPO/issues/1) 的 §0、§3、§5、§6、§7、§11，再读本文件和 [PPO训练说明.md](PPO训练说明.md)。
+> 新接手请先完整读 [Issue #1](https://github.com/voicepeak/ruma2026-PPO/issues/1) 的 §0、§3、§5、§6、§7、§11，再读本文件和 [docs/ppo.md](docs/ppo.md)。
 
 ## 1. 速览
 
@@ -44,7 +44,7 @@
 
 ### 2.1 新实例配置
 
-按 Issue #1 §7 和 [PPO训练说明.md](PPO训练说明.md) 执行：
+按 Issue #1 §7 和 [docs/ppo.md](docs/ppo.md) 执行：
 
 ```bash
 conda create -n py311_rmua python=3.11 -y
@@ -84,7 +84,7 @@ sha256sum .hitsz-repro/v12.onnx
 | `control/lidar_bypass.py` | 中心线 + 左右各两档横移的候选评分 |
 | `evaluation/rollout.py` | 门序、净空、越界、超时判定；PWM 跟随器与 LiDAR 制动跟随器 |
 | `evaluation/lidar_bypass.py` | 五路候选的点云前向净空估计与横移参考 |
-| `evaluation/harness.py` | 冻结场景配对评测；与 v12 同场对比；CSV/JSON 输出 |
+| `ruma_ppo/evaluation/harness.py` | 冻结场景配对评测；与 v12 同场对比；CSV/JSON 输出 |
 | `evaluation/bypass_learning.py` | 10 Hz PPO 适配层、奖励、观测、等待/停靠逻辑 |
 | `scripts/smoke_pwm.py` | PWM 悬停/阶跃/制动/首门冒烟，保存首帧传感器与逐拍 PWM 回放 |
 | `scripts/train_bypass_ppo.py` | PPO 高层选路训练与 `val192` 规则对照 |
@@ -254,7 +254,7 @@ sha256sum .hitsz-repro/v12.onnx
    - **D 不可能**：初始状态/门序本身不可行。
 4. 交付一张逐局表 + 汇总比例。**先不要改训练代码**，这份诊断决定下一步改哪一层。
 
-可直接复用的入口：`ppo-transfer-collision-audit-01/diagnose.py`、`Course(route, start, first_gate)`、`BypassLearningEnv`、`evaluation/harness.py` 的 `Progress`。
+可直接复用的入口：`ppo-transfer-collision-audit-01/diagnose.py`、`Course(route, start, first_gate)`、`BypassLearningEnv`、`ruma_ppo/evaluation/harness.py` 的 `Progress`。
 
 ### 第 2 步：改共用避障层（按诊断结果选一项）
 
@@ -325,12 +325,12 @@ python -m scripts.smoke_pwm --out .hitsz-repro/pwm-smoke-new
 # 期望 replay_identical=true，首门约 2.23 s
 
 # 3. val192 原几何
-python -m evaluation.harness --suite val192 --verify-repeat \
+python -m ruma_ppo.evaluation.harness --suite val192 --verify-repeat \
   --v12 .hitsz-repro/v12.onnx --out .hitsz-repro/pwm-val192-new
 # 期望 66 success / 126 collision（36 起点接触），重跑逐局一致
 
 # 4. val192 规则绕行
-python -m evaluation.harness --suite val192 --lidar-bypass \
+python -m ruma_ppo.evaluation.harness --suite val192 --lidar-bypass \
   --v12 .hitsz-repro/v12.onnx --out .hitsz-repro/pwm-lidar-bypass-new
 # 期望 97 success / 89 collision（含 36 起点接触）/ 6 timeout
 

@@ -10,7 +10,7 @@
 | `gate` | 增加下一门信息。每次按序过门 +5，连续过三门额外 +15 |
 | `joint` | 使用 `gate` 的飞行奖励，增加 0.5 s 和 1.0 s 的车辆占位预测。预测特征进入 Actor |
 
-新增奖励和预测参数在 [共用策略配置](configs/hitsz_joint.yaml)。当前门奖励使用 6 × 3 m 研究孔径。训练仍按 HITSZ 的碰撞、越界和回合时限终止，穿越窗口外会清掉连续过门计数，飞机继续训练后续路段。车辆标签由当前场景按仿真车速推演，栅格采用当前航向坐标系下的车辆包围盒。Actor 在训练和评测都读取预测头输出。
+新增奖励和预测参数在 [共用策略配置](configs/train_joint.yaml)。当前门奖励使用 6 × 3 m 研究孔径。训练仍按 HITSZ 的碰撞、越界和回合时限终止，穿越窗口外会清掉连续过门计数，飞机继续训练后续路段。车辆标签由当前场景按仿真车速推演，栅格采用当前航向坐标系下的车辆包围盒。Actor 在训练和评测都读取预测头输出。
 
 先按下节准备 Python 3.11、CUDA 11.8 和固定 HITSZ 签出。环境检查后，用 4096 环境跑一个独立的短作业，按日志里的 `Steps per second` 和 `status.json` 里的峰值显存量核对机器余量。
 
@@ -60,9 +60,9 @@ python -m scripts.train_hitsz_joint --variant joint --seed 20261121 \
 用训练机本地复跑的开发场景做对照，先用 `--lidar-bypass` 记录本机规则结果，再评新权重。两个输出目录的 `scenes.json` 可用来核对场景哈希。做策略消融时，分别以 `hitsz`、`gate` 和 `joint` 训练，从同一预算取 checkpoint，逐个用 `--native-ppo` 在同一批场景评测。原冻结 `test384` 已用于 P0 的一次性评测。
 
 ```bash
-python -m evaluation.harness --suite val192 --lidar-bypass \
+python -m ruma_ppo.evaluation.harness --suite val192 --lidar-bypass \
   --v12 .hitsz-repro/v12.onnx --out runs/native-eval-rule
-python -m evaluation.harness --suite val192 \
+python -m ruma_ppo.evaluation.harness --suite val192 \
   --native-ppo runs/native-ppo-joint-20261121/latest.pt \
   --v12 .hitsz-repro/v12.onnx --out runs/native-eval-joint-20261121
 ```
@@ -95,7 +95,7 @@ nohup python -u scripts/hitsz_repro.py baseline --out .hitsz-repro/baseline-01 \
 ```bash
 python -m maps.gate_graph "$HITSZ_ROOT/path_point/1-3_2_training.yaml" --out .hitsz-repro/gates-r1.json
 python -m scripts.smoke_pwm --out .hitsz-repro/pwm-smoke-01
-python -m evaluation.harness --suite val192 --verify-repeat \
+python -m ruma_ppo.evaluation.harness --suite val192 --verify-repeat \
   --v12 .hitsz-repro/v12.onnx --out .hitsz-repro/pwm-val192-01
 ```
 
@@ -106,7 +106,7 @@ python -m evaluation.harness --suite val192 --verify-repeat \
 `--lidar-brake` 用 10 Hz 的合成 LiDAR 量测前方 16 m 路线上的障碍，按反应时间和制动距离计算速度上限，再把速度和前视距离交给 100 Hz PWM 控制器。恢复速度前，要求连续两帧观测到原障碍点附近的射线已经穿过原占据位置。逐局 CSV 的 `brake_s` 记录速度上限生效的时长。这一版沿原门序和中心线行驶，等待堵塞解除。
 
 ```bash
-python -m evaluation.harness --suite val192 --lidar-brake \
+python -m ruma_ppo.evaluation.harness --suite val192 --lidar-brake \
   --v12 .hitsz-repro/v12.onnx --out .hitsz-repro/pwm-lidar-brake-val192-01
 ```
 
@@ -115,7 +115,7 @@ python -m evaluation.harness --suite val192 --lidar-brake \
 `--lidar-bypass` 每帧比较中心线及左右各两档横移的路线，用点云估计每条路线能安全前进多远，再兼顾偏移幅度和切换代价。横移参考随前向距离逐步变化，偏移上限按当前三门场景设为 2.05 m。速度仍由选中路线上的第一处障碍约束，逐局 CSV 同时记录 `brake_s` 和 `detour_s`。
 
 ```bash
-python -m evaluation.harness --suite val192 --lidar-bypass \
+python -m ruma_ppo.evaluation.harness --suite val192 --lidar-bypass \
   --v12 .hitsz-repro/v12.onnx --out .hitsz-repro/pwm-lidar-bypass-val192-01
 ```
 
