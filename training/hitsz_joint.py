@@ -236,11 +236,24 @@ class GateActorCritic(CustomVisionActorCritic):
 class OccupancyPPO(PPO):
     """Native recurrent PPO update with a supervised term in the same backward pass."""
 
+    def _adapt_learning_rate(self, kl_mean):
+        if self.desired_kl is not None and self.schedule == "adaptive":
+            if kl_mean > self.desired_kl * 2:
+                self.learning_rate = max(1e-5, self.learning_rate / 1.5)
+            elif 0 < kl_mean < self.desired_kl / 2:
+                self.learning_rate = min(1e-2, self.learning_rate * 1.5)
+            for group in self.optimizer.param_groups:
+                group["lr"] = self.learning_rate
+
     def update(self):
         policy = self.policy
         cfg = policy.occupancy
+        accum = max(1, int(getattr(self, "accum_steps", 1)))
         totals = torch.zeros(6, device=self.device)
         batch_iter = self.storage.recurrent_mini_batch_generator(self.num_mini_batches, self.num_learning_epochs)
+        self.optimizer.zero_grad()
+        grouped = 0
+        grouped_kl = 0.0
         for obs, actions, values, advantages, returns, old_log, old_mean, old_std, hidden, masks in batch_iter:
             if self.normalize_advantage_per_mini_batch:
                 advantages = (advantages - advantages.mean()) / (advantages.std() + 1e-8)
@@ -252,13 +265,6 @@ class OccupancyPPO(PPO):
             with torch.no_grad():
                 kl = (torch.log(std / old_std + 1e-5) + (old_std.square() + (old_mean - mean).square())
                       / (2 * std.square()) - 0.5).sum(-1).mean()
-                if self.desired_kl is not None and self.schedule == "adaptive":
-                    if kl > self.desired_kl * 2:
-                        self.learning_rate = max(1e-5, self.learning_rate / 1.5)
-                    elif 0 < kl < self.desired_kl / 2:
-                        self.learning_rate = min(1e-2, self.learning_rate * 1.5)
-                    for group in self.optimizer.param_groups:
-                        group["lr"] = self.learning_rate
 
             ratio = (policy.get_actions_log_prob(actions) - old_log.squeeze(-1)).exp()
             adv = advantages.squeeze(-1)
@@ -275,11 +281,24 @@ class OccupancyPPO(PPO):
             )
             loss = policy_loss + self.value_loss_coef * value_loss - self.entropy_coef * entropy
             loss = loss + cfg.loss_weight * prediction_loss
-            self.optimizer.zero_grad()
-            loss.backward()
+            (loss / accum).backward()
+            grouped += 1
+            grouped_kl += kl.item()
+            totals += torch.stack((value_loss, policy_loss, entropy, kl, prediction_loss, target.mean())).detach()
+
+            if grouped == accum:
+                self._adapt_learning_rate(grouped_kl / grouped)
+                nn.utils.clip_grad_norm_(policy.parameters(), self.max_grad_norm, error_if_nonfinite=True)
+                self.optimizer.step()
+                self.optimizer.zero_grad()
+                grouped = 0
+                grouped_kl = 0.0
+
+        if grouped:
+            self._adapt_learning_rate(grouped_kl / grouped)
             nn.utils.clip_grad_norm_(policy.parameters(), self.max_grad_norm, error_if_nonfinite=True)
             self.optimizer.step()
-            totals += torch.stack((value_loss, policy_loss, entropy, kl, prediction_loss, target.mean())).detach()
+            self.optimizer.zero_grad()
 
         self.storage.clear()
         names = ("value", "surrogate", "entropy", "kl", "occupancy_bce", "occupancy_target_fraction")
@@ -347,12 +366,14 @@ class HitszRunner(OnPolicyRunner):
             "peak_cuda_reserved_mib": round(torch.cuda.max_memory_reserved(self.device) / 2**20, 1),
         })
 
-    def restore(self, path, *, allow_batch_change=False):
+    def restore(self, path, *, allow_optimization_change=False):
         ckpt = torch.load(path, map_location="cpu", weights_only=True)
         saved_recipe = ckpt["recipe"]
         comparison_recipe = deepcopy(saved_recipe)
-        if allow_batch_change:
+        if allow_optimization_change:
             comparison_recipe["environment"]["env"]["batch_size"] = self.env.num_envs
+            comparison_recipe["train"]["num_steps_per_env"] = self.cfg["num_steps_per_env"]
+            comparison_recipe["train"]["algorithm"]["num_mini_batches"] = self.cfg["algorithm"]["num_mini_batches"]
         if comparison_recipe != self.recipe:
             raise ValueError("Resume settings differ from the checkpoint")
         self.alg.policy.load_state_dict(ckpt["model_state_dict"])

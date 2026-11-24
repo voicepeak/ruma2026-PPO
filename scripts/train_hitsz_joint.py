@@ -36,12 +36,20 @@ def train(args, hitsz):
         train_cfg["seed"] = args.seed
     if args.envs is not None:
         env_cfg["env"]["batch_size"] = args.envs
+    if args.num_steps_per_env is not None:
+        train_cfg["num_steps_per_env"] = args.num_steps_per_env
+    if args.num_mini_batches is not None:
+        train_cfg["algorithm"]["num_mini_batches"] = args.num_mini_batches
+    if train_cfg["num_steps_per_env"] < 1 or train_cfg["algorithm"]["num_mini_batches"] < 1:
+        raise ValueError("Use positive rollout step and mini-batch counts")
     updates = args.updates if args.updates is not None else train_cfg["max_iterations"]
     envs, seed = env_cfg["env"]["batch_size"], train_cfg["seed"]
     if updates < 1 or train_cfg["save_interval"] < 1 or not 0 <= seed < 2**32:
         raise ValueError("Use positive update and save counts and a uint32 seed")
     if args.target_env_steps is not None and args.target_env_steps < 1:
         raise ValueError("The environment step target must be positive")
+    if args.grad_accum_steps is not None and args.grad_accum_steps < 1:
+        raise ValueError("The gradient accumulation count must be positive")
     minibatches = train_cfg["algorithm"]["num_mini_batches"]
     if envs < minibatches or envs % minibatches:
         raise ValueError(f"Environment count must be a positive multiple of {minibatches}")
@@ -59,7 +67,7 @@ def train(args, hitsz):
     checkpoint = args.out / "latest.pt" if args.resume else args.resume_from
     if checkpoint is not None and not checkpoint.is_file():
         raise FileNotFoundError(checkpoint)
-    args.out.mkdir(parents=True, exist_ok=args.resume)
+    args.out.mkdir(parents=True, exist_ok=args.resume or args.resume_from is not None)
     with (args.out / "trainer.lock").open("a") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         random.seed(seed)
@@ -73,8 +81,12 @@ def train(args, hitsz):
         actual_cfg = deepcopy(train_cfg)
         actual_cfg["policy"]["base_model_path"] = str(hitsz / train_cfg["policy"]["base_model_path"])
         runner = HitszRunner(env, actual_cfg, args.out, device, recipe, occupancy)
+        if args.grad_accum_steps is not None:
+            if args.variant != "joint":
+                raise ValueError("Gradient accumulation is only implemented for the joint variant")
+            runner.alg.accum_steps = args.grad_accum_steps
         if checkpoint is not None:
-            runner.restore(checkpoint, allow_batch_change=args.resume_from is not None)
+            runner.restore(checkpoint, allow_optimization_change=args.resume_from is not None)
         steps_per_update = envs * train_cfg["num_steps_per_env"]
         steps_done = runner.environment_steps(runner.current_learning_iteration)
         if args.target_env_steps is not None:
@@ -110,6 +122,9 @@ def main():
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
     parser.add_argument("--envs", type=int, help="Override the upstream 4096 environments")
+    parser.add_argument("--num-steps-per-env", type=int, help="Override rollout steps per update")
+    parser.add_argument("--num-mini-batches", type=int, help="Override PPO mini-batches per epoch")
+    parser.add_argument("--grad-accum-steps", type=int, help="Accumulate this many micro-batches per optimizer step")
     budget = parser.add_mutually_exclusive_group()
     budget.add_argument("--updates", type=int, help="Total updates including any checkpoint progress")
     budget.add_argument("--target-env-steps", type=int, help="Total environment steps across all devices")
