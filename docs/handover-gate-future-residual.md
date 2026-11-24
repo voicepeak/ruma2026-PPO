@@ -37,6 +37,8 @@ python -m scripts.hitsz_repro check
 
 默认用 **alignment-u2601**（当前候选，fresh384 243/384）：
 
+注意：`u2501` 是 4090 续训的起点和回退，不是本方案默认基座；`u3839`（3839 步）是稳定对照；`alignment-u2701`（2701 步）虽然时间最后，但 fresh384 回落到 228/384，不作为默认。
+
 ```bash
 BASE_CKPT=runs/native-joint-20261124-failure-audit/alignment-u2601.pt
 sha256sum "$BASE_CKPT"
