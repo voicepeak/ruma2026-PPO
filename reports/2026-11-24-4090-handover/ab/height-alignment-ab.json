@@ -1,0 +1,143 @@
+{
+  "seeds": [
+    62021,
+    62022,
+    62023,
+    62024
+  ],
+  "obstacle_levels": [
+    2,
+    3
+  ],
+  "results": {
+    "ab-start-u2501": {
+      "cases": 384,
+      "passed": 230,
+      "missed_gates": 62,
+      "first_contact_at_spawn": 52,
+      "flight_collisions": 40,
+      "below_gate_40_misses": 46,
+      "median_gate_40_lower_margin_m": 0.38636255264282227
+    },
+    "ab-control-u2601": {
+      "cases": 384,
+      "passed": 195,
+      "missed_gates": 95,
+      "first_contact_at_spawn": 52,
+      "flight_collisions": 42,
+      "below_gate_40_misses": 71,
+      "median_gate_40_lower_margin_m": 0.23525643348693848
+    },
+    "ab-alignment-u2601": {
+      "cases": 384,
+      "passed": 243,
+      "missed_gates": 46,
+      "first_contact_at_spawn": 52,
+      "flight_collisions": 43,
+      "below_gate_40_misses": 35,
+      "median_gate_40_lower_margin_m": 0.4553879499435425
+    },
+    "ab-control-u2701": {
+      "cases": 384,
+      "passed": 125,
+      "missed_gates": 166,
+      "first_contact_at_spawn": 52,
+      "flight_collisions": 41,
+      "below_gate_40_misses": 85,
+      "median_gate_40_lower_margin_m": 0.06095314025878906
+    },
+    "ab-alignment-u2701": {
+      "cases": 384,
+      "passed": 228,
+      "missed_gates": 70,
+      "first_contact_at_spawn": 52,
+      "flight_collisions": 34,
+      "below_gate_40_misses": 48,
+      "median_gate_40_lower_margin_m": 0.40606945753097534
+    }
+  },
+  "comparisons": {
+    "ab-alignment-u2601 vs ab-control-u2601": {
+      "candidate_only": 52,
+      "both": 191,
+      "neither": 137,
+      "mcnemar_exact_p": 1.1008055578187737e-11,
+      "gain": 0.125,
+      "group_bootstrap_95_ci": [
+        0.09375,
+        0.16145833333333334
+      ],
+      "reference_only": 4,
+      "both_passed_mean_time_delta_s": 0.003422345549738223,
+      "outcome_changes": {
+        "missed_gate -> collision": 7,
+        "missed_gate -> success": 44,
+        "collision -> success": 8,
+        "success -> collision": 3,
+        "success -> missed_gate": 1,
+        "collision -> missed_gate": 1
+      }
+    },
+    "ab-alignment-u2601 vs ab-start-u2501": {
+      "candidate_only": 21,
+      "both": 222,
+      "neither": 133,
+      "mcnemar_exact_p": 0.0241195447742939,
+      "gain": 0.033854166666666664,
+      "group_bootstrap_95_ci": [
+        0.013020833333333334,
+        0.0546875
+      ],
+      "reference_only": 8,
+      "both_passed_mean_time_delta_s": -0.019468202702702695,
+      "outcome_changes": {
+        "success -> collision": 4,
+        "collision -> success": 5,
+        "missed_gate -> success": 16,
+        "success -> missed_gate": 4,
+        "missed_gate -> collision": 4
+      }
+    },
+    "ab-alignment-u2701 vs ab-control-u2701": {
+      "candidate_only": 107,
+      "both": 121,
+      "neither": 152,
+      "mcnemar_exact_p": 4.789431089465355e-27,
+      "gain": 0.2682291666666667,
+      "group_bootstrap_95_ci": [
+        0.21875,
+        0.3151041666666667
+      ],
+      "reference_only": 4,
+      "both_passed_mean_time_delta_s": 0.0027619999999999993,
+      "outcome_changes": {
+        "missed_gate -> success": 101,
+        "collision -> success": 6,
+        "collision -> missed_gate": 4,
+        "success -> collision": 2,
+        "success -> missed_gate": 2,
+        "missed_gate -> collision": 1
+      }
+    },
+    "ab-alignment-u2701 vs ab-start-u2501": {
+      "candidate_only": 13,
+      "both": 215,
+      "neither": 141,
+      "mcnemar_exact_p": 0.8505540192127228,
+      "gain": -0.005208333333333333,
+      "group_bootstrap_95_ci": [
+        -0.028645833333333332,
+        0.018229166666666668
+      ],
+      "reference_only": 15,
+      "both_passed_mean_time_delta_s": -0.0914436511627907,
+      "outcome_changes": {
+        "success -> missed_gate": 14,
+        "collision -> success": 5,
+        "missed_gate -> success": 8,
+        "success -> collision": 1,
+        "collision -> missed_gate": 2
+      }
+    }
+  }
+}

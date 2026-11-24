@@ -1,0 +1,36 @@
+{
+  "model": {
+    "name": "native_joint_2601",
+    "sha256": "616e95f19ef9233ec7000bd8a216dd3bf7a4e88930ea50c81ef3d2892247fe07"
+  },
+  "cases": 384,
+  "gate_centering_probe": false,
+  "outcomes": {
+    "collision": 94,
+    "missed_gate": 95,
+    "success": 195
+  },
+  "miss_axes": {
+    "vertical": 95
+  },
+  "miss_sides": {
+    "below": 93,
+    "above": 2
+  },
+  "miss_gate_ids": {
+    "38": 8,
+    "39": 16,
+    "40": 71
+  },
+  "vertical_miss_median_outside_m": 0.16179180145263672,
+  "initial_contacts": {
+    "fixed_obstacle": 46,
+    "moving_vehicle": 6
+  },
+  "airborne_collisions": {
+    "moving_vehicle": 21,
+    "fixed_obstacle": 21
+  },
+  "airborne_collisions_by_1_second": 30,
+  "airborne_collision_box_also_blocks_route_centerline": 30
+}
