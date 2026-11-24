@@ -1,0 +1,389 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RMUA 飞行策略 · 四套 PPO 架构对比</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #192a35;
+      --muted: #526672;
+      --line: #dce5e8;
+      --paper: #f3f6f7;
+      --white: #fff;
+      --hitsz: #26588a;
+      --joint: #096a60;
+      --fpv: #914b29;
+      --proposal: #584699;
+      --success: #137365;
+      --miss: #f2bd71;
+      --collision: #963a4a;
+      --radius: 16px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font: 15px/1.72 "Noto Sans CJK SC", "Microsoft YaHei", "PingFang SC", system-ui, sans-serif;
+    }
+    a { color: #165e74; text-decoration-thickness: 1px; text-underline-offset: .22em; }
+    a:hover { text-decoration-thickness: 2px; }
+    :focus-visible { outline: 3px solid #a47333; outline-offset: 4px; }
+    .skip { position: absolute; left: 16px; top: -60px; background: white; padding: 8px 16px; }
+    .skip:focus { top: 12px; z-index: 9; }
+    .wrap { width: min(100% - 72px, 1296px); margin-inline: auto; }
+    .hero { background: #142c36; color: #f3f8f7; padding: 55px 0 46px; }
+    .hero h1 { font-size: clamp(30px, 4.8vw, 58px); line-height: 1.18; letter-spacing: -.045em; margin: 14px 0 19px; }
+    .hero p { margin: 0; max-width: 815px; color: #d7e7e8; font-size: clamp(15px, 1.55vw, 19px); }
+    .hero .scope { font: 13px/1.5 ui-monospace, monospace; color: #bdd9d4; letter-spacing: .035em; }
+    nav { background: #fff; border-bottom: 1px solid var(--line); }
+    nav .wrap { display: flex; flex-wrap: wrap; gap: 4px 26px; padding-block: 13px; }
+    nav a { color: #244954; font-weight: 700; text-decoration: none; padding: 2px 0; }
+    nav a:hover { text-decoration: underline; }
+    main { padding-block: 35px 52px; }
+    section { margin-block: 0 42px; scroll-margin-top: 20px; }
+    h2 { font-size: clamp(24px, 2.65vw, 34px); line-height: 1.3; letter-spacing: -.03em; margin: 0 0 12px; }
+    h3 { line-height: 1.35; margin: 0 0 12px; font-size: 20px; }
+    h4 { font-size: 15px; margin: 0 0 5px; }
+    p { margin: 0 0 12px; }
+    p:last-child { margin-bottom: 0; }
+    code, .mono { font-family: ui-monospace, "SFMono-Regular", Consolas, monospace; font-size: .94em; }
+    code { background: #eef2f4; padding: .04em .29em; border-radius: 4px; overflow-wrap: anywhere; }
+    .hero code { background: #294650; color: #eef7f6; }
+    strong { font-weight: 720; }
+    .muted, .note { color: var(--muted); }
+    .note { font-size: 13px; line-height: 1.6; }
+    .panel { background: var(--white); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px 24px; }
+    .callout { margin-bottom: 22px; border-left: 4px solid #169281; }
+    .callout p { max-width: 1010px; }
+    .rule { background: #e8eef1; border-radius: 12px; padding: 12px 16px; margin: 14px 0 16px; }
+    .cite { font-size: .78em; font-weight: 700; margin-left: .3em; white-space: nowrap; }
+    .table-wrap { background: white; border: 1px solid var(--line); border-radius: var(--radius); overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; }
+    .matrix { min-width: 960px; table-layout: fixed; font-size: 14px; }
+    th, td { text-align: left; vertical-align: top; padding: 12px 13px; border-bottom: 1px solid var(--line); }
+    .matrix thead th { padding-top: 14px; background: #f1f5f6; }
+    .matrix thead th:first-child { width: 12%; }
+    .matrix th[scope="row"] { background: #f7f9fa; }
+    .scroll-hint { display: none; }
+    .matrix thead .hitsz { border-top: 3px solid var(--hitsz); color: var(--hitsz); }
+    .matrix thead .joint { border-top: 3px solid var(--joint); color: var(--joint); }
+    .matrix thead .fpv { border-top: 3px solid var(--fpv); color: var(--fpv); }
+    .matrix thead .proposal { border-top: 3px solid var(--proposal); color: var(--proposal); }
+    tr:last-child > * { border-bottom: 0; }
+    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 15px; }
+    .arch { --accent: var(--hitsz); --tint: #f3f7fc; border-top: 3px solid var(--accent); }
+    .arch.joint { --accent: var(--joint); --tint: #ecf7f3; }
+    .arch.fpv { --accent: var(--fpv); --tint: #fbf3eb; }
+    .arch.proposal { --accent: var(--proposal); --tint: #f4f1fc; }
+    .arch h3 { color: var(--accent); }
+    .flow { list-style: none; display: grid; grid-auto-columns: minmax(0, 1fr); grid-auto-flow: column; gap: 15px; padding: 0; margin: 14px 0; }
+    .flow li { position: relative; padding: 9px 8px; min-height: 68px; border-radius: 8px; background: var(--tint); }
+    .flow li + li::before { content: "→"; position: absolute; right: 100%; width: 15px; top: calc(50% - 12px); color: var(--accent); text-align: center; }
+    .flow b { display: block; font-size: 13px; color: var(--accent); margin-bottom: 3px; line-height: 1.4; }
+    .flow span { display: block; font-size: 12px; line-height: 1.5; }
+    .arch .detail { font-size: 14px; }
+    details { margin-top: 12px; padding-top: 8px; border-top: 1px solid var(--line); }
+    summary { cursor: pointer; color: var(--accent, #244954); font-weight: 700; }
+    details p { margin: 8px 0 0; font-size: 13px; }
+    .metrics { grid-template-columns: 1.12fr 1fr; }
+    .legend { display: flex; gap: 13px; flex-wrap: wrap; margin: 0 0 13px; color: var(--muted); font-size: 12px; }
+    .legend span::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 2px; margin-right: 5px; background: var(--chip); }
+    .bar-row { display: grid; grid-template-columns: 110px minmax(0, 1fr); align-items: center; gap: 9px; margin-bottom: 8px; font-size: 12px; }
+    .bar { display: flex; height: 23px; overflow: hidden; border-radius: 5px; font: 700 12px/23px ui-monospace, monospace; }
+    .bar b { flex: var(--count); text-align: center; color: white; }
+    .bar .ok, .legend .ok { --chip: var(--success); }
+    .bar .miss, .legend .miss { --chip: var(--miss); }
+    .bar .bad, .legend .bad { --chip: var(--collision); }
+    .bar b { background: var(--chip); }
+    .bar .miss { color: #422806; }
+    .delta { font: 720 30px/1.15 ui-monospace, monospace; color: var(--joint); letter-spacing: -.04em; margin: 6px 0 10px; }
+    .delta small { font-size: 15px; color: var(--muted); }
+    .metric-list { margin: 10px 0; padding-left: 1.25em; }
+    .metric-list li { padding-left: .22em; margin-bottom: 5px; }
+    .system { --accent: var(--proposal); --tint: #f4f1fc; }
+    .system .flow li { min-height: 76px; padding: 10px 12px; }
+    .contract { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 15px; margin-block: 17px; }
+    .contract > div { padding: 13px 14px; border: 1px solid var(--line); border-radius: 9px; font-size: 14px; }
+    .contract h4 { color: var(--proposal); }
+    .formula { background: #f3f1f9; padding: 10px 14px; border-radius: 7px; margin: 9px 0 13px; color: #352a62; }
+    .experiments { min-width: 650px; font-size: 14px; }
+    .experiments thead { background: #f1f5f6; }
+    .sources { padding-left: 1.55em; margin: 0; }
+    .sources li { margin-bottom: 9px; padding-left: .23em; overflow-wrap: anywhere; }
+    footer { border-top: 1px solid var(--line); color: var(--muted); padding: 14px 0 22px; font-size: 13px; }
+    @media (max-width: 1000px) { .wrap { width: calc(100% - 44px); } .grid { grid-template-columns: 1fr; } }
+    @media (max-width: 660px) {
+      .wrap { width: calc(100% - 28px); }
+      .hero { padding: 37px 0 29px; }
+      .panel { padding: 17px; }
+      .scroll-hint { display: block; margin-bottom: 5px; }
+      .matrix tr > :first-child { position: sticky; left: 0; z-index: 1; box-shadow: 1px 0 var(--line); }
+      .contract { grid-template-columns: 1fr; }
+      .flow { grid-auto-flow: row; grid-template-columns: 1fr; gap: 13px; }
+      .flow li, .system .flow li { min-height: auto; padding: 8px 10px; }
+      .flow li + li::before { content: "↓"; right: auto; left: 12px; top: -16px; }
+      .bar-row { grid-template-columns: 87px minmax(0, 1fr); gap: 7px; }
+    }
+    @media print {
+      body, .hero { background: white; color: black; }
+      body { font-size: 10pt; }
+      .hero { padding: 0 0 10px; }
+      .hero p, .hero .scope { color: black; }
+      .hero code { background: #eef2f4; color: black; }
+      .wrap { width: 100%; }
+      nav, .skip { display: none; }
+      main { padding-block: 10px; }
+      .matrix, .experiments { min-width: 0; font-size: 8pt; }
+      th, td { padding: 6px; }
+      h2, h3 { break-after: avoid; }
+      .panel { break-inside: avoid; }
+      .bar, .legend, .flow { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+<div style="background:#142c36;color:#f3f8f7;padding:8px 16px;font:13px/1.5 'Noto Sans CJK SC',system-ui,sans-serif;text-align:center;border-bottom:1px solid #2b4a55">在线预览版：报告中的本地路径链接仅在开发机有效。</div>
+  <a class="skip" href="#main">跳到报告正文</a>
+  <header class="hero">
+    <div class="wrap">
+      <div class="scope">RMUA 2026 · 2026-11-24 · 讨论版</div>
+      <h1>四套 PPO 飞行架构对比</h1>
+      <p>HITSZ 原版、你们的 <code>joint</code>、本工作区的 FPV，以及面向 RMUA 后续训练的速度修正方案。</p>
+    </div>
+  </header>
+  <nav aria-label="报告目录">
+    <div class="wrap">
+      <a href="#compare">对比总览</a>
+      <a href="#architecture">四套架构</a>
+      <a href="#spec">输入与频率</a>
+      <a href="#evidence">现有证据</a>
+      <a href="#design">提案和验证</a>
+      <a href="#sources">来源</a>
+    </div>
+  </nav>
+
+  <main class="wrap" id="main">
+    <section id="compare" aria-labelledby="compare-title">
+      <div class="panel callout">
+        <h2 id="compare-title">任务不变，先把“未来穿门点”做成输入，再把“动作后果”做成输入</h2>
+        <p>提案沿用 <code>joint</code> 的三门任务和三轴速度接口，不换任务、不换底层控制器。输入分三阶段：<strong>23 维</strong>只加未来穿门点，<strong>37 维</strong>再加横向与候选航迹风险，<strong>40 维</strong>最后加观测质量；每阶段都从上一版权重续训，新增通路零初始化。<strong>10 Hz 是 HITSZ 配方，不是官方要求</strong>；首版保持 10 Hz base，内环/残差可先到 50 Hz。</p>
+      </div>
+      <p class="rule"><strong>比赛目标</strong>　RMUA 按顺序计算有效门数，同门数再比时间。赛道另有线状障碍、悬浮车辆、后续室外风场与工厂巡检。HITSZ 的三门任务适合迭代室外飞行子系统，整场还需要任务与定位切换。<a class="cite" href="#src-rules">规则与接口</a></p>
+      <p class="scroll-hint note">左右滑动查看四套方案。</p>
+      <div class="table-wrap" role="region" aria-label="四套架构对比表，可水平滚动" tabindex="0">
+        <table class="matrix">
+          <thead><tr>
+            <th scope="col">对比维度</th>
+            <th scope="col" class="hitsz">1　HITSZ 原版</th>
+            <th scope="col" class="joint">2　你们的 HITSZ joint</th>
+            <th scope="col" class="fpv">3　本工作区 FPV</th>
+            <th scope="col" class="proposal">4　速度修正提案</th>
+          </tr></thead>
+          <tbody>
+            <tr><th scope="row">评测任务</th><td>道路跟踪、避障与存活（子系统，非完整赛题）。</td><td>三门按序穿越，静态与移动障碍（子系统）。</td><td>六门闭环，30 s 内完成三圈（仿真）。</td><td><strong>同 joint，不改变任务</strong>；只改观测与控制接口。</td></tr>
+            <tr><th scope="row">目标函数</th><td>速度跟踪、避障、存活奖励。</td><td>有效门数优先，同门数比时间；碰撞、越界、漏门为失败条件。</td><td>30 s 内圈数 / 完赛率。</td><td>同 joint；修正层优化可行性与过门余量，不另设目标。</td></tr>
+            <tr><th scope="row">策略输入</th><td><strong>14 维</strong>状态 + <strong>20×80</strong> 深度。</td><td><strong>20 维</strong>状态（14 + 下一门 6）+ <strong>20×80</strong> 深度；<strong>256</strong> 车辆占位是辅助预测，不是 actor 输入。</td><td><strong>46 维</strong>估计状态（3+9+3+24+4+3）；<strong>320×180</strong> RGB 只进检测器。</td><td><strong>23 → 37 → 40</strong> 三阶段：20 + 未来穿门点 3 + 横向 2 + 候选风险 12 + 观测质量 3；新增维度走零初始化投影。</td></tr>
+            <tr><th scope="row">记忆与预测</th><td>隐式记忆：<strong>SRU 192</strong>；无显式预测。</td><td>隐式 SRU + 监督式车辆占位（0.5/1.0 s，<strong>256</strong> 格）；预测经 <code>detach</code> 线性叠加进速度，actor 不直接观测。</td><td>显式卡尔曼信念 + 门匹配 + 约 <strong>2 s</strong> 门位记忆 + 观测门控；无车辆预测。</td><td>保留 SRU；新增显式未来穿门点、动作条件候选前推（1–1.5 s）、年龄/置信度；<strong>预测作为观测</strong>，不是 detached 偏置。</td></tr>
+            <tr><th scope="row">PPO 输出</th><td><strong>3 维速度</strong>，10 Hz，经速度 PI；无显式动作界。</td><td><strong>3 维速度</strong> + detach 占位偏置（不是第 4 维），10 Hz，同一 PI。</td><td><strong>4 维</strong>：总推力 + 三轴角速度；50 Hz 策略、500 Hz 物理；动作有界。</td><td><strong>1 维 Δv_z</strong>（首版）/ <strong>3 维 Δv</strong>（后续），叠加在冻结 joint 的 3 维速度上；执行仍是 3 维速度。</td></tr>
+            <tr><th scope="row">控制节拍</th><td>10 Hz 速度决策；PI 在控制步内计算，动力学以更细步长推进；官方速度接口带 <strong>8 m/s²</strong> 加速度上限。</td><td>继承 HITSZ 的 10 Hz。</td><td><strong>50 Hz</strong> 策略，<strong>500 Hz</strong> 物理。</td><td>首版 <strong>10 Hz base</strong>；残差/内环可到 <strong>50 Hz</strong>；<strong>10 Hz 不是官方要求</strong>，是 HITSZ 配方。</td></tr>
+            <tr><th scope="row">训练重点</th><td>速度跟踪、前视风险、避障、越界、平滑与存活。</td><td>继承原目标；过一门 <strong>+5</strong>，连续三门额外 <strong>+15</strong>；车辆占位辅助监督。</td><td>教师读真值学飞；检测器单独监督；控制策略用带噪估计续训。</td><td>冻结 joint，零初始化修正头；A 高度 → B 过门+避障 → C 观测误差；不做端到端重训。</td></tr>
+            <tr><th scope="row">已知优势</th><td>完整 CUDA 动力学、成熟训练底座和部署参考。</td><td>复用已有权重和训练吞吐；三门配对收益已有记录。</td><td>门位估计可解释，能在检测误差和短暂丢门下闭环飞行。</td><td>能把漏门、风险估计和实际执行分开诊断；完整闭环待验证。</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note" style="margin-top:8px">版本依据 <a href="#src-hitsz">HITSZ 固定提交</a> · <a href="#src-joint">joint 工作分支</a> · <a href="#src-fpv">FPV 发布权重与源码</a></p>
+      <p class="note">10 Hz 是 HITSZ 配方，不是官方要求；官方速度接口的硬约束是 <strong>8 m/s²</strong> 加速度上限，本地 P0 的 PWM 按 <strong>10 ms</strong> 指令推进。频率消融见 <a href="#spec">输入与频率</a>。</p>
+    </section>
+
+    <section id="architecture" aria-labelledby="architecture-title">
+      <h2 id="architecture-title">一拍数据在四套架构里怎么走</h2>
+      <div class="grid">
+        <article class="panel arch hitsz">
+          <h3>1　HITSZ 原版</h3>
+          <ol class="flow" aria-label="HITSZ 数据流">
+            <li><b>深度和状态</b><span>80×20 深度<br>路线相对状态 14 维</span></li>
+            <li><b>CNN 和 SRU</b><span>深度与状态编码<br>192 维隐式记忆</span></li>
+            <li><b>PPO</b><span>三轴目标速度<br>10 Hz 决策</span></li>
+            <li><b>速度 PI</b><span>加速度和航向参考<br>PI + 更细物理步长</span></li>
+          </ol>
+          <p class="detail">原版只有隐式记忆，没有显式门状态或车辆预测。速度参考是低频量，快速跟踪交给 PI 和底层动力学；官方速度接口另有 8 m/s² 加速度上限。三门研究任务会额外计入是否穿进门洞，优化目标随之改变。<a class="cite" href="#src-hitsz">源码</a></p>
+          <details><summary>训练配置</summary><p>固定版本默认 4,096 环境 × 20 步，每轮 81,920 条转移。PPO 5 个 epoch、4 个 minibatch、clip 0.2、γ 0.99、GAE λ 0.95、目标 KL 0.01。配置从上游基础模型初始化并冻结视觉 stem。</p></details>
+        </article>
+        <article class="panel arch joint">
+          <h3>2　你们的 HITSZ joint</h3>
+          <ol class="flow" aria-label="joint 数据流">
+            <li><b>原观测加门位</b><span>下一门相对位置和法向<br>额外 6 维</span></li>
+            <li><b>继承 SRU</b><span>保留隐式记忆<br>预测 0.5/1.0 s 车辆占位</span></li>
+            <li><b>速度融合</b><span>原速度头输出<br>+ detach 占位线性项</span></li>
+            <li><b>同一速度 PI</b><span>沿用 HITSZ 动力学<br>按序过门训练</span></li>
+          </ol>
+          <p class="detail">每个预测时刻输出 <code>8×8×2</code> 个栅格，两个时刻合计 <code>256</code> 个值。占位头用加权 BCE 监督；预测经 sigmoid 后由一个零初始化线性层叠加到 3 维速度上，路径上经过 <code>detach()</code>。因此 <strong>actor 的输入仍是 20 维，预测不是观测</strong>，只是一个低容量速度偏置；PPO 梯度不经过预测头，预测头只由 BCE 训练。<a class="cite" href="#src-joint">源码</a></p>
+          <details><summary>当前训练与计分边界</summary><p>公开 <code>u2501</code> 记录累计 204,881,920 环境步。4090 的 4,096×20 与 3060 的 1,024×80 共用每轮样本总数，单环境 rollout 长度有差异。当前训练穿过窗外会推进内部门索引并清连续计数，三门评测在首次漏门时给出结束结果。局部研究门洞是 6×3 m。<a class="cite" href="#src-audit">评测</a></p></details>
+        </article>
+        <article class="panel arch fpv">
+          <h3>3　本工作区 FPV</h3>
+          <ol class="flow" aria-label="FPV 数据流">
+            <li><b>RGB 门框检测</b><span>320×180 图像<br>输出每门的四个角</span></li>
+            <li><b>几何和滤波</b><span>PnP、模拟 IMU<br>赛道表和门位记忆</span></li>
+            <li><b>PPO · 46 → 4</b><span>三层 256 单元 MLP<br>记忆在估计器</span></li>
+            <li><b>机体角速度环</b><span>推力 + 三轴角速度<br>50 Hz 策略 / 500 Hz 物理</span></li>
+          </ol>
+          <p class="detail">46 维 = 速度 3 + 旋转矩阵 9 + 角速度 3 + 两门×四角×3 = 24 + 上一动作 4 + 年龄/锁定 3。它用卡尔曼滤波和门匹配把视觉误差变成控制器能处理的状态，门位记忆约 2 s；“知道哪道门、穿过去后朝哪边飞”直接进入策略观测。作者通过只换估计器的对照，将 <code>x1</code> 噪声条件下的三圈完成率由 79.4% 提至 92.4%。<a class="cite" href="#src-fpv">模型卡</a></p>
+          <details><summary>训练路径与本地复现</summary><p>先用真值训练教师，用合成图单独训练检测器，再通过带误差的投影角点训练 46 维控制策略。通用权重累计约 25 亿环境步。本机 Circuit 闭环 30 s 穿 37 门、完成 6 圈，无坠机。四视角窗口是本工作区的展示层。<a class="cite" href="outputs/circuit.json">本机结果</a></p></details>
+        </article>
+        <article class="panel arch proposal">
+          <h3>4　基于 joint 的速度修正</h3>
+          <ol class="flow" aria-label="速度修正提案数据流">
+            <li><b>状态估计</b><span>两门相对几何<br>车辆与静态障碍</span></li>
+            <li><b>航迹前推</b><span>同一时间轴算<br>1–1.5 s 净空与门余量</span></li>
+            <li><b>joint + Δv</b><span>1 维/3 维残差<br>首版只改高度</span></li>
+            <li><b>可行性检查</b><span>v_cmd = check(...)<br>沿用现有速度 PI</span></li>
+          </ol>
+          <p class="detail">输入分 23 / 37 / 40 三阶段：先加未来穿门点 3 维，再加横向 2 维和 4 候选×3 风险，最后加观测质量 3 维。预测以<strong>观测</strong>形式进入 actor，不是 detach 后的速度偏置；候选前推和部署共用同一个速度 PI 与加速度限制。首版 10 Hz base，残差/内环可先到 50 Hz。</p>
+          <details><summary>验证状态</summary><p>已有证据来自高度探针和撞击回放。冻结 joint、学习速度修正、航迹可行性检查及赛事传感器误差训练是本报告的设计，完整组合待实施和验证。</p></details>
+        </article>
+      </div>
+    </section>
+
+    <section id="spec" aria-labelledby="spec-title">
+      <h2 id="spec-title">输入、输出与频率的落地规范</h2>
+      <p class="note">这一节把对比表里的“预测穿门交点、候选航迹净空、置信度”拆成可实现的接口。原则是：新增维度必须匹配当前动作权限；预测以观测进入 actor；训练和部署共用同一套前推与检查。</p>
+
+      <h3 style="margin-top:18px">输入分三阶段，不要一次上 40 维</h3>
+      <div class="table-wrap" role="region" aria-label="三阶段输入规范" tabindex="0">
+        <table class="experiments">
+          <thead><tr><th scope="col">阶段</th><th scope="col">维度</th><th scope="col">组成</th><th scope="col">动作权限</th><th scope="col">目的</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">A　高度</th><td><strong>23</strong></td><td>20 基础 + <code>t_gate</code>、<code>z_cross</code>、<code>lower_margin</code></td><td><code>|Δv_z| ≤ 0.8 m/s</code></td><td>先修门下沿</td></tr>
+            <tr><th scope="row">B　全修正</th><td><strong>37</strong></td><td>A + <code>lat_cross</code>、<code>side_margin</code> + 4 候选 × 3 标量</td><td>三轴 <code>Δv</code> 有界</td><td>避障与过门耦合</td></tr>
+            <tr><th scope="row">C　部署</th><td><strong>40</strong></td><td>B + <code>gate_age</code>、<code>unknown_fraction</code>、<code>visual_confidence</code></td><td>同 B</td><td>观测延迟/丢帧</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note" style="margin-top:8px">为什么 A 阶段不加横向和车辆风险：A 的动作只有 <code>Δv_z</code>，横向偏差和车辆净空不可行动；加了会造成观测与动作错配。等 B 开放横向/沿程后再加。</p>
+
+      <h3 style="margin-top:21px">40 维怎么分组</h3>
+      <div class="table-wrap" role="region" aria-label="40 维输入分组" tabindex="0">
+        <table class="experiments">
+          <thead><tr><th scope="col">组</th><th scope="col">维度</th><th scope="col">内容</th><th scope="col">进入策略的方式</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">state</th><td>14</td><td>速度 3、目标速度 3、机体 z 轴 3、路线偏差范数 1、方向 3、margin 1</td><td>原 <code>v_proj</code>，不动</td></tr>
+            <tr><th scope="row">gate</th><td>6</td><td>下一门中心相对位置 3 + 门法向 3</td><td>原 <code>actor_gate</code>，不动</td></tr>
+            <tr><th scope="row">gate_future</th><td>5</td><td><code>t_gate</code>、<code>z_cross</code>、<code>lower_margin</code>、<code>lat_cross</code>、<code>side_margin</code></td><td>新增独立零初始化投影</td></tr>
+            <tr><th scope="row">risk</th><td>12</td><td>nominal / brake / left / right 各 3 个标量</td><td>新增独立零初始化投影</td></tr>
+            <tr><th scope="row">quality</th><td>3</td><td><code>gate_age</code>、<code>unknown_fraction</code>、<code>visual_confidence</code></td><td>新增独立零初始化投影</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note" style="margin-top:8px"><code>256</code> 车辆占位不直接进 actor；它只用于计算 <code>risk</code> 组的 12 个标量。joint 已有门位和 256 格预测，但 u3701 的 27 次漏门、u3839 的 28 次漏门全部发生在下沿；说明缺的是“未来穿门点”和“动作条件的风险”，不是更多原始预测。</p>
+      <p class="note">训练路径：从 joint 权重续训，新增组零初始化，第 0 步输出与 joint 一致；先 23，再 37，再 40。joint 已累计约 2 亿环境步，从零直接 40 维会把路线跟踪和避障一起重学，也无法区分收益来自维度还是重训；从零 40 只能作为后续消融。</p>
+
+      <h3 style="margin-top:21px">候选风险：每条候选只给 3 个标量</h3>
+      <div class="table-wrap" role="region" aria-label="候选航迹风险特征" tabindex="0">
+        <table class="experiments">
+          <thead><tr><th scope="col">候选</th><th scope="col">动作</th><th scope="col">三个输出</th><th scope="col">回答的问题</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">nominal</th><td><code>Δv = 0</code></td><td rowspan="4">最小时空净空<br>首次可能冲突时间<br>到门时下沿余量</td><td>什么都不改会不会撞，还能不能过门</td></tr>
+            <tr><th scope="row">brake</th><td>沿机体系 x 减速</td><td>刹车有没有用，会不会因下降而漏门</td></tr>
+            <tr><th scope="row">left</th><td>沿机体系 +y 横移</td><td>左移有没有用，会不会擦左框</td></tr>
+            <tr><th scope="row">right</th><td>沿机体系 −y 横移</td><td>右移有没有用，会不会擦右框</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note" style="margin-top:8px">候选前推用同一个速度 PI、同一套加速度限制和同一时间轴，前推 1–1.5 s。左、右必须同时给，否则策略会有方向偏置。候选集先固定四个；只有审计显示需要垂直规避时，再加 up/down。</p>
+
+      <h3 style="margin-top:21px">输出：残差，不是重训整个策略</h3>
+      <p class="formula"><strong>一次决策</strong>　<code>v_cmd = check(v_joint + Δv)</code>；首版 <code>Δv = [0, 0, Δv_z]</code>，后续 <code>Δv = [Δv_x, Δv_y, Δv_z]</code>。</p>
+      <p>PPO 动作维度不等于执行维度：首版 PPO 动作 <strong>1 维</strong>，执行 <strong>3 维</strong>；完全版 PPO 动作 <strong>3 维</strong>，执行 <strong>3 维</strong>。joint 的占位项不是第 4 维，它只是加在 3 维速度均值上的 detach 偏置。首版残差界参考现有高度探针的 <strong>0.8 m/s</strong>；先和固定高度探针、几何门中心控制器对照，再判断 PPO 是否必要。</p>
+      <p class="note">可行性检查有一个 PPO 细节：PPO 用采样到的 <code>Δv</code> 算概率，仿真用 check 后的速度生成状态。硬裁剪会让采样动作和执行动作不一致。首轮只记录风险、不裁剪；确认高度修正站住后，再把 check 加进训练，并记录干预频率。</p>
+
+      <h3 style="margin-top:21px">频率：10 Hz 不是官方要求</h3>
+      <div class="table-wrap" role="region" aria-label="频率层级" tabindex="0">
+        <table class="experiments">
+          <thead><tr><th scope="col">层</th><th scope="col">频率</th><th scope="col">说明</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">策略 / base</th><td>10 Hz</td><td>HITSZ 配方；首版不改</td></tr>
+            <tr><th scope="row">提案：残差 / 内环</th><td>50 Hz，可到 100 Hz</td><td>跟踪同一个 10 Hz 参考，处理快速扰动</td></tr>
+            <tr><th scope="row">物理 / 官方控制器</th><td>更细步长 / 官方实现</td><td>速度接口带 8 m/s² 加速度上限；本地 P0 的 PWM 按 10 ms 指令推进</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note" style="margin-top:8px">提策略频率会换一个学习问题：同模拟时长样本量 ×2（20 Hz）或 ×5（50 Hz）；<code>gamma</code> 要从 0.99 调到 0.995/0.998；rollout 长度、奖励尺度、动作噪声都要重调。20 Hz base 可作为消融；50 Hz base 不是首跑。先提内环和残差，最后才动策略频率。</p>
+
+      <div class="contract">
+        <div><h4>加什么</h4><p>未来穿门点：<code>t_gate</code>、<code>z_cross</code>、边界余量。候选后果：4 候选 × 净空/冲突时间/门余量。观测质量：年龄、未知比例、置信度。</p></div>
+        <div><h4>不加什么</h4><p>原始 256 格占位、每门 4 角点、再下一门、门 ID、绝对 GPS、完整旋转矩阵、上一动作、四条边余量全给、完整协方差。</p></div>
+        <div><h4>怎么接</h4><p>独立 observation group；新增投影零初始化；加载 joint 权重 <code>strict=False</code>；第 0 步输出与 joint 一致；不要用 <code>--resume</code>，recipe 变了会报错。</p></div>
+      </div>
+    </section>
+
+    <section id="evidence" aria-labelledby="evidence-title">
+      <h2 id="evidence-title">本地记录把优先级指向门下沿和提前避障</h2>
+      <div class="grid metrics">
+        <article class="panel">
+          <h3>同一批 192 局三门验证</h3>
+          <div class="legend"><span class="ok">通过三门</span><span class="miss">漏门</span><span class="bad">碰撞，含起点接触</span></div>
+          <div class="bar-row"><strong>HITSZ v12</strong><div class="bar" role="img" aria-label="HITSZ v12，通过 61，漏门 79，碰撞 52"><b class="ok" style="--count:61">61</b><b class="miss" style="--count:79">79</b><b class="bad" style="--count:52">52</b></div></div>
+          <div class="bar-row"><strong>joint u2501</strong><div class="bar" role="img" aria-label="joint u2501，通过 121，漏门 31，碰撞 40"><b class="ok" style="--count:121">121</b><b class="miss" style="--count:31">31</b><b class="bad" style="--count:40">40</b></div></div>
+          <div class="bar-row"><strong>joint u3701</strong><div class="bar" role="img" aria-label="joint u3701，通过 123，漏门 27，碰撞 42"><b class="ok" style="--count:123">123</b><b class="miss" style="--count:27">27</b><b class="bad" style="--count:42">42</b></div></div>
+          <div class="bar-row"><strong>joint u3839</strong><div class="bar" role="img" aria-label="joint u3839，通过 123，漏门 28，碰撞 41"><b class="ok" style="--count:123">123</b><b class="miss" style="--count:28">28</b><b class="bad" style="--count:41">41</b></div></div>
+          <p class="note">这一组是 HITSZ 的 <code>val192</code> 开发验证。<code>u3701</code> 和 <code>u3839</code> 的漏门均发生在下沿；漏门点偏离下沿的中位数分别是 <strong>0.157 m</strong> 和 <strong>0.137 m</strong>。FPV 的三圈率来自另一套动力学、门尺寸和任务，见上面的 FPV 卡片。<a class="cite" href="#src-audit">逐局来源</a></p>
+        </article>
+        <article class="panel">
+          <h3>门下沿的修正值得试，收益要看新种子</h3>
+          <div class="delta">255 → 261 <small>/ 384 局</small></div>
+          <p>同一 <code>u3701</code> 权重，比较原动作和预测式高度探针。校验场景哈希后，384 局新种子是 <strong>9 局从失败变通过，3 局从通过变失败</strong>；漏门 44→39，碰撞 85→84，两组都是 49 局起点接触。同一权重、固定高度探针在原 192 局上是 <strong>123→133</strong>，漏门 27→17，碰撞 42→42；方向一致，但换到新种子后收益缩小。<a class="cite" href="#src-audit">配对数据</a></p>
+          <p class="note">12 个不一致对做符号检验约 <code>p≈0.15</code>，还不足以单独作为强结论。384 局里 49 局是起点接触，不是策略能学的失败；A 阶段主指标应把它单列，否则会稀释高度修正的真实收益。</p>
+          <p>另外，<code>u3839</code> 压力测试的 17 次飞行中撞车里，9 次可回看撞前约 0.5 s。在这 9 次里，撞击车辆所在栅格的预测峰值中位数约 <strong>0.74</strong>，前向速度指令中位数仍约 <strong>8.9 m/s</strong>。这个回看以碰撞样本为条件，下一步可与成功避开的样本对照，区分预测错误和动作响应不足。<a class="cite" href="#src-stress">回放数据</a></p>
+        </article>
+      </div>
+    </section>
+
+    <section id="design" aria-labelledby="design-title">
+      <h2 id="design-title">提案如何接入现有训练</h2>
+      <article class="panel system">
+        <h3>先统一过门事件，再给 PPO 可操作的预测量</h3>
+        <p>三门训练和三门评测共享门平面相交、门洞和门序判定。当前窗口外穿越在训练会推进内部门索引并清连续计数，在三门评测会结束该局。建议把这项口径对齐做独立对照，同时记录相同的门平面交点。整段任务可保留回门重试，由成功触发来推进正式门序。<a class="cite" href="#src-joint">训练代码</a><a class="cite" href="#src-audit">评测代码</a></p>
+        <div class="contract">
+          <div><h4>门状态</h4><p>以门平面为基准，A 阶段只给到门时间、预计垂直偏差和下沿余量；B 阶段再加横向偏差与侧边余量。再下一门/转向、观测年龄和不确定度作为独立消融，不默认塞进 A。门或地标在官方画面里可见时，用视觉纠正姿态与门位。</p></div>
+          <div><h4>障碍状态</h4><p>用相同时间戳查询车辆未来占位和候选机体位置。B 阶段给 4 个候选 × 净空/冲突时间/门余量；原始 <code>256</code> 格占位不进 actor。静态细线用单独的检测、碰撞与压力场景覆盖。</p></div>
+          <div><h4>控制边界</h4><p>从冻结的 joint 得到名义速度，零初始化修正头。首版垂向 <code>|Δv_z| ≤ 0.8 m/s</code>，后续三轴有界；PPO 动作维度不等于执行维度。部署与训练共用同一前推和检查，首轮检查只记录风险，并记录干预频率。</p></div>
+        </div>
+        <p class="formula"><strong>一次决策</strong>　<code>v_cmd = 检查(v_joint + Δv)</code>　每条候选同时查两个值 <code>预计穿门余量</code> 和 <code>预测时空净空</code>。</p>
+        <p class="note">前推首先可用常速度验证数据接口，之后接入现有速度 PI 的响应、延迟和加速度限制。首版固定 10 Hz base，残差/内环先到 50 Hz；20 Hz base 只作为消融。用候选路径上的风险决定何时减速或横移。等待前检查停车点是否会落进车辆路线。进入工厂后由任务状态机切换到定位、搜索和读表流程。<a class="cite" href="#src-rules">比赛接口</a></p>
+        <p class="note">训练时同时记录策略提议和实际执行的速度。PPO 用所采样的修正量计算动作概率，仿真用可行性检查后的指令生成下一个状态和奖励；硬检查会让采样动作和执行动作不一致，所以首轮只记录风险，确认高度修正站住后再加入裁剪。以上为设计参数。</p>
+      </article>
+
+      <h3 style="margin-top:21px">对照顺序和判定指标</h3>
+      <div class="table-wrap" role="region" aria-label="提案验证顺序" tabindex="0">
+        <table class="experiments">
+          <thead><tr><th scope="col">阶段</th><th scope="col">同起点做什么对照</th><th scope="col">重点看什么</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">A　命中门洞</th><td><strong>23 维 vs 20 维</strong>。以 <code>u3701</code> 为起点，比较原版、高度探针、高度奖励续训和单轴 PPO 修正；固定 10 Hz base + 50 Hz 内环，同一采样预算和场景。</td><td>门平面高度/横向余量、漏门→通过、通过→碰撞；起点接触单列。改变门序口径本身也单独记录。</td></tr>
+            <tr><th scope="row">B　提前避障</th><td><strong>37 维 vs 23 维</strong>。保持 A 的最佳权重与控制器，对比仅过门修正和加入 4 候选航迹风险；先冻结 base，再释放沿程和横向；残差可到 50 Hz。</td><td>飞行中碰撞、最小净空、有可行候选的比例；按固定障碍、车辆、细线分组。起点接触单列。</td></tr>
+            <tr><th scope="row">C　赛事观测</th><td><strong>40 维 vs 37 维</strong>。先用 HITSZ 真值做诊断，再以官方 ROS 记录标定的估计误差、延迟、丢帧训练 actor；训练 critic 可读取真值。</td><td>比较真值、估计输入、估计输入加延迟下的配对结果；在官方模拟器核对门数、时钟和控制模式；检查年龄/置信度校准。</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="note" style="margin-top:9px">频率不是首轮变量。先固定 10 Hz base + 50 Hz 内环/残差；A/B 站住后再做 20 Hz base 消融。频率消融要对齐模拟时长，而不是只对齐环境步数；提频还要同步调 <code>gamma</code>、rollout、奖励尺度和动作噪声。</p>
+      <p class="note">短训探针建议每个学习方案 50–100 个更新。按 4,096×20 配方约 410 万–819 万环境步。固定场景哈希、底层控制与有效采样预算，保留新的门组和随机种子做最终检验。主指标按官方优先级报告有效门数，同门数再看时间。<a class="cite" href="#src-joint">训练配方</a><a class="cite" href="#src-rules">规则</a></p>
+    </section>
+
+    <section id="sources" class="panel" aria-labelledby="sources-title">
+      <h2 id="sources-title">来源与版本</h2>
+      <ol class="sources">
+        <li id="src-rules"><strong>比赛规则</strong>　RMUA 2026 V1.0.0，重点为 §2.2 计分、道路障碍和工厂任务，§2.3 传感器与控制。官方速度接口带 <strong>8 m/s²</strong> 加速度上限；本地 P0 的 PWM 按 <strong>10 ms</strong> 指令推进。<strong>10 Hz 是 HITSZ 配方，不是官方要求</strong>。<a href="https://bbs.robomaster.com/wiki/20204847/809873">官方规则中心</a> · <a href="https://github.com/RoboMaster/IntelligentUAVChampionshipSimulator/blob/RMUA2026-01/README.md">官方模拟器数据接口</a></li>
+        <li id="src-hitsz"><strong>HITSZ 固定版本</strong>　<code>9ac9657</code>，配置、循环模型及部署参考。图表中的 v12 指归档对照权重。<a href="https://github.com/HITSZcjh/rmua_rl/blob/9ac9657334817ad0bac6db3520bca59e5f864bf3/RL/configs/config_rl.yaml">PPO 配置</a> · <a href="https://github.com/HITSZcjh/rmua_rl/blob/9ac9657334817ad0bac6db3520bca59e5f864bf3/RL/rsl_rl/rsl_rl/modules/vision_actor_critic.py">视觉策略源码</a> · <a href="../ruma-train/rmua_rl-native/RL/rl_env_wrapper.py">本地观测与速度接口</a></li>
+        <li id="src-joint"><strong>RUMA 当前实现</strong>　工作分支 <code>feat/ppo-fullbatch-stable</code>，发布提交 <code>4ae9840</code>，另参考本地高度对齐试验代码。<a href="https://github.com/voicepeak/ruma2026-PPO/tree/4ae9840d57e919482eb70d22849358b1887749b7">分支快照</a> · <a href="https://github.com/voicepeak/ruma2026-PPO/issues/2">训练实验记录</a> · <a href="../ruma-ppo/ruma_ppo/training/hitsz_joint.py">本地 joint 源码</a> · <a href="../ruma-ppo/docs/progress.md">训练进度</a></li>
+        <li id="src-fpv"><strong>FPV 工作区</strong>　源码 <code>8cc4032</code>，模型发布 <code>06da3d3</code>。<a href="https://huggingface.co/Abuudiii/fpv-perception-pipeline">项目模型卡</a> · <a href="source/fpv-racing/fpv/perception/estimator.py">状态估计器</a> · <a href="source/fpv-racing/fpv/ppo_est.py">PPO 源码</a> · <a href="outputs/circuit_flight0.mp4">本地回放</a></li>
+        <li id="src-audit"><strong>门位与配对评测</strong>　使用本地已有记录，384 局高度探针依据 <code>scene_sha256</code> 和 <code>batch_sha256</code> 复核。<a href="../ruma-ppo/reports/2026-11-24-u2501-val192/result.json">u2501 报告</a> · <a href="../ruma-ppo/runs/native-joint-20261124-val-u3701/result.json">u3701 报告</a> · <a href="../ruma-ppo/runs/native-joint-20261124-failure-audit/u3839/summary.json">u3839 审计</a> · <a href="../ruma-ppo/runs/native-joint-20261124-failure-audit/u3701-height-probe/summary.json">固定高度探针 192 局</a> · <a href="../ruma-ppo/runs/native-joint-20261124-failure-audit/u3701-predictive-height/scenes.csv">预测式高度探针 384 局</a> · <a href="../ruma-ppo/ruma_ppo/evaluation/rollout.py">三门评测判定</a></li>
+        <li id="src-stress"><strong>压力测试</strong>　按飞行中撞车及有效预测窗口筛选回放，报告预测峰值与速度指令中位数。<a href="../ruma-ppo/runs/native-joint-20261124-failure-audit/u3839-avoidance-stress/scenes.csv">逐局 CSV</a> · <a href="../ruma-ppo/runs/native-joint-20261124-failure-audit/replay.py">回放与采样逻辑</a></li>
+      </ol>
+    </section>
+  </main>
+  <footer><div class="wrap">报告可离线阅读。来源中的本地链接指向当前工作区和相邻的 RUMA、HITSZ 工作区。</div></footer>
+</body>
+</html>
