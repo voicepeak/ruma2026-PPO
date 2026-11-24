@@ -10,7 +10,7 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 
-from evaluation.rollout import gate_crossing
+from ruma_ppo.evaluation.rollout import gate_crossing
 from hitsz_ppo import atomic_json, save
 from RL.rl_env_wrapper import RLQuadEnv
 from rsl_rl.algorithms import PPO

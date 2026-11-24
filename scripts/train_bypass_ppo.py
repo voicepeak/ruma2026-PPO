@@ -13,9 +13,9 @@ import numpy as np
 import torch
 from torch.distributions import Categorical
 
-from evaluation.bypass_learning import BypassActorCritic, BypassLearningEnv, Rewards, RULE_PRIOR_SCALE, WAIT
-from evaluation.harness import BATCH, SUITES
-from evaluation.rollout import COLLISION
+from ruma_ppo.evaluation.bypass_learning import BypassActorCritic, BypassLearningEnv, Rewards, RULE_PRIOR_SCALE, WAIT
+from ruma_ppo.evaluation.harness import BATCH, SUITES
+from ruma_ppo.evaluation.rollout import COLLISION
 from hitsz_branches import NEXT_GATE, ROUTE, UP, seed
 from hitsz_ppo import Course, DEVICE, atomic_json, save, update
 from ruma_ppo.env.maps.gate_graph import GateGraph

@@ -10,7 +10,7 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from evaluation.rollout import Progress, PWMRouteFollower
+from ruma_ppo.evaluation.rollout import Progress, PWMRouteFollower
 from hitsz_ppo import Course, atomic_json
 from scripts.train_bypass_ppo import gate_graph
 from ruma_ppo.env.sim.pwm_env import CONTROL_HZ, PWMEnv

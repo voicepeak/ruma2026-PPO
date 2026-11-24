@@ -10,8 +10,8 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from evaluation.bypass_learning import BypassActorCritic, BypassLearningEnv
-from evaluation.harness import BATCH
+from ruma_ppo.evaluation.bypass_learning import BypassActorCritic, BypassLearningEnv
+from ruma_ppo.evaluation.harness import BATCH
 from hitsz_branches import NEXT_GATE, ROUTE, UP, station
 from hitsz_ppo import Course, DEVICE, atomic_json
 from ruma_ppo.env.maps.gate_graph import GateGraph

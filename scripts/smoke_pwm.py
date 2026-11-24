@@ -10,7 +10,7 @@ import torch
 
 from hitsz_branches import NEXT_GATE, ROUTE, UP
 from hitsz_ppo import Course
-from evaluation.rollout import Progress, PWMRouteFollower
+from ruma_ppo.evaluation.rollout import Progress, PWMRouteFollower
 from ruma_ppo.env.maps.gate_graph import GateGraph
 from ruma_ppo.env.sim.pwm_env import CONTROL_HZ, PWMEnv
 from ruma_ppo.env.sim.render import Renderer, SensorConfig
