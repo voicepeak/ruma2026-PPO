@@ -2,3 +2,11 @@ __pycache__/
 *.pyc
 .ipynb_checkpoints/
 *.tmp
+runs/
+.hitsz-repro/
+*.pt
+*.onnx
+*.log
+*.pid
+.pytest_cache/
+.ruff_cache/
