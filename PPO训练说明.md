@@ -42,6 +42,21 @@ python -m scripts.train_hitsz_joint --variant joint --seed 20261121 \
   --out runs/native-ppo-joint-20261121-local
 ```
 
+## 全样本续训与稳定自适应 LR
+
+显存较小的机器不必降低每轮 PPO 的有效样本数：保持 1024 个环境，把每个环境 rollout 提到 80 步，使用 32 个 micro-batch，并用 `--grad-accum-steps 8` 累积梯度。这样每次更新仍是 81,920 个样本，优化器每 epoch 走 4 步、共 20 步，与 4090 的 4096×20 配置对齐；代价是每轮耗时约 31~40 秒。
+
+```bash
+python -m scripts.train_hitsz_joint --variant joint --seed 20261121 \
+  --envs 1024 --num-steps-per-env 80 --num-mini-batches 32 \
+  --grad-accum-steps 8 --lr-schedule stable --learning-rate 0.003 \
+  --resume-from <checkpoint> --out runs/<new-run>
+```
+
+`--lr-schedule stable` 是按整轮 KL 的 EMA 调整学习率的保守自适应版本：死区 0.006~0.018，调整倍率 1.2，上限 0.006。它不是 4090 的逐 minibatch adaptive，而是为了降低小 micro-batch 的 KL 噪声；需要精确复刻 4090 时仍用 `--lr-schedule adaptive`。
+
+本地候选 checkpoint（sha256 `30a169914591566dffc3ca163dd3350b816b5906010cf9c9b2596878e0997ec7`）在 `val192` 上对 HITSZ v12：success 63.0% vs 31.8%，collision 20.8% vs 27.1%，McNemar p=2.3e-16。`val192` 是验证集，最终对外结论仍需使用未参与调参的 held-out 协议。
+
 用训练机本地复跑的开发场景做对照，先用 `--lidar-bypass` 记录本机规则结果，再评新权重。两个输出目录的 `scenes.json` 可用来核对场景哈希。做策略消融时，分别以 `hitsz`、`gate` 和 `joint` 训练，从同一预算取 checkpoint，逐个用 `--native-ppo` 在同一批场景评测。原冻结 `test384` 已用于 P0 的一次性评测。
 
 ```bash
