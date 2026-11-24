@@ -12,7 +12,7 @@ import sys
 from ruma_ppo.cli.setup_hitsz import CACHE, ROOT, git, verify_checkout
 
 
-DEFAULT_CONFIG = ROOT / "configs" / "hitsz_joint.yaml"
+DEFAULT_CONFIG = ROOT / "configs" / "train_joint.yaml"
 
 
 def train(args, hitsz):
