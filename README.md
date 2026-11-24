@@ -1,4 +1,12 @@
-# RMUA 从零策略研究 · 第一轮
+## 当前入口
+
+- 架构与目录约定：[docs/architecture.md](docs/architecture.md)
+- 训练：`python -m scripts.train_joint ...`（兼容 `python -m scripts.train_hitsz_joint`）
+- 评测：`python -m ruma_ppo.evaluation.harness ...`
+- HITSZ 复现：`python -m scripts.hitsz_repro ...`
+- 旧研究实验：`scripts/legacy/`（冻结，不再作为主入口）
+
+## RMUA 从零策略研究 · 第一轮
 
 ## HITSZ 原生三维复核
 
@@ -11,9 +19,9 @@
 在已编译 HITSZ 扩展的 Linux 环境中设置 HITSZ_ROOT 指向固定版本仓库后，依次运行以下命令。每个输出目录需为新目录。
 
 ```bash
-python hitsz_branches.py --out replay-base
-python hitsz_amplitude.py --out replay-confirm
-python plot_hitsz_case.py replay-confirm
+python -m ruma_ppo.hitsz.branches --out replay-base
+python -m scripts.legacy.hitsz_amplitude --out replay-confirm
+python -m scripts.legacy.plot_hitsz_case replay-confirm
 ```
 
 
@@ -26,11 +34,11 @@ python plot_hitsz_case.py replay-confirm
 Python 3.11、NumPy、PyTorch。服务器实测 PyTorch 2.6.0+cu118、Ubuntu 22.04、RTX 4090。进入本目录后执行下列命令，输出目录需要是新目录。
 
 ```bash
-python experiment.py --device cuda --out result-new
-python direction_control.py result-new
+python -m scripts.legacy.experiment --device cuda --out result-new
+python -m scripts.legacy.direction_control result-new
 ```
 
-快速验证可以运行 `python experiment.py --device cpu --families 8 4 6 --epochs 1 --seeds 7 --out smoke-new`。首轮实测的结果、9 份权重、原始留出分支和日志在 [runs/pilot-7f22646883](runs/pilot-7f22646883)。原始文件与服务器下载副本已逐文件校验。
+快速验证可以运行 `python -m scripts.legacy.experiment --device cpu --families 8 4 6 --epochs 1 --seeds 7 --out smoke-new`。首轮实测的结果、9 份权重、原始留出分支和日志在 [runs/pilot-7f22646883](runs/pilot-7f22646883)。原始文件与服务器下载副本已逐文件校验。
 
 ## 设计与口径
 
@@ -57,8 +65,8 @@ python direction_control.py result-new
 
 ## 文件
 
-- course.py 生成配对场景、执行候选与续飞、判定碰撞与计分。
-- experiment.py 生成训练标签、训练 B/C/D、冻结后评估并导出逐场数据。
-- direction_control.py 回载 C 的三份权重，在新几何族上与能看到弯向的解析规则比较。
+- ruma_ppo/hitsz/course.py 生成配对场景、执行候选与续飞、判定碰撞与计分。
+- scripts/legacy/experiment.py 生成训练标签、训练 B/C/D、冻结后评估并导出逐场数据。
+- scripts/legacy/direction_control.py 回载 C 的三份权重，在新几何族上与能看到弯向的解析规则比较。
 - report.json 和 direction-control.json 位于 run 目录，保存指标与对照区间。holdout-branches.npz 的第一维对应 CSV 行，第二维为候选编号，features 最后一维顺序见 course.OBS_NAMES。
 
