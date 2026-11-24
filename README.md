@@ -1,6 +1,7 @@
 ## 当前入口
 
 - 架构与目录约定：[docs/architecture.md](docs/architecture.md)
+- 4090 接手/当前进度：[docs/progress.md](docs/progress.md)
 - 训练：`python -m scripts.train_joint ...`（兼容 `python -m scripts.train_hitsz_joint`）
 - 评测：`python -m ruma_ppo.evaluation.harness ...`
 - HITSZ 复现：`python -m scripts.hitsz_repro ...`
