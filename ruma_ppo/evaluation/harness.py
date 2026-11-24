@@ -1,17 +1,16 @@
 """Run frozen R1 scene suites with per-scene pairing and grouped confidence intervals."""
 
 import argparse
-from collections import Counter, defaultdict
 import csv
 from dataclasses import asdict
 import hashlib
 import json
-from math import comb
 from pathlib import Path
 
 import numpy as np
 import torch
 
+from ruma_ppo.evaluation.metrics import metrics, paired_statistics
 from ruma_ppo.hitsz.v12 import V12Course
 from ruma_ppo.evaluation.lidar_bypass import LidarBypassFollower
 from ruma_ppo.hitsz.branches import NEXT_GATE, ROUTE, UP, station
@@ -155,49 +154,6 @@ def run_suite(suite, graph, candidate, reference, pwm):
                               "candidate": ours, "v12": theirs})
             print(f"{suite} level={level} seed={seed} cases={len(cases)}", flush=True)
     return cases
-
-
-def metrics(rows):
-    outcomes = Counter(row["outcome"] for row in rows)
-    times = [row["flight_s"] for row in rows if row["outcome"] == "success"]
-    report = {"cases": len(rows), "outcomes": dict(sorted(outcomes.items())),
-              "three_gate_rate": outcomes["success"] / len(rows),
-              "mean_gates": sum(r["gates"] for r in rows) / len(rows),
-              "near_miss_count": sum(r["near_miss"] for r in rows),
-              "mean_success_s": float(np.mean(times)) if times else None,
-              "minimum_clearance_m": min(r["min_clearance_m"] for r in rows)}
-    if "brake_s" in rows[0]:
-        interventions = [row["brake_s"] for row in rows if row["brake_s"] > 0]
-        report["braked_cases"] = len(interventions)
-        report["mean_brake_s_when_active"] = float(np.mean(interventions)) if interventions else None
-    if "detour_s" in rows[0]:
-        report["detour_cases"] = sum(row["detour_s"] > 0 for row in rows)
-    return report
-
-
-def paired_statistics(cases):
-    categories = Counter()
-    groups = defaultdict(list)
-    for case in cases:
-        ours = case["candidate"]["outcome"] == "success"
-        theirs = case["v12"]["outcome"] == "success"
-        categories[ours, theirs] += 1
-        groups[case["route"], case["level"], case["seed"]].append(int(ours) - int(theirs))
-    wins, losses = categories[True, False], categories[False, True]
-    n = wins + losses
-    p = min(1.0, 2 * sum(comb(n, k) for k in range(min(wins, losses) + 1)) / (2**n))
-
-    rng = np.random.default_rng(20261121)
-    strata = defaultdict(list)
-    for (route, level, _), changes in sorted(groups.items()):
-        strata[route, level].append(sum(changes))
-    sample = np.zeros(10_000)
-    for totals in strata.values():
-        sample += rng.choice(totals, size=(len(sample), len(totals)), replace=True).sum(axis=1)
-    ci = np.percentile(sample / len(cases), [2.5, 97.5]).tolist()
-    return {"candidate_only": wins, "v12_only": losses, "both": categories[True, True],
-            "neither": categories[False, False], "mcnemar_exact_p": p,
-            "gain": (wins - losses) / len(cases), "group_bootstrap_95_ci": ci}
 
 
 def save(out, suite, graph, cases, names, verified):
