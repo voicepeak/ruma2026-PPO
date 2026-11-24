@@ -147,6 +147,8 @@ def snapshot(course, time_s):
 
 
 def gate_centering_probe(course, predictive):
+    from ruma_ppo.training.residual import apply_vertical_delta, geometric_height_delta
+
     original_step = course.env.step
     progress = None
 
@@ -157,17 +159,14 @@ def gate_centering_probe(course, predictive):
     def step(actions):
         index = progress.gates.clamp_max(len(progress.center) - 1)
         center, basis = progress.center[index], progress.basis[index]
+        if predictive:
+            delta = geometric_height_delta(course.e.p, course.e.v, center, basis, ~progress.done)
+            return original_step(apply_vertical_delta(actions, delta))
         relative = ((course.e.p - center)[:, None] @ basis).squeeze(1)
         ahead = -relative[:, 0]
         proximity = (1 - ahead / 10.0).clamp(0, 1)
         upward = (relative[:, 2] - 0.75).clamp(0, 0.8)
         active = (ahead > 0) & ~progress.done
-        if predictive:
-            gate_velocity = (course.e.v[:, None] @ basis).squeeze(1)
-            seconds = (ahead / gate_velocity[:, 0].clamp_min(1.0)).clamp(0, 1)
-            predicted_down = relative[:, 2] + seconds * gate_velocity[:, 2]
-            upward = (2 * (predicted_down - 1.35)).clamp(0, 0.8)
-            active &= gate_velocity[:, 0] > 1.0
         adjusted = actions.clone()
         adjusted[:, 2] -= upward * proximity * active
         return original_step(adjusted)

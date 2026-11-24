@@ -3,7 +3,7 @@
 import argparse
 from copy import deepcopy
 import fcntl
-from hashlib import sha256
+from hashlib import file_digest, sha256
 import os
 from pathlib import Path
 import random
@@ -21,20 +21,52 @@ def train(args, hitsz):
     from Env.utils import load_yaml, make_env
     from RL.rl_env_wrapper import RLQuadEnv
     from ruma_ppo.hitsz.legacy_policy import atomic_json
-    from ruma_ppo.training.hitsz_joint import GateConfig, GateEnv, HitszRunner, OccupancyConfig
+    from ruma_ppo.training.hitsz_joint import GateConfig, GateEnv, GateFutureConfig, HitszRunner, OccupancyConfig
+    from ruma_ppo.training.residual import (
+        RESIDUAL_GROUPS, RESIDUAL_POLICY, ResidualGateEnv, ResidualRunner, make_frozen_base,
+    )
 
     if not torch.cuda.is_available():
         raise ValueError("HITSZ training requires a working CUDA GPU")
     if int(os.environ.get("WORLD_SIZE", 1)) != 1:
         raise ValueError("This training entry runs one process on a single GPU")
 
+    residual = args.variant == "residual"
+    if args.residual_bc_steps is not None and (
+        not residual or args.base_checkpoint is None or args.residual_bc_steps < 1
+    ):
+        raise ValueError("--residual-bc-steps needs a positive count and a new residual run with --base-checkpoint")
+    checkpoint = args.out / "latest.pt" if args.resume else args.resume_from
+    for path in (checkpoint, args.base_checkpoint):
+        if path is not None and not path.is_file():
+            raise FileNotFoundError(path)
+
     addition = load_yaml(args.config)
+    future_settings = addition.pop("gate_future", {})
+    if args.gate_future or residual:
+        future_settings["enabled"] = True
+    if args.gate_future_unfreeze_actor_head:
+        future_settings["unfreeze_actor_head"] = True
+    future = GateFutureConfig(**future_settings)
+    if future.unfreeze_actor_head and args.variant != "joint":
+        raise ValueError("A0b requires the joint variant")
+    if future.enabled:
+        if args.variant == "hitsz":
+            raise ValueError("Gate future features require the gate or joint variant")
+        if args.base_checkpoint is None and not (args.resume or args.resume_from):
+            raise ValueError("A new gate future run requires --base-checkpoint")
+        addition["gate_future"] = future_settings
     if args.gate_height_alignment_weight is not None:
         if args.variant == "hitsz":
             raise ValueError("Gate height alignment requires the gate or joint variant")
         addition["gate"]["height_alignment_weight"] = args.gate_height_alignment_weight
     env_cfg = load_yaml(hitsz / "RL" / "configs" / "config_env.yaml")
     train_cfg = load_yaml(hitsz / "RL" / "configs" / "config_rl.yaml")
+    if residual:
+        if args.lr_schedule == "stable":
+            raise ValueError("Residual PPO supports fixed or adaptive learning rates")
+        train_cfg["obs_groups"] = deepcopy(RESIDUAL_GROUPS)
+        train_cfg["policy"] = RESIDUAL_POLICY.copy()
     train_cfg["save_interval"] = int(addition["checkpoint_interval"])
     if args.seed is not None:
         train_cfg["seed"] = args.seed
@@ -73,10 +105,23 @@ def train(args, hitsz):
         "train": deepcopy(train_cfg),
         "additions": addition,
     }
+    if residual:
+        source = torch.load(args.base_checkpoint or checkpoint, map_location="cpu", weights_only=True)
+        if checkpoint is None:
+            recipe["residual_base"] = source["recipe"]
+            base_weights = source["model_state_dict"]
+            if args.residual_bc_steps is not None:
+                recipe["residual_bc"] = {"teacher": "geometric_height", "steps": args.residual_bc_steps}
+        else:
+            recipe["residual_base"] = source["recipe"]["residual_base"]
+            if "residual_bc" in source["recipe"]:
+                recipe["residual_bc"] = source["recipe"]["residual_bc"]
+            base_weights = {key.removeprefix("base_policy."): value
+                            for key, value in source["model_state_dict"].items() if key.startswith("base_policy.")}
+        if recipe["residual_base"]["hitsz_commit"] != recipe["hitsz_commit"]:
+            raise ValueError("Residual base checkpoint and training HITSZ commits differ")
+
     device = f"cuda:{env_cfg['runtime']['gpu_id']}"
-    checkpoint = args.out / "latest.pt" if args.resume else args.resume_from
-    if checkpoint is not None and not checkpoint.is_file():
-        raise FileNotFoundError(checkpoint)
     args.out.mkdir(parents=True, exist_ok=args.resume or args.resume_from is not None)
     with (args.out / "trainer.lock").open("a") as lock:
         fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
@@ -87,10 +132,19 @@ def train(args, hitsz):
         torch.cuda.reset_peak_memory_stats(device)
         sim = make_env(env_cfg, device=torch.device(device))
         cfg = {**train_cfg, "env": env_cfg["env"]}
-        env = RLQuadEnv(cfg, sim) if gate is None else GateEnv(cfg, sim, gate, occupancy)
         actual_cfg = deepcopy(train_cfg)
-        actual_cfg["policy"]["base_model_path"] = str(hitsz / train_cfg["policy"]["base_model_path"])
-        runner = HitszRunner(env, actual_cfg, args.out, device, recipe, occupancy)
+        if residual:
+            base_policy = make_frozen_base(recipe["residual_base"])
+            base_policy.load_state_dict(base_weights)
+            env = ResidualGateEnv(cfg, sim, gate, future, base_policy.to(device), RESIDUAL_POLICY["bound_mps"])
+            runner = ResidualRunner(env, actual_cfg, args.out, device, recipe, None)
+        else:
+            env = RLQuadEnv(cfg, sim) if gate is None else GateEnv(cfg, sim, gate, occupancy, future)
+            actual_cfg["policy"]["base_model_path"] = (
+                None if args.base_checkpoint is not None or future.enabled
+                else str(hitsz / train_cfg["policy"]["base_model_path"])
+            )
+            runner = HitszRunner(env, actual_cfg, args.out, device, recipe, occupancy, future)
         if args.grad_accum_steps is not None:
             if args.variant != "joint":
                 raise ValueError("Gradient accumulation is only implemented for the joint variant")
@@ -103,10 +157,15 @@ def train(args, hitsz):
                     args.resume_from is not None and args.gate_height_alignment_weight is not None
                 ),
             )
+        elif args.base_checkpoint is not None:
+            if residual:
+                runner.restore_curriculum(source["curriculum"])
+            else:
+                runner.load_base(args.base_checkpoint)
         if args.learning_rate is not None:
             runner.alg.learning_rate = args.learning_rate
             for group in runner.alg.optimizer.param_groups:
-                group["lr"] = args.learning_rate
+                group["lr"] = args.learning_rate * group.get("lr_scale", 1.0)
         steps_per_update = envs * train_cfg["num_steps_per_env"]
         steps_done = runner.environment_steps(runner.current_learning_iteration)
         if args.target_env_steps is not None:
@@ -121,7 +180,7 @@ def train(args, hitsz):
 
         if not args.resume:
             atomic_json(args.out / "config.json", recipe)
-            atomic_json(args.out / "environment.json", {
+            environment = {
                 "repo_commit": git(ROOT, "rev-parse", "HEAD"),
                 "repo_status": git(ROOT, "status", "--porcelain").splitlines(),
                 "gpu": torch.cuda.get_device_name(device),
@@ -130,7 +189,17 @@ def train(args, hitsz):
                 "steps_per_update": steps_per_update,
                 "resume_from": str(checkpoint.resolve()) if checkpoint else None,
                 "initial_environment_steps": steps_done,
-            })
+            }
+            if args.base_checkpoint is not None:
+                with args.base_checkpoint.open("rb") as stream:
+                    environment["base_checkpoint_sha256"] = file_digest(stream, "sha256").hexdigest()
+                environment["base_checkpoint"] = str(args.base_checkpoint.resolve())
+            atomic_json(args.out / "environment.json", environment)
+        if args.residual_bc_steps is not None:
+            from ruma_ppo.training.residual_bc import behavior_clone
+
+            behavior_clone(runner, args.residual_bc_steps)
+            runner.restore_curriculum(source["curriculum"])
         print(f"Training {args.variant}: {envs} environments, updates "
               f"{runner.current_learning_iteration + 1}–{updates}, seed {seed}", flush=True)
         runner.learn(remaining, init_at_random_ep_len=checkpoint is None)
@@ -138,7 +207,7 @@ def train(args, hitsz):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--variant", required=True, choices=("hitsz", "gate", "joint"))
+    parser.add_argument("--variant", required=True, choices=("hitsz", "gate", "joint", "residual"))
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--config", type=Path, default=DEFAULT_CONFIG)
     parser.add_argument("--envs", type=int, help="Override the upstream 4096 environments")
@@ -149,6 +218,12 @@ def main():
     parser.add_argument("--learning-rate", type=float, help="Override the initial learning rate")
     parser.add_argument("--gate-height-alignment-weight", type=float,
                         help="Add a bounded penalty for approaching below the next gate")
+    parser.add_argument("--gate-future", action="store_true",
+                        help="Add explicit future gate crossing features (A0)")
+    parser.add_argument("--gate-future-unfreeze-actor-head", action="store_true",
+                        help="Also fit the joint actor output head at one tenth of the base learning rate (A0b)")
+    parser.add_argument("--residual-bc-steps", type=int,
+                        help="Warm-start the residual actor with this many geometric teacher rollout steps")
     budget = parser.add_mutually_exclusive_group()
     budget.add_argument("--updates", type=int, help="Total updates including any checkpoint progress")
     budget.add_argument("--target-env-steps", type=int, help="Total environment steps across all devices")
@@ -156,6 +231,8 @@ def main():
     resume = parser.add_mutually_exclusive_group()
     resume.add_argument("--resume", action="store_true", help="Continue in the same output directory")
     resume.add_argument("--resume-from", type=Path, help="Continue from a checkpoint in a new directory")
+    resume.add_argument("--base-checkpoint", type=Path,
+                        help="Start a new run with the checkpoint model and curriculum")
     args = parser.parse_args()
     hitsz = Path(os.environ.get("HITSZ_ROOT", CACHE / "rmua_rl")).resolve()
     verify_checkout(hitsz)

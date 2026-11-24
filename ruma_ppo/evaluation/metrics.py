@@ -18,6 +18,13 @@ def metrics(rows):
         report["mean_brake_s_when_active"] = float(np.mean(interventions)) if interventions else None
     if "detour_s" in rows[0]:
         report["detour_cases"] = sum(row["detour_s"] > 0 for row in rows)
+    if "residual_steps" in rows[0]:
+        steps = sum(row["residual_steps"] for row in rows)
+        report["residual"] = {
+            "steps": steps,
+            "saturation_fraction": sum(row["residual_saturated_steps"] for row in rows) / steps if steps else None,
+            "mean_abs_delta_mps": sum(row["residual_abs_delta_sum_mps"] for row in rows) / steps if steps else None,
+        }
     return report
 
 
