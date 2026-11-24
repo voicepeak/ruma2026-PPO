@@ -12,9 +12,8 @@
 
 ## 分支与提交
 
-- `feat/ppo-fullbatch-stable`：唯一工作分支，包含 2026-11-24 的代码、评测和交接提交；目录已整理为 `ruma_ppo/{env,training,evaluation,hitsz,cli}`。
-- `main`：默认分支；尚未合并本分支。
-- 旧临时分支和 `refactor/repo-layout` 已删除，远端只保留 `main` 和 `feat/ppo-fullbatch-stable`。
+- `main`：唯一工作分支，包含 2026-11-24 的代码、评测和交接提交；目录已整理为 `ruma_ppo/{env,training,evaluation,hitsz,cli}`。
+- 旧临时分支、`refactor/repo-layout` 和 `feat/ppo-fullbatch-stable` 已删除；远端代码只保留 `main`。另有 `gh-pages` 仅用于报告站。
 - 本机没有安装 pytest；交接时直接调用 `tests/test_metrics.py` 的两项检查，并跑了高度 shaping 的边界检查，均通过。新机器在开始训练前补跑 `python -m pytest -q`。
 
 ## 当前权重
@@ -44,7 +43,7 @@ sha256sum /data/checkpoints/joint-3060-u2501.pt
 ```bash
 git clone git@github.com:voicepeak/ruma2026-PPO.git
 cd ruma2026-PPO
-git checkout feat/ppo-fullbatch-stable
+git checkout main
 
 conda create -n py311_rmua python=3.11 -y
 conda activate py311_rmua

@@ -1,6 +1,6 @@
 # RUMA 2026 PPO
 
-> 最近整理：2026-11-24 夜。当前分支 `feat/ppo-fullbatch-stable`；最新交接报告见 [reports/2026-11-24-4090-handover/README.md](reports/2026-11-24-4090-handover/README.md)。
+> 最近整理：2026-11-24 夜。当前分支 `main`；最新交接报告见 [reports/2026-11-24-4090-handover/README.md](reports/2026-11-24-4090-handover/README.md)。
 
 ## 当前入口
 
