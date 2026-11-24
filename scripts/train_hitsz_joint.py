@@ -21,7 +21,7 @@ def train(args, hitsz):
     from Env.utils import load_yaml, make_env
     from RL.rl_env_wrapper import RLQuadEnv
     from hitsz_ppo import atomic_json
-    from training.hitsz_joint import GateConfig, GateEnv, HitszRunner, OccupancyConfig
+    from ruma_ppo.training.hitsz_joint import GateConfig, GateEnv, HitszRunner, OccupancyConfig
 
     if not torch.cuda.is_available():
         raise ValueError("HITSZ training requires a working CUDA GPU")
