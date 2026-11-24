@@ -9,7 +9,7 @@ import torch.nn.functional as F
 from ruma_ppo.env.control.lidar_bypass import candidate_scores, right_of
 from ruma_ppo.evaluation.lidar_bypass import LidarBypassFollower
 from ruma_ppo.evaluation.rollout import BOUNDS, COLLISION, MISSED_GATE, SUCCESS, TIMEOUT, Progress
-from hitsz_branches import station
+from ruma_ppo.hitsz.branches import station
 from ruma_ppo.env.sim.pwm_env import DT
 
 

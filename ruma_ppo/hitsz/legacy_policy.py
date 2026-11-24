@@ -13,7 +13,7 @@ from torch.distributions import Categorical
 from torch.utils.tensorboard import SummaryWriter
 import yaml
 
-from hitsz_branches import BranchEnv, UP, ROUTE, START, NEXT_GATE, make_env, reset, seed, station
+from ruma_ppo.hitsz.branches import BranchEnv, UP, ROUTE, START, NEXT_GATE, make_env, reset, seed, station
 
 DEVICE = torch.device("cuda")
 OFFSETS = [-1.8, -1.15, 0., 1.15, 1.8]

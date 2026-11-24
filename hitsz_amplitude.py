@@ -8,7 +8,7 @@ import numpy as np
 import torch
 import yaml
 
-from hitsz_branches import (BranchEnv, CANDIDATES, NEXT_GATE, ROUTE, START, UP,
+from ruma_ppo.hitsz.branches import (BranchEnv, CANDIDATES, NEXT_GATE, ROUTE, START, UP,
                             make_env, reset, rollout, seed)
 
 

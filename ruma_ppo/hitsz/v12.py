@@ -8,7 +8,7 @@ import json
 import numpy as np
 import onnxruntime as ort
 import torch
-from hitsz_ppo import ActorCritic, Course, DEV, DEVICE, MAX_DECISIONS
+from ruma_ppo.hitsz.legacy_policy import ActorCritic, Course, DEV, DEVICE, MAX_DECISIONS
 
 
 class V12Course(Course):

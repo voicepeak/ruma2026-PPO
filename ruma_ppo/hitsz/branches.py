@@ -12,7 +12,7 @@ import numpy as np
 import torch
 import yaml
 
-from course import CANDIDATES
+from ruma_ppo.hitsz.course import CANDIDATES
 
 UP = Path(os.environ["HITSZ_ROOT"]).resolve()
 sys.path.insert(0, str(UP))

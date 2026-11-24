@@ -20,7 +20,7 @@ def train(args, hitsz):
     import torch
     from Env.utils import load_yaml, make_env
     from RL.rl_env_wrapper import RLQuadEnv
-    from hitsz_ppo import atomic_json
+    from ruma_ppo.hitsz.legacy_policy import atomic_json
     from ruma_ppo.training.hitsz_joint import GateConfig, GateEnv, HitszRunner, OccupancyConfig
 
     if not torch.cuda.is_available():

@@ -11,7 +11,7 @@ from torch import nn
 import torch.nn.functional as F
 
 from ruma_ppo.evaluation.rollout import gate_crossing
-from hitsz_ppo import atomic_json, save
+from ruma_ppo.hitsz.legacy_policy import atomic_json, save
 from RL.rl_env_wrapper import RLQuadEnv
 from rsl_rl.algorithms import PPO
 from rsl_rl.modules import CustomVisionActorCritic

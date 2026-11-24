@@ -12,8 +12,8 @@ import torch
 
 from ruma_ppo.evaluation.bypass_learning import BypassActorCritic, BypassLearningEnv
 from ruma_ppo.evaluation.harness import BATCH
-from hitsz_branches import NEXT_GATE, ROUTE, UP, station
-from hitsz_ppo import Course, DEVICE, atomic_json
+from ruma_ppo.hitsz.branches import NEXT_GATE, ROUTE, UP, station
+from ruma_ppo.hitsz.legacy_policy import Course, DEVICE, atomic_json
 from ruma_ppo.env.maps.gate_graph import GateGraph
 from scripts.train_bypass_ppo import episode, gate_graph, summarize
 

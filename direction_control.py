@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 
 import torch
-from course import generate
+from ruma_ppo.hitsz.course import generate
 from experiment import feature_view, make_model, metrics, paired_diff, scores, validate
 
 

@@ -92,7 +92,7 @@ def check(hitsz):
 
     # Match the imports performed by the original trainer and simulator.
     sys.path.insert(0, str(ROOT))
-    from hitsz_ppo import ROUTE
+    from ruma_ppo.hitsz.legacy_policy import ROUTE
     import quadsim_cuda
 
     if not (hitsz / ROUTE).is_file():

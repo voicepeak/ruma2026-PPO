@@ -12,10 +12,10 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from compare_hitsz_v12 import V12Course
+from ruma_ppo.hitsz.v12 import V12Course
 from ruma_ppo.evaluation.lidar_bypass import LidarBypassFollower
-from hitsz_branches import NEXT_GATE, ROUTE, UP, station
-from hitsz_ppo import ActorCritic, Course, DEVICE, HOLD_TICKS
+from ruma_ppo.hitsz.branches import NEXT_GATE, ROUTE, UP, station
+from ruma_ppo.hitsz.legacy_policy import ActorCritic, Course, DEVICE, HOLD_TICKS
 from ruma_ppo.evaluation.rollout import LidarBrakeFollower, Progress, PWMRouteFollower
 from ruma_ppo.env.maps.gate_graph import GateGraph
 from ruma_ppo.env.sim.pwm_env import CONTROL_HZ

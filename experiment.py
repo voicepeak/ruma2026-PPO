@@ -12,7 +12,7 @@ import torch
 from torch import nn
 from torch.nn import functional as F
 
-from course import CANDIDATES, DT, OBS_NAMES, generate
+from ruma_ppo.hitsz.course import CANDIDATES, DT, OBS_NAMES, generate
 
 
 def feature_view(data, variant):

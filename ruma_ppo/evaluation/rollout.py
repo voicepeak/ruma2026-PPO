@@ -4,7 +4,7 @@ import torch
 
 from ruma_ppo.env.control.geometric import GeometricController
 from ruma_ppo.env.control.lidar_brake import BrakeConfig, first_path_return, lidar_confirms_clear, stopping_speed
-from hitsz_branches import station
+from ruma_ppo.hitsz.branches import station
 from ruma_ppo.env.sim.pwm_env import DT, PWMEnv, clearance
 from ruma_ppo.env.sim.render import Renderer, SensorConfig
 

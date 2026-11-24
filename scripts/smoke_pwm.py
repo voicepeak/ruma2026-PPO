@@ -8,8 +8,8 @@ import time
 import numpy as np
 import torch
 
-from hitsz_branches import NEXT_GATE, ROUTE, UP
-from hitsz_ppo import Course
+from ruma_ppo.hitsz.branches import NEXT_GATE, ROUTE, UP
+from ruma_ppo.hitsz.legacy_policy import Course
 from ruma_ppo.evaluation.rollout import Progress, PWMRouteFollower
 from ruma_ppo.env.maps.gate_graph import GateGraph
 from ruma_ppo.env.sim.pwm_env import CONTROL_HZ, PWMEnv

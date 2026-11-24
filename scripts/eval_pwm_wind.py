@@ -11,7 +11,7 @@ import numpy as np
 import torch
 
 from ruma_ppo.evaluation.rollout import Progress, PWMRouteFollower
-from hitsz_ppo import Course, atomic_json
+from ruma_ppo.hitsz.legacy_policy import Course, atomic_json
 from scripts.train_bypass_ppo import gate_graph
 from ruma_ppo.env.sim.pwm_env import CONTROL_HZ, PWMEnv
 from ruma_ppo.env.sim.wind import WindField, WindSpec

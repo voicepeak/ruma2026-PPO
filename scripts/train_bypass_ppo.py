@@ -16,8 +16,8 @@ from torch.distributions import Categorical
 from ruma_ppo.evaluation.bypass_learning import BypassActorCritic, BypassLearningEnv, Rewards, RULE_PRIOR_SCALE, WAIT
 from ruma_ppo.evaluation.harness import BATCH, SUITES
 from ruma_ppo.evaluation.rollout import COLLISION
-from hitsz_branches import NEXT_GATE, ROUTE, UP, seed
-from hitsz_ppo import Course, DEVICE, atomic_json, save, update
+from ruma_ppo.hitsz.branches import NEXT_GATE, ROUTE, UP, seed
+from ruma_ppo.hitsz.legacy_policy import Course, DEVICE, atomic_json, save, update
 from ruma_ppo.env.maps.gate_graph import GateGraph
 
 
