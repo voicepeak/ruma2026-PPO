@@ -77,7 +77,7 @@ class NativePPOPolicy(LegacyPolicy):
 
 def load_native_ppo(path, course):
     from rsl_rl.modules import CustomVisionActorCritic
-    from scripts.hitsz_repro import git
+    from ruma_ppo.cli.setup_hitsz import git
     from ruma_ppo.training.hitsz_joint import GateActorCritic, OccupancyConfig, gate_features
 
     checkpoint = torch.load(path, map_location="cpu", weights_only=True)
