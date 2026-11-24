@@ -2,7 +2,7 @@
 
 from copy import deepcopy
 from dataclasses import dataclass
-from math import prod
+from math import isfinite, prod
 from pathlib import Path
 import random
 
@@ -33,6 +33,11 @@ class GateConfig:
     aperture_m: tuple
     pass_reward: float
     three_gate_reward: float
+    height_alignment_weight: float = 0.0
+
+    def __post_init__(self):
+        if not isfinite(self.height_alignment_weight) or self.height_alignment_weight < 0:
+            raise ValueError("Gate height alignment weight must be finite and nonnegative")
 
 
 @dataclass(frozen=True)
@@ -96,6 +101,18 @@ class OrderedGates:
     def features(self, yaw):
         center, basis, active = self.current()
         return gate_features(self.env.p, yaw, center, basis, active)
+
+    def height_alignment_penalty(self, fatal):
+        center, basis, active = self.current()
+        position = ((self.env.p - center)[:, None] @ basis).squeeze(1)
+        velocity = (self.env.v[:, None] @ basis).squeeze(1)
+        ahead = -position[:, 0]
+        seconds = (ahead / velocity[:, 0].clamp_min(1.0)).clamp(0, 1)
+        down_at_gate = position[:, 2] + seconds * velocity[:, 2]
+        excess = (down_at_gate - (self.half_aperture[1] - 0.15)).clamp(0, 1)
+        proximity = (1 - ahead / 10.0).clamp(0, 1)
+        approaching = active & (ahead > 0) & (velocity[:, 0] > 1.0) & ~fatal.bool()
+        return torch.where(approaching, proximity * excess.square(), 0.0)
 
     def step(self, before, fatal):
         center, basis, active = self.current()
@@ -176,6 +193,10 @@ class GateEnv(RLQuadEnv):
 
     def _compute_rewards(self):
         rewards, fatal, info = super()._compute_rewards()
+        if self.gate_cfg.height_alignment_weight:
+            penalty = self.gate_cfg.height_alignment_weight * self.gates.height_alignment_penalty(fatal)
+            rewards = rewards - penalty
+            info["reward/gate_height_alignment"] = -penalty.mean()
         passed, completed, missed = self.gates.step(self._before, fatal)
         bonus = passed * self.gate_cfg.pass_reward + completed * self.gate_cfg.three_gate_reward
         info.update({
@@ -391,7 +412,7 @@ class HitszRunner(OnPolicyRunner):
             "peak_cuda_reserved_mib": round(torch.cuda.max_memory_reserved(self.device) / 2**20, 1),
         })
 
-    def restore(self, path, *, allow_optimization_change=False):
+    def restore(self, path, *, allow_optimization_change=False, allow_gate_height_alignment_change=False):
         ckpt = torch.load(path, map_location="cpu", weights_only=True)
         saved_recipe = ckpt["recipe"]
         comparison_recipe = deepcopy(saved_recipe)
@@ -401,6 +422,10 @@ class HitszRunner(OnPolicyRunner):
             comparison_recipe["train"]["algorithm"]["num_mini_batches"] = self.cfg["algorithm"]["num_mini_batches"]
             comparison_recipe["train"]["algorithm"]["schedule"] = self.cfg["algorithm"]["schedule"]
             comparison_recipe["train"]["algorithm"]["learning_rate"] = self.cfg["algorithm"]["learning_rate"]
+        if allow_gate_height_alignment_change:
+            comparison_recipe["additions"]["gate"]["height_alignment_weight"] = (
+                self.recipe["additions"]["gate"]["height_alignment_weight"]
+            )
         if comparison_recipe != self.recipe:
             raise ValueError("Resume settings differ from the checkpoint")
         self.alg.policy.load_state_dict(ckpt["model_state_dict"])

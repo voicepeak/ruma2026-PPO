@@ -29,6 +29,10 @@ def train(args, hitsz):
         raise ValueError("This training entry runs one process on a single GPU")
 
     addition = load_yaml(args.config)
+    if args.gate_height_alignment_weight is not None:
+        if args.variant == "hitsz":
+            raise ValueError("Gate height alignment requires the gate or joint variant")
+        addition["gate"]["height_alignment_weight"] = args.gate_height_alignment_weight
     env_cfg = load_yaml(hitsz / "RL" / "configs" / "config_env.yaml")
     train_cfg = load_yaml(hitsz / "RL" / "configs" / "config_rl.yaml")
     train_cfg["save_interval"] = int(addition["checkpoint_interval"])
@@ -92,7 +96,13 @@ def train(args, hitsz):
                 raise ValueError("Gradient accumulation is only implemented for the joint variant")
             runner.alg.accum_steps = args.grad_accum_steps
         if checkpoint is not None:
-            runner.restore(checkpoint, allow_optimization_change=args.resume_from is not None)
+            runner.restore(
+                checkpoint,
+                allow_optimization_change=args.resume_from is not None,
+                allow_gate_height_alignment_change=(
+                    args.resume_from is not None and args.gate_height_alignment_weight is not None
+                ),
+            )
         if args.learning_rate is not None:
             runner.alg.learning_rate = args.learning_rate
             for group in runner.alg.optimizer.param_groups:
@@ -137,6 +147,8 @@ def main():
     parser.add_argument("--grad-accum-steps", type=int, help="Accumulate this many micro-batches per optimizer step")
     parser.add_argument("--lr-schedule", choices=("adaptive", "fixed", "stable"), help="Override the PPO learning-rate schedule")
     parser.add_argument("--learning-rate", type=float, help="Override the initial learning rate")
+    parser.add_argument("--gate-height-alignment-weight", type=float,
+                        help="Add a bounded penalty for approaching below the next gate")
     budget = parser.add_mutually_exclusive_group()
     budget.add_argument("--updates", type=int, help="Total updates including any checkpoint progress")
     budget.add_argument("--target-env-steps", type=int, help="Total environment steps across all devices")
