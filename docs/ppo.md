@@ -67,6 +67,20 @@ python -m ruma_ppo.evaluation.harness --suite val192 \
   --v12 .hitsz-repro/v12.onnx --out runs/native-eval-joint-20261121
 ```
 
+### 门前高度对准奖励（可选）
+
+`--gate-height-alignment-weight 0.5` 在接近下一道门时，惩罚预计会从门下沿穿出的状态。它只在门前方 10 m 内、前向速度大于 1 m/s、当前门有效且本拍未终止时生效；阈值是门半高减 0.15 m，超出部分最多计 1 m，按接近距离加权后取平方。默认权重是 0，不改变原配方。
+
+```bash
+python -m scripts.train_joint --variant joint --seed 20261121 \
+  --envs 4096 --num-steps-per-env 20 --num-mini-batches 4 \
+  --grad-accum-steps 1 --lr-schedule adaptive --learning-rate 0.001 \
+  --gate-height-alignment-weight 0.5 --updates 2701 \
+  --resume-from <joint-3060-u2501.pt> --out runs/height-alignment
+```
+
+只允许 `gate` 或 `joint` 变体使用；从旧检查点续训时，该权重变化会放宽 recipe 校验。2026-11-24 的 384 局 A/B 里，高度对准 `u2601` 比同轮原配方多 48 局通过、漏门少 49 次，但飞行中碰撞多 1 次；相对起点 `u2501` 多 13 局通过、碰撞多 3 次。结果和限制见 [4090 交接报告](../reports/2026-11-24-4090-handover/README.md)。
+
 ## 新服务器复现
 
 使用 Ubuntu 22.04、NVIDIA 驱动 ≥535、RTX 4090 和 CUDA Toolkit 11.8。需要能执行 `nvidia-smi`、`nvcc --version` 和 `g++ --version`。将本目录同步到训练机后，在仓库根目录运行以下命令。在装有 Conda 的机器上首次建立 Python 环境可运行 `conda create -n py311_rmua python=3.11 -y`。
