@@ -12,7 +12,7 @@ import torch
 
 from ruma_ppo.evaluation.rollout import Progress, PWMRouteFollower
 from ruma_ppo.hitsz.legacy_policy import Course, atomic_json
-from scripts.train_bypass_ppo import gate_graph
+from scripts.legacy.train_bypass_ppo import gate_graph
 from ruma_ppo.env.sim.pwm_env import CONTROL_HZ, PWMEnv
 from ruma_ppo.env.sim.wind import WindField, WindSpec
 

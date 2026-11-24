@@ -5,7 +5,7 @@ from pathlib import Path
 
 import torch
 from ruma_ppo.hitsz.course import generate
-from experiment import feature_view, make_model, metrics, paired_diff, scores, validate
+from scripts.legacy.experiment import feature_view, make_model, metrics, paired_diff, scores, validate
 
 
 def direction_rule(data):
