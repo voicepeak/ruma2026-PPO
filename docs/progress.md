@@ -2,16 +2,16 @@
 
 ## TL;DR
 
-- 代码用分支 `refactor/repo-layout`（基于 `feat/ppo-fullbatch-stable`），已推送到 GitHub。
+- 代码收敛在单分支 `feat/ppo-fullbatch-stable`（已包含功能、重构、评测和进度提交），已推送到 GitHub。
 - 当前最好权重是 3060 全样本续训的 `u2501`，不是公开的 `u1338`。
 - 在 4090 上从 `u2501` 续训，恢复 4096×20 的原 4090 吞吐；推荐原始 `adaptive` LR，起始 0.0038。
 - 先搬 `checkpoint_u2501.pt` 到 4090，跑 smoke，再启动长训练。
 
 ## 分支与提交
 
-- `feat/ppo-fullbatch-stable`：功能分支，4 个细提交（batch/累积、stable LR、docs、val192）。
-- `refactor/repo-layout`：重构分支，基于功能分支；目录已整理为 `ruma_ppo/{env,training,evaluation,hitsz,cli}`，测试 2 passed。
-- `main` 还没有合并；临时分支 `feat/ppo-batch-accum`、`feat/ppo-stable-lr`、`docs/native-fullbatch-stable`、`eval/val192-native-stable` 可忽略/删除。
+- `feat/ppo-fullbatch-stable`：唯一工作分支，包含功能、重构、评测和进度提交；目录已整理为 `ruma_ppo/{env,training,evaluation,hitsz,cli}`，测试 2 passed。
+- `main`：默认分支；尚未合并本分支。
+- 旧临时分支和 `refactor/repo-layout` 已删除，远端只保留 `main` 和 `feat/ppo-fullbatch-stable`。
 
 ## 当前权重
 
@@ -37,7 +37,7 @@ sha256sum /data/checkpoints/checkpoint_u2501.pt
 ```bash
 git clone git@github.com:voicepeak/ruma2026-PPO.git
 cd ruma2026-PPO
-git checkout refactor/repo-layout
+git checkout feat/ppo-fullbatch-stable
 
 conda create -n py311_rmua python=3.11 -y
 conda activate py311_rmua
