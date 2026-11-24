@@ -1,0 +1,59 @@
+{
+  "original_recipe_50_updates": {
+    "frozen_base_tensor_count": 38,
+    "frozen_base_weights_bitwise_equal": true,
+    "optimizer_state_slots": 13,
+    "residual_critic_last_layer_norm": 1.4974278211593628,
+    "actor_observations": [
+      "gate_future",
+      "base_action"
+    ],
+    "critic_observations": [
+      "gate_future",
+      "base_action",
+      "state",
+      "gate"
+    ],
+    "critic_adds_frozen_base_value": true,
+    "latent_std_initial": 0.1,
+    "latent_std_final": 0.11749392747879028,
+    "latent_entropy": {
+      "first": -0.8858,
+      "last": -0.7235
+    },
+    "sampled_mean_abs_delta_mps": {
+      "first": 0.0631,
+      "last": 0.077
+    },
+    "signed_mean_delta_mps": {
+      "first": 0.0001,
+      "last": -0.0147
+    },
+    "deterministic_validation": {
+      "steps": 5176,
+      "saturation_fraction": 0.0,
+      "mean_abs_delta_mps": 0.014657993131730312
+    },
+    "residual_command_hard_check_enabled": false,
+    "vertical_acceleration_limit_mps2": 9.81,
+    "original_preclip_gradient_norm_logged": false
+  },
+  "same_recipe_seed_2_update_diagnostic": {
+    "actor_mean_preclip_norm_by_update": [
+      0.8093,
+      0.1155
+    ],
+    "critic_mean_preclip_norm_by_update": [
+      6.4436,
+      51.8286
+    ],
+    "combined_grad_clip_fraction_by_update": [
+      1.0,
+      1.0
+    ],
+    "vertical_pi_clip_fraction_by_update": [
+      0.0488,
+      0.0113
+    ]
+  }
+}

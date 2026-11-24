@@ -1,0 +1,65 @@
+{
+  "suite": "val192",
+  "route": "1-3_2_training",
+  "gate_ids": [
+    38,
+    39,
+    40
+  ],
+  "gate_graph_sha256": "a5a5257e6becd3670a456fc33e8a4b21da5bccc09da3c36ee484a98fcaf05d8d",
+  "scenes_sha256": "c34084789996f890b297490cfc881af05c20fbabedd2b8f4f18374a9819fe73a",
+  "models": {
+    "v12": {
+      "name": "v12",
+      "sha256": "8e997b5215152c8f63797ba1319b8ad8abd7d7bd5e4e57b9e667d71e9604a86d"
+    },
+    "candidate": {
+      "name": "native_residual_50",
+      "sha256": "3fbae312a3b12c21ff1a4164b0c0f9904b9a06443fdb39f9d760f46980fe5841"
+    }
+  },
+  "repeat_verified": true,
+  "candidate": {
+    "cases": 192,
+    "outcomes": {
+      "collision": 46,
+      "missed_gate": 31,
+      "success": 115
+    },
+    "three_gate_rate": 0.5989583333333334,
+    "mean_gates": 2.1302083333333335,
+    "near_miss_count": 30,
+    "mean_success_s": 3.460420443478261,
+    "minimum_clearance_m": -0.834545,
+    "residual": {
+      "steps": 5176,
+      "saturation_fraction": 0.0,
+      "mean_abs_delta_mps": 0.014657993131730312
+    }
+  },
+  "v12": {
+    "cases": 192,
+    "outcomes": {
+      "collision": 50,
+      "missed_gate": 78,
+      "success": 64
+    },
+    "three_gate_rate": 0.3333333333333333,
+    "mean_gates": 1.7604166666666667,
+    "near_miss_count": 49,
+    "mean_success_s": 3.8642510625,
+    "minimum_clearance_m": -0.834545
+  },
+  "paired": {
+    "candidate_only": 52,
+    "v12_only": 1,
+    "both": 63,
+    "neither": 76,
+    "mcnemar_exact_p": 1.199040866595169e-14,
+    "gain": 0.265625,
+    "group_bootstrap_95_ci": [
+      0.25,
+      0.28125
+    ]
+  }
+}

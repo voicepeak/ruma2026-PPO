@@ -1,0 +1,22 @@
+{
+  "bc": {
+    "examples": 65536,
+    "teacher_active_examples": 14254,
+    "mae_mps": 0.03591407835483551,
+    "active_mae_mps": 0.06354786455631256,
+    "inactive_mae_mps": 0.028233176097273827,
+    "teacher_active_mean_abs_mps": 0.25926828384399414,
+    "mean_abs_delta_on_teacher_active_mps": 0.25576579570770264,
+    "mean_abs_delta_mps": 0.0777212455868721
+  },
+  "bc_ppo": {
+    "examples": 65536,
+    "teacher_active_examples": 14254,
+    "mae_mps": 0.05375240370631218,
+    "active_mae_mps": 0.0720662772655487,
+    "inactive_mae_mps": 0.04866200312972069,
+    "teacher_active_mean_abs_mps": 0.25926828384399414,
+    "mean_abs_delta_on_teacher_active_mps": 0.23177728056907654,
+    "mean_abs_delta_mps": 0.0884893536567688
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "teacher_environment_steps": 524288,
+  "train_active_examples": 100661,
+  "train_inactive_examples": 358091,
+  "epochs": 12,
+  "held_out_before": {
+    "examples": 65536,
+    "teacher_active_examples": 14254,
+    "mae_mps": 0.056390538811683655,
+    "active_mae_mps": 0.25926828384399414,
+    "inactive_mae_mps": 3.130107284476935e-10,
+    "teacher_active_mean_abs_mps": 0.25926828384399414
+  },
+  "held_out_after": {
+    "examples": 65536,
+    "teacher_active_examples": 14254,
+    "mae_mps": 0.03591407835483551,
+    "active_mae_mps": 0.06354786455631256,
+    "inactive_mae_mps": 0.028233176097273827,
+    "teacher_active_mean_abs_mps": 0.25926828384399414
+  }
+}

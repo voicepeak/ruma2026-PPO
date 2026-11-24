@@ -1,0 +1,2400 @@
+{
+  "val192": {
+    "conditions": {
+      "a0a-s20261125": {
+        "cases": 192,
+        "success": 122,
+        "missed_gate": 25,
+        "below_gate": 25,
+        "initial_contacts": 36,
+        "airborne_collisions": 9,
+        "airborne_by_object": {
+          "moving_vehicle": 7,
+          "fixed_obstacle": 2
+        },
+        "mean_gates": 2.1875,
+        "mean_success_s": 3.433104680327869,
+        "gate40_margin_sample_size": 143,
+        "gate40_margin_median_m": 0.41641080379486084
+      },
+      "a0a-s20261126": {
+        "cases": 192,
+        "success": 112,
+        "missed_gate": 34,
+        "below_gate": 34,
+        "initial_contacts": 36,
+        "airborne_collisions": 10,
+        "airborne_by_object": {
+          "moving_vehicle": 8,
+          "fixed_obstacle": 2
+        },
+        "mean_gates": 2.1145833333333335,
+        "mean_success_s": 3.4679745982142856,
+        "gate40_margin_sample_size": 140,
+        "gate40_margin_median_m": 0.42959898710250854
+      },
+      "a0a-s20261127": {
+        "cases": 192,
+        "success": 118,
+        "missed_gate": 28,
+        "below_gate": 28,
+        "initial_contacts": 36,
+        "airborne_collisions": 10,
+        "airborne_by_object": {
+          "moving_vehicle": 7,
+          "fixed_obstacle": 3
+        },
+        "mean_gates": 2.15625,
+        "mean_success_s": 3.433414008474576,
+        "gate40_margin_sample_size": 140,
+        "gate40_margin_median_m": 0.45697450637817383
+      },
+      "a0b-s20261125": {
+        "cases": 192,
+        "success": 113,
+        "missed_gate": 34,
+        "below_gate": 34,
+        "initial_contacts": 36,
+        "airborne_collisions": 9,
+        "airborne_by_object": {
+          "moving_vehicle": 6,
+          "fixed_obstacle": 3
+        },
+        "mean_gates": 2.1197916666666665,
+        "mean_success_s": 3.4486216017699114,
+        "gate40_margin_sample_size": 139,
+        "gate40_margin_median_m": 0.3384542465209961
+      },
+      "base": {
+        "cases": 192,
+        "success": 115,
+        "missed_gate": 31,
+        "below_gate": 31,
+        "initial_contacts": 36,
+        "airborne_collisions": 10,
+        "airborne_by_object": {
+          "fixed_obstacle": 3,
+          "moving_vehicle": 7
+        },
+        "mean_gates": 2.140625,
+        "mean_success_s": 3.448941913043478,
+        "gate40_margin_sample_size": 140,
+        "gate40_margin_median_m": 0.45078474283218384
+      },
+      "teacher": {
+        "cases": 192,
+        "success": 123,
+        "missed_gate": 23,
+        "below_gate": 23,
+        "initial_contacts": 36,
+        "airborne_collisions": 10,
+        "airborne_by_object": {
+          "fixed_obstacle": 3,
+          "moving_vehicle": 7
+        },
+        "mean_gates": 2.203125,
+        "mean_success_s": 3.450005894308943,
+        "gate40_margin_sample_size": 143,
+        "gate40_margin_median_m": 0.45073938369750977
+      },
+      "a1-bc": {
+        "cases": 192,
+        "success": 127,
+        "missed_gate": 22,
+        "below_gate": 22,
+        "initial_contacts": 36,
+        "airborne_collisions": 7,
+        "airborne_by_object": {
+          "moving_vehicle": 4,
+          "fixed_obstacle": 3
+        },
+        "mean_gates": 2.2395833333333335,
+        "mean_success_s": 3.4565888897637795,
+        "gate40_margin_sample_size": 147,
+        "gate40_margin_median_m": 0.44171369075775146
+      },
+      "a1-bc-ppo": {
+        "cases": 192,
+        "success": 117,
+        "missed_gate": 29,
+        "below_gate": 29,
+        "initial_contacts": 36,
+        "airborne_collisions": 10,
+        "airborne_by_object": {
+          "fixed_obstacle": 4,
+          "moving_vehicle": 6
+        },
+        "mean_gates": 2.171875,
+        "mean_success_s": 3.4482851025641024,
+        "gate40_margin_sample_size": 143,
+        "gate40_margin_median_m": 0.40729188919067383
+      },
+      "a1-original": {
+        "cases": 192,
+        "success": 115,
+        "missed_gate": 31,
+        "below_gate": 31,
+        "initial_contacts": 36,
+        "airborne_collisions": 10,
+        "airborne_by_object": {
+          "fixed_obstacle": 3,
+          "moving_vehicle": 7
+        },
+        "mean_gates": 2.1302083333333335,
+        "mean_success_s": 3.460420443478261,
+        "gate40_margin_sample_size": 140,
+        "gate40_margin_median_m": 0.4693804979324341
+      }
+    },
+    "by_scene_seed": {
+      "61001": {
+        "a0a-s20261125": {
+          "cases": 96,
+          "success": 58,
+          "missed_gate": 17,
+          "below_gate": 17,
+          "initial_contacts": 16,
+          "airborne_collisions": 5,
+          "airborne_by_object": {
+            "moving_vehicle": 5
+          },
+          "mean_gates": 2.21875,
+          "mean_success_s": 3.4076945,
+          "gate40_margin_sample_size": 74,
+          "gate40_margin_median_m": 0.3157583475112915
+        },
+        "a0a-s20261126": {
+          "cases": 96,
+          "success": 52,
+          "missed_gate": 22,
+          "below_gate": 22,
+          "initial_contacts": 16,
+          "airborne_collisions": 6,
+          "airborne_by_object": {
+            "moving_vehicle": 6
+          },
+          "mean_gates": 2.1354166666666665,
+          "mean_success_s": 3.4265619807692307,
+          "gate40_margin_sample_size": 72,
+          "gate40_margin_median_m": 0.35135072469711304
+        },
+        "a0a-s20261127": {
+          "cases": 96,
+          "success": 55,
+          "missed_gate": 19,
+          "below_gate": 19,
+          "initial_contacts": 16,
+          "airborne_collisions": 6,
+          "airborne_by_object": {
+            "moving_vehicle": 5,
+            "fixed_obstacle": 1
+          },
+          "mean_gates": 2.1666666666666665,
+          "mean_success_s": 3.3989316545454544,
+          "gate40_margin_sample_size": 71,
+          "gate40_margin_median_m": 0.3910243511199951
+        },
+        "a0b-s20261125": {
+          "cases": 96,
+          "success": 56,
+          "missed_gate": 20,
+          "below_gate": 20,
+          "initial_contacts": 16,
+          "airborne_collisions": 4,
+          "airborne_by_object": {
+            "moving_vehicle": 4
+          },
+          "mean_gates": 2.1770833333333335,
+          "mean_success_s": 3.391813482142857,
+          "gate40_margin_sample_size": 73,
+          "gate40_margin_median_m": 0.25811028480529785
+        },
+        "base": {
+          "cases": 96,
+          "success": 52,
+          "missed_gate": 21,
+          "below_gate": 21,
+          "initial_contacts": 16,
+          "airborne_collisions": 7,
+          "airborne_by_object": {
+            "fixed_obstacle": 1,
+            "moving_vehicle": 6
+          },
+          "mean_gates": 2.1354166666666665,
+          "mean_success_s": 3.4174181346153847,
+          "gate40_margin_sample_size": 71,
+          "gate40_margin_median_m": 0.38028252124786377
+        },
+        "teacher": {
+          "cases": 96,
+          "success": 56,
+          "missed_gate": 17,
+          "below_gate": 17,
+          "initial_contacts": 16,
+          "airborne_collisions": 7,
+          "airborne_by_object": {
+            "fixed_obstacle": 1,
+            "moving_vehicle": 6
+          },
+          "mean_gates": 2.2083333333333335,
+          "mean_success_s": 3.41333575,
+          "gate40_margin_sample_size": 73,
+          "gate40_margin_median_m": 0.4233618974685669
+        },
+        "a1-bc": {
+          "cases": 96,
+          "success": 59,
+          "missed_gate": 17,
+          "below_gate": 17,
+          "initial_contacts": 16,
+          "airborne_collisions": 4,
+          "airborne_by_object": {
+            "moving_vehicle": 4
+          },
+          "mean_gates": 2.2604166666666665,
+          "mean_success_s": 3.443032525423729,
+          "gate40_margin_sample_size": 76,
+          "gate40_margin_median_m": 0.4221877455711365
+        },
+        "a1-bc-ppo": {
+          "cases": 96,
+          "success": 54,
+          "missed_gate": 20,
+          "below_gate": 20,
+          "initial_contacts": 16,
+          "airborne_collisions": 6,
+          "airborne_by_object": {
+            "fixed_obstacle": 2,
+            "moving_vehicle": 4
+          },
+          "mean_gates": 2.2083333333333335,
+          "mean_success_s": 3.4177280185185186,
+          "gate40_margin_sample_size": 74,
+          "gate40_margin_median_m": 0.3779906630516052
+        },
+        "a1-original": {
+          "cases": 96,
+          "success": 53,
+          "missed_gate": 21,
+          "below_gate": 21,
+          "initial_contacts": 16,
+          "airborne_collisions": 6,
+          "airborne_by_object": {
+            "fixed_obstacle": 1,
+            "moving_vehicle": 5
+          },
+          "mean_gates": 2.1458333333333335,
+          "mean_success_s": 3.4119604150943394,
+          "gate40_margin_sample_size": 72,
+          "gate40_margin_median_m": 0.4465833902359009
+        }
+      },
+      "61002": {
+        "a0a-s20261125": {
+          "cases": 96,
+          "success": 64,
+          "missed_gate": 8,
+          "below_gate": 8,
+          "initial_contacts": 20,
+          "airborne_collisions": 4,
+          "airborne_by_object": {
+            "moving_vehicle": 2,
+            "fixed_obstacle": 2
+          },
+          "mean_gates": 2.15625,
+          "mean_success_s": 3.45613265625,
+          "gate40_margin_sample_size": 69,
+          "gate40_margin_median_m": 0.4617105722427368
+        },
+        "a0a-s20261126": {
+          "cases": 96,
+          "success": 60,
+          "missed_gate": 12,
+          "below_gate": 12,
+          "initial_contacts": 20,
+          "airborne_collisions": 4,
+          "airborne_by_object": {
+            "moving_vehicle": 2,
+            "fixed_obstacle": 2
+          },
+          "mean_gates": 2.09375,
+          "mean_success_s": 3.5038655333333333,
+          "gate40_margin_sample_size": 68,
+          "gate40_margin_median_m": 0.4568289518356323
+        },
+        "a0a-s20261127": {
+          "cases": 96,
+          "success": 63,
+          "missed_gate": 9,
+          "below_gate": 9,
+          "initial_contacts": 20,
+          "airborne_collisions": 4,
+          "airborne_by_object": {
+            "fixed_obstacle": 2,
+            "moving_vehicle": 2
+          },
+          "mean_gates": 2.1458333333333335,
+          "mean_success_s": 3.463517650793651,
+          "gate40_margin_sample_size": 69,
+          "gate40_margin_median_m": 0.5266249179840088
+        },
+        "a0b-s20261125": {
+          "cases": 96,
+          "success": 57,
+          "missed_gate": 14,
+          "below_gate": 14,
+          "initial_contacts": 20,
+          "airborne_collisions": 5,
+          "airborne_by_object": {
+            "moving_vehicle": 2,
+            "fixed_obstacle": 3
+          },
+          "mean_gates": 2.0625,
+          "mean_success_s": 3.504433087719298,
+          "gate40_margin_sample_size": 66,
+          "gate40_margin_median_m": 0.4365493059158325
+        },
+        "base": {
+          "cases": 96,
+          "success": 63,
+          "missed_gate": 10,
+          "below_gate": 10,
+          "initial_contacts": 20,
+          "airborne_collisions": 3,
+          "airborne_by_object": {
+            "fixed_obstacle": 2,
+            "moving_vehicle": 1
+          },
+          "mean_gates": 2.1458333333333335,
+          "mean_success_s": 3.4749615396825395,
+          "gate40_margin_sample_size": 69,
+          "gate40_margin_median_m": 0.5174087882041931
+        },
+        "teacher": {
+          "cases": 96,
+          "success": 67,
+          "missed_gate": 6,
+          "below_gate": 6,
+          "initial_contacts": 20,
+          "airborne_collisions": 3,
+          "airborne_by_object": {
+            "fixed_obstacle": 2,
+            "moving_vehicle": 1
+          },
+          "mean_gates": 2.1979166666666665,
+          "mean_success_s": 3.4806555671641792,
+          "gate40_margin_sample_size": 70,
+          "gate40_margin_median_m": 0.4908032715320587
+        },
+        "a1-bc": {
+          "cases": 96,
+          "success": 68,
+          "missed_gate": 5,
+          "below_gate": 5,
+          "initial_contacts": 20,
+          "airborne_collisions": 3,
+          "airborne_by_object": {
+            "fixed_obstacle": 3
+          },
+          "mean_gates": 2.21875,
+          "mean_success_s": 3.4683510294117648,
+          "gate40_margin_sample_size": 71,
+          "gate40_margin_median_m": 0.4766038656234741
+        },
+        "a1-bc-ppo": {
+          "cases": 96,
+          "success": 63,
+          "missed_gate": 9,
+          "below_gate": 9,
+          "initial_contacts": 20,
+          "airborne_collisions": 4,
+          "airborne_by_object": {
+            "moving_vehicle": 2,
+            "fixed_obstacle": 2
+          },
+          "mean_gates": 2.1354166666666665,
+          "mean_success_s": 3.474476888888889,
+          "gate40_margin_sample_size": 69,
+          "gate40_margin_median_m": 0.43746042251586914
+        },
+        "a1-original": {
+          "cases": 96,
+          "success": 62,
+          "missed_gate": 10,
+          "below_gate": 10,
+          "initial_contacts": 20,
+          "airborne_collisions": 4,
+          "airborne_by_object": {
+            "moving_vehicle": 2,
+            "fixed_obstacle": 2
+          },
+          "mean_gates": 2.1145833333333335,
+          "mean_success_s": 3.501845951612903,
+          "gate40_margin_sample_size": 68,
+          "gate40_margin_median_m": 0.5150529742240906
+        }
+      }
+    },
+    "paired": {
+      "base_vs_a0a-s20261125": {
+        "both": 107,
+        "neither": 62,
+        "mcnemar_exact_p": 0.21003961563110352,
+        "gain": 0.036458333333333336,
+        "group_bootstrap_95_ci": [
+          -0.03125,
+          0.10416666666666667
+        ],
+        "alternative_only": 15,
+        "reference_only": 8,
+        "outcome_transitions": [
+          {
+            "before": "collision",
+            "after": "collision",
+            "cases": 42
+          },
+          {
+            "before": "collision",
+            "after": "success",
+            "cases": 4
+          },
+          {
+            "before": "missed_gate",
+            "after": "missed_gate",
+            "cases": 20
+          },
+          {
+            "before": "missed_gate",
+            "after": "success",
+            "cases": 11
+          },
+          {
+            "before": "success",
+            "after": "collision",
+            "cases": 3
+          },
+          {
+            "before": "success",
+            "after": "missed_gate",
+            "cases": 5
+          },
+          {
+            "before": "success",
+            "after": "success",
+            "cases": 107
+          }
+        ],
+        "new_airborne_collisions": 3,
+        "avoided_airborne_collisions": 4,
+        "paired_gate40_margin_m": {
+          "cases": 136,
+          "reference_median": 0.4407828450202942,
+          "alternative_median": 0.40808194875717163,
+          "median_paired_delta": 0.0027392953634262085
+        }
+      },
+      "base_vs_a0a-s20261126": {
+        "both": 107,
+        "neither": 72,
+        "mcnemar_exact_p": 0.5810546875,
+        "gain": -0.015625,
+        "group_bootstrap_95_ci": [
+          -0.052083333333333336,
+          0.020833333333333332
+        ],
+        "alternative_only": 5,
+        "reference_only": 8,
+        "outcome_transitions": [
+          {
+            "before": "collision",
+            "after": "collision",
+            "cases": 44
+          },
+          {
+            "before": "collision",
+            "after": "success",
+            "cases": 2
+          },
+          {
+            "before": "missed_gate",
+            "after": "missed_gate",
+            "cases": 28
+          },
+          {
+            "before": "missed_gate",
+            "after": "success",
+            "cases": 3
+          },
+          {
+            "before": "success",
+            "after": "collision",
+            "cases": 2
+          },
+          {
+            "before": "success",
+            "after": "missed_gate",
+            "cases": 6
+          },
+          {
+            "before": "success",
+            "after": "success",
+            "cases": 107
+          }
+        ],
+        "new_airborne_collisions": 2,
+        "avoided_airborne_collisions": 2,
+        "paired_gate40_margin_m": {
+          "cases": 137,
+          "reference_median": 0.4543263912200928,
+          "alternative_median": 0.43076562881469727,
+          "median_paired_delta": -0.022684454917907715
+        }
+      },
+      "base_vs_a0a-s20261127": {
+        "both": 107,
+        "neither": 66,
+        "mcnemar_exact_p": 0.6476058959960938,
+        "gain": 0.015625,
+        "group_bootstrap_95_ci": [
+          -0.03125,
+          0.0625
+        ],
+        "alternative_only": 11,
+        "reference_only": 8,
+        "outcome_transitions": [
+          {
+            "before": "collision",
+            "after": "collision",
+            "cases": 44
+          },
+          {
+            "before": "collision",
+            "after": "success",
+            "cases": 2
+          },
+          {
+            "before": "missed_gate",
+            "after": "missed_gate",
+            "cases": 22
+          },
+          {
+            "before": "missed_gate",
+            "after": "success",
+            "cases": 9
+          },
+          {
+            "before": "success",
+            "after": "collision",
+            "cases": 2
+          },
+          {
+            "before": "success",
+            "after": "missed_gate",
+            "cases": 6
+          },
+          {
+            "before": "success",
+            "after": "success",
+            "cases": 107
+          }
+        ],
+        "new_airborne_collisions": 2,
+        "avoided_airborne_collisions": 2,
+        "paired_gate40_margin_m": {
+          "cases": 135,
+          "reference_median": 0.4472430944442749,
+          "alternative_median": 0.45865774154663086,
+          "median_paired_delta": -4.392862319946289e-05
+        }
+      },
+      "base_vs_a0b-s20261125": {
+        "both": 100,
+        "neither": 64,
+        "mcnemar_exact_p": 0.8505540192127228,
+        "gain": -0.010416666666666666,
+        "group_bootstrap_95_ci": [
+          -0.08333333333333333,
+          0.0625
+        ],
+        "alternative_only": 13,
+        "reference_only": 15,
+        "outcome_transitions": [
+          {
+            "before": "collision",
+            "after": "collision",
+            "cases": 41
+          },
+          {
+            "before": "collision",
+            "after": "success",
+            "cases": 5
+          },
+          {
+            "before": "missed_gate",
+            "after": "missed_gate",
+            "cases": 23
+          },
+          {
+            "before": "missed_gate",
+            "after": "success",
+            "cases": 8
+          },
+          {
+            "before": "success",
+            "after": "collision",
+            "cases": 4
+          },
+          {
+            "before": "success",
+            "after": "missed_gate",
+            "cases": 11
+          },
+          {
+            "before": "success",
+            "after": "success",
+            "cases": 100
+          }
+        ],
+        "new_airborne_collisions": 4,
+        "avoided_airborne_collisions": 5,
+        "paired_gate40_margin_m": {
+          "cases": 132,
+          "reference_median": 0.46855831146240234,
+          "alternative_median": 0.3556478023529053,
+          "median_paired_delta": -0.04419797658920288
+        }
+      },
+      "base_vs_teacher": {
+        "both": 115,
+        "neither": 69,
+        "mcnemar_exact_p": 0.0078125,
+        "gain": 0.041666666666666664,
+        "group_bootstrap_95_ci": [
+          0.0,
+          0.08333333333333333
+        ],
+        "alternative_only": 8,
+        "reference_only": 0,
+        "outcome_transitions": [
+          {
+            "before": "collision",
+            "after": "collision",
+            "cases": 46
+          },
+          {
+            "before": "missed_gate",
+            "after": "missed_gate",
+            "cases": 23
+          },
+          {
+            "before": "missed_gate",
+            "after": "success",
+            "cases": 8
+          },
+          {
+            "before": "success",
+            "after": "success",
+            "cases": 115
+          }
+        ],
+        "new_airborne_collisions": 0,
+        "avoided_airborne_collisions": 0,
+        "paired_gate40_margin_m": {
+          "cases": 140,
+          "reference_median": 0.45078474283218384,
+          "alternative_median": 0.45253288745880127,
+          "median_paired_delta": 0.0
+        }
+      },
+      "base_vs_a1-bc": {
+        "both": 114,
+        "neither": 64,
+        "mcnemar_exact_p": 0.0018310546875,
+        "gain": 0.0625,
+        "group_bootstrap_95_ci": [
+          0.010416666666666666,
+          0.11458333333333333
+        ],
+        "alternative_only": 13,
+        "reference_only": 1,
+        "outcome_transitions": [
+          {
+            "before": "collision",
+            "after": "collision",
+            "cases": 42
+          },
+          {
+            "before": "collision",
+            "after": "success",
+            "cases": 4
+          },
+          {
+            "before": "missed_gate",
+            "after": "missed_gate",
+            "cases": 22
+          },
+          {
+            "before": "missed_gate",
+            "after": "success",
+            "cases": 9
+          },
+          {
+            "before": "success",
+            "after": "collision",
+            "cases": 1
+          },
+          {
+            "before": "success",
+            "after": "success",
+            "cases": 114
+          }
+        ],
+        "new_airborne_collisions": 1,
+        "avoided_airborne_collisions": 4,
+        "paired_gate40_margin_m": {
+          "cases": 139,
+          "reference_median": 0.4472430944442749,
+          "alternative_median": 0.47059106826782227,
+          "median_paired_delta": 0.011653140187263489
+        }
+      },
+      "base_vs_a1-bc-ppo": {
+        "both": 111,
+        "neither": 71,
+        "mcnemar_exact_p": 0.75390625,
+        "gain": 0.010416666666666666,
+        "group_bootstrap_95_ci": [
+          -0.020833333333333332,
+          0.041666666666666664
+        ],
+        "alternative_only": 6,
+        "reference_only": 4,
+        "outcome_transitions": [
+          {
+            "before": "collision",
+            "after": "collision",
+            "cases": 45
+          },
+          {
+            "before": "collision",
+            "after": "success",
+            "cases": 1
+          },
+          {
+            "before": "missed_gate",
+            "after": "missed_gate",
+            "cases": 26
+          },
+          {
+            "before": "missed_gate",
+            "after": "success",
+            "cases": 5
+          },
+          {
+            "before": "success",
+            "after": "collision",
+            "cases": 1
+          },
+          {
+            "before": "success",
+            "after": "missed_gate",
+            "cases": 3
+          },
+          {
+            "before": "success",
+            "after": "success",
+            "cases": 111
+          }
+        ],
+        "new_airborne_collisions": 1,
+        "avoided_airborne_collisions": 1,
+        "paired_gate40_margin_m": {
+          "cases": 139,
+          "reference_median": 0.4543263912200928,
+          "alternative_median": 0.41344237327575684,
+          "median_paired_delta": 0.003664255142211914
+        }
+      },
+      "base_vs_a1-original": {
+        "both": 109,
+        "neither": 71,
+        "mcnemar_exact_p": 1.0,
+        "gain": 0.0,
+        "group_bootstrap_95_ci": [
+          -0.041666666666666664,
+          0.041666666666666664
+        ],
+        "alternative_only": 6,
+        "reference_only": 6,
+        "outcome_transitions": [
+          {
+            "before": "collision",
+            "after": "collision",
+            "cases": 45
+          },
+          {
+            "before": "collision",
+            "after": "success",
+            "cases": 1
+          },
+          {
+            "before": "missed_gate",
+            "after": "missed_gate",
+            "cases": 26
+          },
+          {
+            "before": "missed_gate",
+            "after": "success",
+            "cases": 5
+          },
+          {
+            "before": "success",
+            "after": "collision",
+            "cases": 1
+          },
+          {
+            "before": "success",
+            "after": "missed_gate",
+            "cases": 5
+          },
+          {
+            "before": "success",
+            "after": "success",
+            "cases": 109
+          }
+        ],
+        "new_airborne_collisions": 1,
+        "avoided_airborne_collisions": 1,
+        "paired_gate40_margin_m": {
+          "cases": 138,
+          "reference_median": 0.45078474283218384,
+          "alternative_median": 0.4693804979324341,
+          "median_paired_delta": 0.007010668516159058
+        }
+      },
+      "teacher_vs_a1-bc": {
+        "both": 121,
+        "neither": 63,
+        "mcnemar_exact_p": 0.2890625,
+        "gain": 0.020833333333333332,
+        "group_bootstrap_95_ci": [
+          0.010416666666666666,
+          0.03125
+        ],
+        "alternative_only": 6,
+        "reference_only": 2,
+        "outcome_transitions": [
+          {
+            "before": "collision",
+            "after": "collision",
+            "cases": 42
+          },
+          {
+            "before": "collision",
+            "after": "success",
+            "cases": 4
+          },
+          {
+            "before": "missed_gate",
+            "after": "missed_gate",
+            "cases": 21
+          },
+          {
+            "before": "missed_gate",
+            "after": "success",
+            "cases": 2
+          },
+          {
+            "before": "success",
+            "after": "collision",
+            "cases": 1
+          },
+          {
+            "before": "success",
+            "after": "missed_gate",
+            "cases": 1
+          },
+          {
+            "before": "success",
+            "after": "success",
+            "cases": 121
+          }
+        ],
+        "new_airborne_collisions": 1,
+        "avoided_airborne_collisions": 4,
+        "paired_gate40_margin_m": {
+          "cases": 142,
+          "reference_median": 0.44899123907089233,
+          "alternative_median": 0.4657789468765259,
+          "median_paired_delta": -0.007839411497116089
+        }
+      },
+      "a1-bc_vs_a1-bc-ppo": {
+        "both": 115,
+        "neither": 63,
+        "mcnemar_exact_p": 0.012939453125,
+        "gain": -0.052083333333333336,
+        "group_bootstrap_95_ci": [
+          -0.07291666666666667,
+          -0.03125
+        ],
+        "alternative_only": 2,
+        "reference_only": 12,
+        "outcome_transitions": [
+          {
+            "before": "collision",
+            "after": "collision",
+            "cases": 41
+          },
+          {
+            "before": "collision",
+            "after": "success",
+            "cases": 2
+          },
+          {
+            "before": "missed_gate",
+            "after": "missed_gate",
+            "cases": 22
+          },
+          {
+            "before": "success",
+            "after": "collision",
+            "cases": 5
+          },
+          {
+            "before": "success",
+            "after": "missed_gate",
+            "cases": 7
+          },
+          {
+            "before": "success",
+            "after": "success",
+            "cases": 115
+          }
+        ],
+        "new_airborne_collisions": 5,
+        "avoided_airborne_collisions": 2,
+        "paired_gate40_margin_m": {
+          "cases": 141,
+          "reference_median": 0.47059106826782227,
+          "alternative_median": 0.40729188919067383,
+          "median_paired_delta": -0.019721508026123047
+        }
+      },
+      "a0a-s20261125_vs_a0b-s20261125": {
+        "both": 110,
+        "neither": 67,
+        "mcnemar_exact_p": 0.03515625,
+        "gain": -0.046875,
+        "group_bootstrap_95_ci": [
+          -0.07291666666666667,
+          -0.020833333333333332
+        ],
+        "alternative_only": 3,
+        "reference_only": 12,
+        "outcome_transitions": [
+          {
+            "before": "collision",
+            "after": "collision",
+            "cases": 44
+          },
+          {
+            "before": "collision",
+            "after": "success",
+            "cases": 1
+          },
+          {
+            "before": "missed_gate",
+            "after": "missed_gate",
+            "cases": 23
+          },
+          {
+            "before": "missed_gate",
+            "after": "success",
+            "cases": 2
+          },
+          {
+            "before": "success",
+            "after": "collision",
+            "cases": 1
+          },
+          {
+            "before": "success",
+            "after": "missed_gate",
+            "cases": 11
+          },
+          {
+            "before": "success",
+            "after": "success",
+            "cases": 110
+          }
+        ],
+        "new_airborne_collisions": 1,
+        "avoided_airborne_collisions": 1,
+        "paired_gate40_margin_m": {
+          "cases": 138,
+          "reference_median": 0.422718346118927,
+          "alternative_median": 0.3409561514854431,
+          "median_paired_delta": -0.03985065221786499
+        }
+      }
+    },
+    "a0a_train_seed_average": {
+      "success": {
+        "mean_delta_cases": 2.333333333333333,
+        "paired_scene_group_bootstrap_95_ci_cases": [
+          -7.333333333333334,
+          12.0
+        ]
+      },
+      "below_gate": {
+        "mean_delta_cases": -2.0,
+        "paired_scene_group_bootstrap_95_ci_cases": [
+          -7.333333333333334,
+          3.333333333333333
+        ]
+      },
+      "airborne_collisions": {
+        "mean_delta_cases": -0.33333333333333354,
+        "paired_scene_group_bootstrap_95_ci_cases": [
+          -4.666666666666667,
+          4.0
+        ]
+      }
+    }
+  },
+  "fresh384": {
+    "conditions": {
+      "a0a-s20261125": {
+        "cases": 384,
+        "success": 218,
+        "missed_gate": 64,
+        "below_gate": 63,
+        "initial_contacts": 64,
+        "airborne_collisions": 38,
+        "airborne_by_object": {
+          "moving_vehicle": 16,
+          "fixed_obstacle": 22
+        },
+        "mean_gates": 2.0572916666666665,
+        "mean_success_s": 3.510426724770642,
+        "gate40_margin_sample_size": 269,
+        "gate40_margin_median_m": 0.3752470016479492
+      },
+      "a0a-s20261126": {
+        "cases": 384,
+        "success": 221,
+        "missed_gate": 62,
+        "below_gate": 61,
+        "initial_contacts": 64,
+        "airborne_collisions": 37,
+        "airborne_by_object": {
+          "moving_vehicle": 14,
+          "fixed_obstacle": 23
+        },
+        "mean_gates": 2.0703125,
+        "mean_success_s": 3.5342343936651583,
+        "gate40_margin_sample_size": 271,
+        "gate40_margin_median_m": 0.3600001335144043
+      },
+      "a0a-s20261127": {
+        "cases": 384,
+        "success": 226,
+        "missed_gate": 59,
+        "below_gate": 58,
+        "initial_contacts": 64,
+        "airborne_collisions": 35,
+        "airborne_by_object": {
+          "moving_vehicle": 12,
+          "fixed_obstacle": 23
+        },
+        "mean_gates": 2.078125,
+        "mean_success_s": 3.5072278230088494,
+        "gate40_margin_sample_size": 274,
+        "gate40_margin_median_m": 0.3664278984069824
+      },
+      "a0b-s20261125": {
+        "cases": 384,
+        "success": 217,
+        "missed_gate": 64,
+        "below_gate": 63,
+        "initial_contacts": 64,
+        "airborne_collisions": 39,
+        "airborne_by_object": {
+          "moving_vehicle": 16,
+          "fixed_obstacle": 23
+        },
+        "mean_gates": 2.0520833333333335,
+        "mean_success_s": 3.497342078341014,
+        "gate40_margin_sample_size": 266,
+        "gate40_margin_median_m": 0.31866973638534546
+      },
+      "base": {
+        "cases": 384,
+        "success": 221,
+        "missed_gate": 62,
+        "below_gate": 61,
+        "initial_contacts": 64,
+        "airborne_collisions": 37,
+        "airborne_by_object": {
+          "fixed_obstacle": 20,
+          "moving_vehicle": 17
+        },
+        "mean_gates": 2.0729166666666665,
+        "mean_success_s": 3.5034390542986427,
+        "gate40_margin_sample_size": 272,
+        "gate40_margin_median_m": 0.35565370321273804
+      },
+      "teacher": {
+        "cases": 384,
+        "success": 233,
+        "missed_gate": 49,
+        "below_gate": 48,
+        "initial_contacts": 64,
+        "airborne_collisions": 38,
+        "airborne_by_object": {
+          "fixed_obstacle": 20,
+          "moving_vehicle": 18
+        },
+        "mean_gates": 2.109375,
+        "mean_success_s": 3.4949504978540773,
+        "gate40_margin_sample_size": 272,
+        "gate40_margin_median_m": 0.3527921438217163
+      },
+      "a1-bc": {
+        "cases": 384,
+        "success": 228,
+        "missed_gate": 53,
+        "below_gate": 52,
+        "initial_contacts": 64,
+        "airborne_collisions": 39,
+        "airborne_by_object": {
+          "moving_vehicle": 19,
+          "fixed_obstacle": 20
+        },
+        "mean_gates": 2.0911458333333335,
+        "mean_success_s": 3.5083214342105262,
+        "gate40_margin_sample_size": 271,
+        "gate40_margin_median_m": 0.36760950088500977
+      },
+      "a1-bc-ppo": {
+        "cases": 384,
+        "success": 228,
+        "missed_gate": 55,
+        "below_gate": 54,
+        "initial_contacts": 64,
+        "airborne_collisions": 37,
+        "airborne_by_object": {
+          "fixed_obstacle": 20,
+          "moving_vehicle": 17
+        },
+        "mean_gates": 2.0963541666666665,
+        "mean_success_s": 3.503404763157895,
+        "gate40_margin_sample_size": 273,
+        "gate40_margin_median_m": 0.34041285514831543
+      }
+    },
+    "by_scene_seed": {
+      "64011": {
+        "a0a-s20261125": {
+          "cases": 96,
+          "success": 61,
+          "missed_gate": 19,
+          "below_gate": 19,
+          "initial_contacts": 10,
+          "airborne_collisions": 6,
+          "airborne_by_object": {
+            "moving_vehicle": 2,
+            "fixed_obstacle": 4
+          },
+          "mean_gates": 2.3020833333333335,
+          "mean_success_s": 3.5292536721311474,
+          "gate40_margin_sample_size": 78,
+          "gate40_margin_median_m": 0.41829413175582886
+        },
+        "a0a-s20261126": {
+          "cases": 96,
+          "success": 64,
+          "missed_gate": 16,
+          "below_gate": 16,
+          "initial_contacts": 10,
+          "airborne_collisions": 6,
+          "airborne_by_object": {
+            "moving_vehicle": 2,
+            "fixed_obstacle": 4
+          },
+          "mean_gates": 2.3333333333333335,
+          "mean_success_s": 3.557277265625,
+          "gate40_margin_sample_size": 78,
+          "gate40_margin_median_m": 0.3651949167251587
+        },
+        "a0a-s20261127": {
+          "cases": 96,
+          "success": 63,
+          "missed_gate": 16,
+          "below_gate": 16,
+          "initial_contacts": 10,
+          "airborne_collisions": 7,
+          "airborne_by_object": {
+            "moving_vehicle": 2,
+            "fixed_obstacle": 5
+          },
+          "mean_gates": 2.3020833333333335,
+          "mean_success_s": 3.5401475714285713,
+          "gate40_margin_sample_size": 77,
+          "gate40_margin_median_m": 0.3874697685241699
+        },
+        "a0b-s20261125": {
+          "cases": 96,
+          "success": 61,
+          "missed_gate": 18,
+          "below_gate": 18,
+          "initial_contacts": 10,
+          "airborne_collisions": 7,
+          "airborne_by_object": {
+            "moving_vehicle": 2,
+            "fixed_obstacle": 5
+          },
+          "mean_gates": 2.3020833333333335,
+          "mean_success_s": 3.5242838524590163,
+          "gate40_margin_sample_size": 77,
+          "gate40_margin_median_m": 0.34464871883392334
+        },
+        "base": {
+          "cases": 96,
+          "success": 58,
+          "missed_gate": 17,
+          "below_gate": 17,
+          "initial_contacts": 10,
+          "airborne_collisions": 11,
+          "airborne_by_object": {
+            "fixed_obstacle": 5,
+            "moving_vehicle": 6
+          },
+          "mean_gates": 2.25,
+          "mean_success_s": 3.544477724137931,
+          "gate40_margin_sample_size": 73,
+          "gate40_margin_median_m": 0.42836320400238037
+        },
+        "teacher": {
+          "cases": 96,
+          "success": 60,
+          "missed_gate": 15,
+          "below_gate": 15,
+          "initial_contacts": 10,
+          "airborne_collisions": 11,
+          "airborne_by_object": {
+            "fixed_obstacle": 5,
+            "moving_vehicle": 6
+          },
+          "mean_gates": 2.2916666666666665,
+          "mean_success_s": 3.5470820666666665,
+          "gate40_margin_sample_size": 73,
+          "gate40_margin_median_m": 0.4155104160308838
+        },
+        "a1-bc": {
+          "cases": 96,
+          "success": 59,
+          "missed_gate": 16,
+          "below_gate": 16,
+          "initial_contacts": 10,
+          "airborne_collisions": 11,
+          "airborne_by_object": {
+            "moving_vehicle": 6,
+            "fixed_obstacle": 5
+          },
+          "mean_gates": 2.2604166666666665,
+          "mean_success_s": 3.5340916610169493,
+          "gate40_margin_sample_size": 73,
+          "gate40_margin_median_m": 0.39651358127593994
+        },
+        "a1-bc-ppo": {
+          "cases": 96,
+          "success": 59,
+          "missed_gate": 17,
+          "below_gate": 17,
+          "initial_contacts": 10,
+          "airborne_collisions": 10,
+          "airborne_by_object": {
+            "fixed_obstacle": 5,
+            "moving_vehicle": 5
+          },
+          "mean_gates": 2.28125,
+          "mean_success_s": 3.5346619830508472,
+          "gate40_margin_sample_size": 74,
+          "gate40_margin_median_m": 0.36310940980911255
+        }
+      },
+      "64012": {
+        "a0a-s20261125": {
+          "cases": 96,
+          "success": 56,
+          "missed_gate": 15,
+          "below_gate": 15,
+          "initial_contacts": 17,
+          "airborne_collisions": 8,
+          "airborne_by_object": {
+            "moving_vehicle": 5,
+            "fixed_obstacle": 3
+          },
+          "mean_gates": 2.1041666666666665,
+          "mean_success_s": 3.5491750357142857,
+          "gate40_margin_sample_size": 67,
+          "gate40_margin_median_m": 0.40306997299194336
+        },
+        "a0a-s20261126": {
+          "cases": 96,
+          "success": 58,
+          "missed_gate": 14,
+          "below_gate": 14,
+          "initial_contacts": 17,
+          "airborne_collisions": 7,
+          "airborne_by_object": {
+            "moving_vehicle": 3,
+            "fixed_obstacle": 4
+          },
+          "mean_gates": 2.1354166666666665,
+          "mean_success_s": 3.5452910862068965,
+          "gate40_margin_sample_size": 69,
+          "gate40_margin_median_m": 0.3600001335144043
+        },
+        "a0a-s20261127": {
+          "cases": 96,
+          "success": 59,
+          "missed_gate": 14,
+          "below_gate": 14,
+          "initial_contacts": 17,
+          "airborne_collisions": 6,
+          "airborne_by_object": {
+            "fixed_obstacle": 4,
+            "moving_vehicle": 2
+          },
+          "mean_gates": 2.1458333333333335,
+          "mean_success_s": 3.5353624406779662,
+          "gate40_margin_sample_size": 70,
+          "gate40_margin_median_m": 0.3760192394256592
+        },
+        "a0b-s20261125": {
+          "cases": 96,
+          "success": 57,
+          "missed_gate": 14,
+          "below_gate": 14,
+          "initial_contacts": 17,
+          "airborne_collisions": 8,
+          "airborne_by_object": {
+            "moving_vehicle": 3,
+            "fixed_obstacle": 5
+          },
+          "mean_gates": 2.1041666666666665,
+          "mean_success_s": 3.517834052631579,
+          "gate40_margin_sample_size": 67,
+          "gate40_margin_median_m": 0.32676947116851807
+        },
+        "base": {
+          "cases": 96,
+          "success": 60,
+          "missed_gate": 13,
+          "below_gate": 13,
+          "initial_contacts": 17,
+          "airborne_collisions": 6,
+          "airborne_by_object": {
+            "moving_vehicle": 3,
+            "fixed_obstacle": 3
+          },
+          "mean_gates": 2.15625,
+          "mean_success_s": 3.5087757666666666,
+          "gate40_margin_sample_size": 70,
+          "gate40_margin_median_m": 0.3114830255508423
+        },
+        "teacher": {
+          "cases": 96,
+          "success": 64,
+          "missed_gate": 9,
+          "below_gate": 9,
+          "initial_contacts": 17,
+          "airborne_collisions": 6,
+          "airborne_by_object": {
+            "moving_vehicle": 3,
+            "fixed_obstacle": 3
+          },
+          "mean_gates": 2.1979166666666665,
+          "mean_success_s": 3.503537328125,
+          "gate40_margin_sample_size": 71,
+          "gate40_margin_median_m": 0.31647348403930664
+        },
+        "a1-bc": {
+          "cases": 96,
+          "success": 60,
+          "missed_gate": 11,
+          "below_gate": 11,
+          "initial_contacts": 17,
+          "airborne_collisions": 8,
+          "airborne_by_object": {
+            "moving_vehicle": 5,
+            "fixed_obstacle": 3
+          },
+          "mean_gates": 2.1666666666666665,
+          "mean_success_s": 3.5146807,
+          "gate40_margin_sample_size": 70,
+          "gate40_margin_median_m": 0.33545374870300293
+        },
+        "a1-bc-ppo": {
+          "cases": 96,
+          "success": 62,
+          "missed_gate": 10,
+          "below_gate": 10,
+          "initial_contacts": 17,
+          "airborne_collisions": 7,
+          "airborne_by_object": {
+            "moving_vehicle": 4,
+            "fixed_obstacle": 3
+          },
+          "mean_gates": 2.1770833333333335,
+          "mean_success_s": 3.522909387096774,
+          "gate40_margin_sample_size": 70,
+          "gate40_margin_median_m": 0.36014610528945923
+        }
+      },
+      "64013": {
+        "a0a-s20261125": {
+          "cases": 96,
+          "success": 54,
+          "missed_gate": 12,
+          "below_gate": 11,
+          "initial_contacts": 16,
+          "airborne_collisions": 14,
+          "airborne_by_object": {
+            "fixed_obstacle": 9,
+            "moving_vehicle": 5
+          },
+          "mean_gates": 1.9270833333333333,
+          "mean_success_s": 3.447066074074074,
+          "gate40_margin_sample_size": 63,
+          "gate40_margin_median_m": 0.33898186683654785
+        },
+        "a0a-s20261126": {
+          "cases": 96,
+          "success": 51,
+          "missed_gate": 12,
+          "below_gate": 11,
+          "initial_contacts": 16,
+          "airborne_collisions": 17,
+          "airborne_by_object": {
+            "fixed_obstacle": 10,
+            "moving_vehicle": 7
+          },
+          "mean_gates": 1.8958333333333333,
+          "mean_success_s": 3.464164117647059,
+          "gate40_margin_sample_size": 60,
+          "gate40_margin_median_m": 0.35842543840408325
+        },
+        "a0a-s20261127": {
+          "cases": 96,
+          "success": 53,
+          "missed_gate": 12,
+          "below_gate": 11,
+          "initial_contacts": 16,
+          "airborne_collisions": 15,
+          "airborne_by_object": {
+            "fixed_obstacle": 10,
+            "moving_vehicle": 5
+          },
+          "mean_gates": 1.9166666666666667,
+          "mean_success_s": 3.436430641509434,
+          "gate40_margin_sample_size": 62,
+          "gate40_margin_median_m": 0.28846949338912964
+        },
+        "a0b-s20261125": {
+          "cases": 96,
+          "success": 53,
+          "missed_gate": 13,
+          "below_gate": 12,
+          "initial_contacts": 16,
+          "airborne_collisions": 14,
+          "airborne_by_object": {
+            "fixed_obstacle": 9,
+            "moving_vehicle": 5
+          },
+          "mean_gates": 1.9375,
+          "mean_success_s": 3.450551490566038,
+          "gate40_margin_sample_size": 63,
+          "gate40_margin_median_m": 0.2574889659881592
+        },
+        "base": {
+          "cases": 96,
+          "success": 55,
+          "missed_gate": 12,
+          "below_gate": 11,
+          "initial_contacts": 16,
+          "airborne_collisions": 13,
+          "airborne_by_object": {
+            "fixed_obstacle": 8,
+            "moving_vehicle": 5
+          },
+          "mean_gates": 1.9583333333333333,
+          "mean_success_s": 3.4511054545454547,
+          "gate40_margin_sample_size": 64,
+          "gate40_margin_median_m": 0.35188817977905273
+        },
+        "teacher": {
+          "cases": 96,
+          "success": 57,
+          "missed_gate": 9,
+          "below_gate": 8,
+          "initial_contacts": 16,
+          "airborne_collisions": 14,
+          "airborne_by_object": {
+            "fixed_obstacle": 8,
+            "moving_vehicle": 6
+          },
+          "mean_gates": 1.9791666666666667,
+          "mean_success_s": 3.424951947368421,
+          "gate40_margin_sample_size": 63,
+          "gate40_margin_median_m": 0.3504645824432373
+        },
+        "a1-bc": {
+          "cases": 96,
+          "success": 56,
+          "missed_gate": 10,
+          "below_gate": 9,
+          "initial_contacts": 16,
+          "airborne_collisions": 14,
+          "airborne_by_object": {
+            "fixed_obstacle": 8,
+            "moving_vehicle": 6
+          },
+          "mean_gates": 1.96875,
+          "mean_success_s": 3.47891525,
+          "gate40_margin_sample_size": 62,
+          "gate40_margin_median_m": 0.34292954206466675
+        },
+        "a1-bc-ppo": {
+          "cases": 96,
+          "success": 57,
+          "missed_gate": 10,
+          "below_gate": 9,
+          "initial_contacts": 16,
+          "airborne_collisions": 13,
+          "airborne_by_object": {
+            "fixed_obstacle": 8,
+            "moving_vehicle": 5
+          },
+          "mean_gates": 1.9791666666666667,
+          "mean_success_s": 3.4625399298245614,
+          "gate40_margin_sample_size": 64,
+          "gate40_margin_median_m": 0.33233946561813354
+        }
+      },
+      "64014": {
+        "a0a-s20261125": {
+          "cases": 96,
+          "success": 47,
+          "missed_gate": 18,
+          "below_gate": 18,
+          "initial_contacts": 21,
+          "airborne_collisions": 10,
+          "airborne_by_object": {
+            "moving_vehicle": 4,
+            "fixed_obstacle": 6
+          },
+          "mean_gates": 1.8958333333333333,
+          "mean_success_s": 3.5126208936170213,
+          "gate40_margin_sample_size": 61,
+          "gate40_margin_median_m": 0.3524034023284912
+        },
+        "a0a-s20261126": {
+          "cases": 96,
+          "success": 48,
+          "missed_gate": 20,
+          "below_gate": 20,
+          "initial_contacts": 21,
+          "airborne_collisions": 7,
+          "airborne_by_object": {
+            "fixed_obstacle": 5,
+            "moving_vehicle": 2
+          },
+          "mean_gates": 1.9166666666666667,
+          "mean_success_s": 3.5646000625,
+          "gate40_margin_sample_size": 64,
+          "gate40_margin_median_m": 0.3333105444908142
+        },
+        "a0a-s20261127": {
+          "cases": 96,
+          "success": 51,
+          "missed_gate": 17,
+          "below_gate": 17,
+          "initial_contacts": 21,
+          "airborne_collisions": 7,
+          "airborne_by_object": {
+            "moving_vehicle": 3,
+            "fixed_obstacle": 4
+          },
+          "mean_gates": 1.9479166666666667,
+          "mean_success_s": 3.5075879019607843,
+          "gate40_margin_sample_size": 65,
+          "gate40_margin_median_m": 0.3236234188079834
+        },
+        "a0b-s20261125": {
+          "cases": 96,
+          "success": 46,
+          "missed_gate": 19,
+          "below_gate": 19,
+          "initial_contacts": 21,
+          "airborne_collisions": 10,
+          "airborne_by_object": {
+            "moving_vehicle": 6,
+            "fixed_obstacle": 4
+          },
+          "mean_gates": 1.8645833333333333,
+          "mean_success_s": 3.4901336086956523,
+          "gate40_margin_sample_size": 59,
+          "gate40_margin_median_m": 0.3174821138381958
+        },
+        "base": {
+          "cases": 96,
+          "success": 48,
+          "missed_gate": 20,
+          "below_gate": 20,
+          "initial_contacts": 21,
+          "airborne_collisions": 7,
+          "airborne_by_object": {
+            "moving_vehicle": 3,
+            "fixed_obstacle": 4
+          },
+          "mean_gates": 1.9270833333333333,
+          "mean_success_s": 3.5071453541666666,
+          "gate40_margin_sample_size": 65,
+          "gate40_margin_median_m": 0.3254748582839966
+        },
+        "teacher": {
+          "cases": 96,
+          "success": 52,
+          "missed_gate": 16,
+          "below_gate": 16,
+          "initial_contacts": 21,
+          "airborne_collisions": 7,
+          "airborne_by_object": {
+            "moving_vehicle": 3,
+            "fixed_obstacle": 4
+          },
+          "mean_gates": 1.96875,
+          "mean_success_s": 3.5009594615384616,
+          "gate40_margin_sample_size": 65,
+          "gate40_margin_median_m": 0.3254748582839966
+        },
+        "a1-bc": {
+          "cases": 96,
+          "success": 53,
+          "missed_gate": 16,
+          "below_gate": 16,
+          "initial_contacts": 21,
+          "airborne_collisions": 6,
+          "airborne_by_object": {
+            "fixed_obstacle": 4,
+            "moving_vehicle": 2
+          },
+          "mean_gates": 1.96875,
+          "mean_success_s": 3.5035053396226417,
+          "gate40_margin_sample_size": 66,
+          "gate40_margin_median_m": 0.29743802547454834
+        },
+        "a1-bc-ppo": {
+          "cases": 96,
+          "success": 50,
+          "missed_gate": 18,
+          "below_gate": 18,
+          "initial_contacts": 21,
+          "airborne_collisions": 7,
+          "airborne_by_object": {
+            "fixed_obstacle": 4,
+            "moving_vehicle": 3
+          },
+          "mean_gates": 1.9479166666666667,
+          "mean_success_s": 3.48892142,
+          "gate40_margin_sample_size": 65,
+          "gate40_margin_median_m": 0.30509352684020996
+        }
+      }
+    },
+    "paired": {
+      "base_vs_a0a-s20261125": {
+        "both": 205,
+        "neither": 150,
+        "mcnemar_exact_p": 0.711071103811264,
+        "gain": -0.0078125,
+        "group_bootstrap_95_ci": [
+          -0.026041666666666668,
+          0.013020833333333334
+        ],
+        "alternative_only": 13,
+        "reference_only": 16,
+        "outcome_transitions": [
+          {
+            "before": "collision",
+            "after": "collision",
+            "cases": 93
+          },
+          {
+            "before": "collision",
+            "after": "missed_gate",
+            "cases": 2
+          },
+          {
+            "before": "collision",
+            "after": "success",
+            "cases": 6
+          },
+          {
+            "before": "missed_gate",
+            "after": "collision",
+            "cases": 4
+          },
+          {
+            "before": "missed_gate",
+            "after": "missed_gate",
+            "cases": 51
+          },
+          {
+            "before": "missed_gate",
+            "after": "success",
+            "cases": 7
+          },
+          {
+            "before": "success",
+            "after": "collision",
+            "cases": 5
+          },
+          {
+            "before": "success",
+            "after": "missed_gate",
+            "cases": 11
+          },
+          {
+            "before": "success",
+            "after": "success",
+            "cases": 205
+          }
+        ],
+        "new_airborne_collisions": 9,
+        "avoided_airborne_collisions": 8,
+        "paired_gate40_margin_m": {
+          "cases": 261,
+          "reference_median": 0.3585101366043091,
+          "alternative_median": 0.38083600997924805,
+          "median_paired_delta": 0.007822275161743164
+        }
+      },
+      "base_vs_a0a-s20261126": {
+        "both": 206,
+        "neither": 148,
+        "mcnemar_exact_p": 1.0,
+        "gain": 0.0,
+        "group_bootstrap_95_ci": [
+          -0.0390625,
+          0.036458333333333336
+        ],
+        "alternative_only": 15,
+        "reference_only": 15,
+        "outcome_transitions": [
+          {
+            "before": "collision",
+            "after": "collision",
+            "cases": 92
+          },
+          {
+            "before": "collision",
+            "after": "missed_gate",
+            "cases": 2
+          },
+          {
+            "before": "collision",
+            "after": "success",
+            "cases": 7
+          },
+          {
+            "before": "missed_gate",
+            "after": "collision",
+            "cases": 4
+          },
+          {
+            "before": "missed_gate",
+            "after": "missed_gate",
+            "cases": 50
+          },
+          {
+            "before": "missed_gate",
+            "after": "success",
+            "cases": 8
+          },
+          {
+            "before": "success",
+            "after": "collision",
+            "cases": 5
+          },
+          {
+            "before": "success",
+            "after": "missed_gate",
+            "cases": 10
+          },
+          {
+            "before": "success",
+            "after": "success",
+            "cases": 206
+          }
+        ],
+        "new_airborne_collisions": 9,
+        "avoided_airborne_collisions": 9,
+        "paired_gate40_margin_m": {
+          "cases": 262,
+          "reference_median": 0.3642551898956299,
+          "alternative_median": 0.36076438426971436,
+          "median_paired_delta": -0.015063881874084473
+        }
+      },
+      "base_vs_a0a-s20261127": {
+        "both": 209,
+        "neither": 146,
+        "mcnemar_exact_p": 0.45825831964612007,
+        "gain": 0.013020833333333334,
+        "group_bootstrap_95_ci": [
+          -0.018229166666666668,
+          0.046875
+        ],
+        "alternative_only": 17,
+        "reference_only": 12,
+        "outcome_transitions": [
+          {
+            "before": "collision",
+            "after": "collision",
+            "cases": 92
+          },
+          {
+            "before": "collision",
+            "after": "missed_gate",
+            "cases": 1
+          },
+          {
+            "before": "collision",
+            "after": "success",
+            "cases": 8
+          },
+          {
+            "before": "missed_gate",
+            "after": "collision",
+            "cases": 1
+          },
+          {
+            "before": "missed_gate",
+            "after": "missed_gate",
+            "cases": 52
+          },
+          {
+            "before": "missed_gate",
+            "after": "success",
+            "cases": 9
+          },
+          {
+            "before": "success",
+            "after": "collision",
+            "cases": 6
+          },
+          {
+            "before": "success",
+            "after": "missed_gate",
+            "cases": 6
+          },
+          {
+            "before": "success",
+            "after": "success",
+            "cases": 209
+          }
+        ],
+        "new_airborne_collisions": 7,
+        "avoided_airborne_collisions": 9,
+        "paired_gate40_margin_m": {
+          "cases": 265,
+          "reference_median": 0.3585101366043091,
+          "alternative_median": 0.3654296398162842,
+          "median_paired_delta": -0.0024055391550064087
+        }
+      },
+      "base_vs_a0b-s20261125": {
+        "both": 202,
+        "neither": 148,
+        "mcnemar_exact_p": 0.6075913612730801,
+        "gain": -0.010416666666666666,
+        "group_bootstrap_95_ci": [
+          -0.0390625,
+          0.020833333333333332
+        ],
+        "alternative_only": 15,
+        "reference_only": 19,
+        "outcome_transitions": [
+          {
+            "before": "collision",
+            "after": "collision",
+            "cases": 92
+          },
+          {
+            "before": "collision",
+            "after": "missed_gate",
+            "cases": 2
+          },
+          {
+            "before": "collision",
+            "after": "success",
+            "cases": 7
+          },
+          {
+            "before": "missed_gate",
+            "after": "collision",
+            "cases": 4
+          },
+          {
+            "before": "missed_gate",
+            "after": "missed_gate",
+            "cases": 50
+          },
+          {
+            "before": "missed_gate",
+            "after": "success",
+            "cases": 8
+          },
+          {
+            "before": "success",
+            "after": "collision",
+            "cases": 7
+          },
+          {
+            "before": "success",
+            "after": "missed_gate",
+            "cases": 12
+          },
+          {
+            "before": "success",
+            "after": "success",
+            "cases": 202
+          }
+        ],
+        "new_airborne_collisions": 11,
+        "avoided_airborne_collisions": 9,
+        "paired_gate40_margin_m": {
+          "cases": 257,
+          "reference_median": 0.36467409133911133,
+          "alternative_median": 0.31807446479797363,
+          "median_paired_delta": -0.03165745735168457
+        }
+      },
+      "base_vs_teacher": {
+        "both": 220,
+        "neither": 150,
+        "mcnemar_exact_p": 0.0018310546875,
+        "gain": 0.03125,
+        "group_bootstrap_95_ci": [
+          0.020833333333333332,
+          0.041666666666666664
+        ],
+        "alternative_only": 13,
+        "reference_only": 1,
+        "outcome_transitions": [
+          {
+            "before": "collision",
+            "after": "collision",
+            "cases": 100
+          },
+          {
+            "before": "collision",
+            "after": "success",
+            "cases": 1
+          },
+          {
+            "before": "missed_gate",
+            "after": "collision",
+            "cases": 1
+          },
+          {
+            "before": "missed_gate",
+            "after": "missed_gate",
+            "cases": 49
+          },
+          {
+            "before": "missed_gate",
+            "after": "success",
+            "cases": 12
+          },
+          {
+            "before": "success",
+            "after": "collision",
+            "cases": 1
+          },
+          {
+            "before": "success",
+            "after": "success",
+            "cases": 220
+          }
+        ],
+        "new_airborne_collisions": 2,
+        "avoided_airborne_collisions": 1,
+        "paired_gate40_margin_m": {
+          "cases": 271,
+          "reference_median": 0.352797269821167,
+          "alternative_median": 0.3527870178222656,
+          "median_paired_delta": 0.0
+        }
+      },
+      "base_vs_a1-bc": {
+        "both": 214,
+        "neither": 149,
+        "mcnemar_exact_p": 0.18924713134765625,
+        "gain": 0.018229166666666668,
+        "group_bootstrap_95_ci": [
+          0.0026041666666666665,
+          0.036458333333333336
+        ],
+        "alternative_only": 14,
+        "reference_only": 7,
+        "outcome_transitions": [
+          {
+            "before": "collision",
+            "after": "collision",
+            "cases": 98
+          },
+          {
+            "before": "collision",
+            "after": "missed_gate",
+            "cases": 1
+          },
+          {
+            "before": "collision",
+            "after": "success",
+            "cases": 2
+          },
+          {
+            "before": "missed_gate",
+            "after": "collision",
+            "cases": 3
+          },
+          {
+            "before": "missed_gate",
+            "after": "missed_gate",
+            "cases": 47
+          },
+          {
+            "before": "missed_gate",
+            "after": "success",
+            "cases": 12
+          },
+          {
+            "before": "success",
+            "after": "collision",
+            "cases": 2
+          },
+          {
+            "before": "success",
+            "after": "missed_gate",
+            "cases": 5
+          },
+          {
+            "before": "success",
+            "after": "success",
+            "cases": 214
+          }
+        ],
+        "new_airborne_collisions": 5,
+        "avoided_airborne_collisions": 3,
+        "paired_gate40_margin_m": {
+          "cases": 267,
+          "reference_median": 0.3585101366043091,
+          "alternative_median": 0.36844074726104736,
+          "median_paired_delta": 0.013861477375030518
+        }
+      },
+      "base_vs_a1-bc-ppo": {
+        "both": 215,
+        "neither": 150,
+        "mcnemar_exact_p": 0.1670684814453125,
+        "gain": 0.018229166666666668,
+        "group_bootstrap_95_ci": [
+          0.0078125,
+          0.028645833333333332
+        ],
+        "alternative_only": 13,
+        "reference_only": 6,
+        "outcome_transitions": [
+          {
+            "before": "collision",
+            "after": "collision",
+            "cases": 98
+          },
+          {
+            "before": "collision",
+            "after": "success",
+            "cases": 3
+          },
+          {
+            "before": "missed_gate",
+            "after": "collision",
+            "cases": 2
+          },
+          {
+            "before": "missed_gate",
+            "after": "missed_gate",
+            "cases": 50
+          },
+          {
+            "before": "missed_gate",
+            "after": "success",
+            "cases": 10
+          },
+          {
+            "before": "success",
+            "after": "collision",
+            "cases": 1
+          },
+          {
+            "before": "success",
+            "after": "missed_gate",
+            "cases": 5
+          },
+          {
+            "before": "success",
+            "after": "success",
+            "cases": 215
+          }
+        ],
+        "new_airborne_collisions": 3,
+        "avoided_airborne_collisions": 3,
+        "paired_gate40_margin_m": {
+          "cases": 269,
+          "reference_median": 0.35988783836364746,
+          "alternative_median": 0.34418773651123047,
+          "median_paired_delta": -0.0006375312805175781
+        }
+      },
+      "teacher_vs_a1-bc": {
+        "both": 219,
+        "neither": 142,
+        "mcnemar_exact_p": 0.4048728942871094,
+        "gain": -0.013020833333333334,
+        "group_bootstrap_95_ci": [
+          -0.028645833333333332,
+          0.0
+        ],
+        "alternative_only": 9,
+        "reference_only": 14,
+        "outcome_transitions": [
+          {
+            "before": "collision",
+            "after": "collision",
+            "cases": 100
+          },
+          {
+            "before": "collision",
+            "after": "missed_gate",
+            "cases": 1
+          },
+          {
+            "before": "collision",
+            "after": "success",
+            "cases": 1
+          },
+          {
+            "before": "missed_gate",
+            "after": "collision",
+            "cases": 1
+          },
+          {
+            "before": "missed_gate",
+            "after": "missed_gate",
+            "cases": 40
+          },
+          {
+            "before": "missed_gate",
+            "after": "success",
+            "cases": 8
+          },
+          {
+            "before": "success",
+            "after": "collision",
+            "cases": 2
+          },
+          {
+            "before": "success",
+            "after": "missed_gate",
+            "cases": 12
+          },
+          {
+            "before": "success",
+            "after": "success",
+            "cases": 219
+          }
+        ],
+        "new_airborne_collisions": 3,
+        "avoided_airborne_collisions": 2,
+        "paired_gate40_margin_m": {
+          "cases": 268,
+          "reference_median": 0.3541836142539978,
+          "alternative_median": 0.37004274129867554,
+          "median_paired_delta": -0.00332564115524292
+        }
+      },
+      "a1-bc_vs_a1-bc-ppo": {
+        "both": 220,
+        "neither": 148,
+        "mcnemar_exact_p": 1.0,
+        "gain": 0.0,
+        "group_bootstrap_95_ci": [
+          -0.015625,
+          0.013020833333333334
+        ],
+        "alternative_only": 8,
+        "reference_only": 8,
+        "outcome_transitions": [
+          {
+            "before": "collision",
+            "after": "collision",
+            "cases": 98
+          },
+          {
+            "before": "collision",
+            "after": "missed_gate",
+            "cases": 2
+          },
+          {
+            "before": "collision",
+            "after": "success",
+            "cases": 3
+          },
+          {
+            "before": "missed_gate",
+            "after": "collision",
+            "cases": 2
+          },
+          {
+            "before": "missed_gate",
+            "after": "missed_gate",
+            "cases": 46
+          },
+          {
+            "before": "missed_gate",
+            "after": "success",
+            "cases": 5
+          },
+          {
+            "before": "success",
+            "after": "collision",
+            "cases": 1
+          },
+          {
+            "before": "success",
+            "after": "missed_gate",
+            "cases": 7
+          },
+          {
+            "before": "success",
+            "after": "success",
+            "cases": 220
+          }
+        ],
+        "new_airborne_collisions": 3,
+        "avoided_airborne_collisions": 5,
+        "paired_gate40_margin_m": {
+          "cases": 267,
+          "reference_median": 0.3716447353363037,
+          "alternative_median": 0.34418773651123047,
+          "median_paired_delta": -0.01244497299194336
+        }
+      },
+      "a0a-s20261125_vs_a0b-s20261125": {
+        "both": 211,
+        "neither": 160,
+        "mcnemar_exact_p": 1.0,
+        "gain": -0.0026041666666666665,
+        "group_bootstrap_95_ci": [
+          -0.020833333333333332,
+          0.015625
+        ],
+        "alternative_only": 6,
+        "reference_only": 7,
+        "outcome_transitions": [
+          {
+            "before": "collision",
+            "after": "collision",
+            "cases": 99
+          },
+          {
+            "before": "collision",
+            "after": "missed_gate",
+            "cases": 1
+          },
+          {
+            "before": "collision",
+            "after": "success",
+            "cases": 2
+          },
+          {
+            "before": "missed_gate",
+            "after": "collision",
+            "cases": 2
+          },
+          {
+            "before": "missed_gate",
+            "after": "missed_gate",
+            "cases": 58
+          },
+          {
+            "before": "missed_gate",
+            "after": "success",
+            "cases": 4
+          },
+          {
+            "before": "success",
+            "after": "collision",
+            "cases": 2
+          },
+          {
+            "before": "success",
+            "after": "missed_gate",
+            "cases": 5
+          },
+          {
+            "before": "success",
+            "after": "success",
+            "cases": 211
+          }
+        ],
+        "new_airborne_collisions": 4,
+        "avoided_airborne_collisions": 3,
+        "paired_gate40_margin_m": {
+          "cases": 263,
+          "reference_median": 0.3813894987106323,
+          "alternative_median": 0.31807446479797363,
+          "median_paired_delta": -0.037459731101989746
+        }
+      }
+    },
+    "a0a_train_seed_average": {
+      "success": {
+        "mean_delta_cases": 0.6666666666666652,
+        "paired_scene_group_bootstrap_95_ci_cases": [
+          -9.674999999999994,
+          11.999999999999998
+        ]
+      },
+      "below_gate": {
+        "mean_delta_cases": -0.33333333333333415,
+        "paired_scene_group_bootstrap_95_ci_cases": [
+          -7.000000000000001,
+          6.333333333333333
+        ]
+      },
+      "airborne_collisions": {
+        "mean_delta_cases": -0.3333333333333339,
+        "paired_scene_group_bootstrap_95_ci_cases": [
+          -8.666666666666668,
+          6.333333333333333
+        ]
+      }
+    }
+  }
+}
