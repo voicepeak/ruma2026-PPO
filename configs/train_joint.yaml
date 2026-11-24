@@ -4,6 +4,9 @@ gate:
   aperture_m: [6.0, 3.0]
   pass_reward: 5.0
   three_gate_reward: 15.0
+gate_future:
+  enabled: false
+  min_closing_mps: 0.5
 occupancy:
   horizons_s: [0.5, 1.0]
   grid_shape: [8, 8, 2]

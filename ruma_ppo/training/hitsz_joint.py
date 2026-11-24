@@ -41,6 +41,19 @@ class GateConfig:
 
 
 @dataclass(frozen=True)
+class GateFutureConfig:
+    enabled: bool = False
+    min_closing_mps: float = 0.5
+    unfreeze_actor_head: bool = False
+
+    def __post_init__(self):
+        if not isfinite(self.min_closing_mps) or self.min_closing_mps <= 0:
+            raise ValueError("Minimum closing speed must be finite and positive")
+        if self.unfreeze_actor_head and not self.enabled:
+            raise ValueError("Unfreezing the actor head requires gate future inputs")
+
+
+@dataclass(frozen=True)
 class OccupancyConfig:
     horizons_s: tuple
     grid_shape: tuple
@@ -59,6 +72,21 @@ def gate_features(position, yaw, center, basis, active):
     scale = relative.new_tensor([24, 6, 4])
     features = torch.cat(((relative / scale).clamp(-2, 2), normal), dim=-1)
     return torch.where(active[:, None], features, 0.0)
+
+
+def gate_future_features(position, velocity, center, basis, half_aperture, active, min_closing_mps=0.5):
+    """Predict the crossing in gate coordinates, where positive z points down."""
+    relative = ((position - center)[:, None] @ basis).squeeze(1)
+    gate_velocity = (velocity[:, None] @ basis).squeeze(1)
+    closing = gate_velocity[:, 0]
+    seconds = (-relative[:, 0] / closing.clamp_min(min_closing_mps)).clamp(0, 2)
+    half_height = half_aperture[..., 1]
+    down_at_gate = relative[:, 2] + seconds * gate_velocity[:, 2]
+    down = down_at_gate / half_height
+    time = torch.where(active & (closing > min_closing_mps), seconds / 2, 1.0)
+    height = torch.where(active, down.clamp(-1.5, 1.5), 0.0)
+    lower_margin = torch.where(active, (1 - down).clamp(-1, 1), 0.0)
+    return torch.stack((time, height, lower_margin), dim=-1)
 
 
 class OrderedGates:
@@ -97,10 +125,6 @@ class OrderedGates:
         routes = self.env.env_traj_ids
         index = self.next.clamp_max(self.centers.size(1) - 1)
         return self.centers[routes, index], self.bases[routes, index], self.next < self.counts[routes]
-
-    def features(self, yaw):
-        center, basis, active = self.current()
-        return gate_features(self.env.p, yaw, center, basis, active)
 
     def height_alignment_penalty(self, fatal):
         center, basis, active = self.current()
@@ -174,15 +198,22 @@ class VehicleOccupancy:
 
 
 class GateEnv(RLQuadEnv):
-    def __init__(self, cfg, env_cuda, gate, occupancy=None):
+    def __init__(self, cfg, env_cuda, gate, occupancy=None, future=None):
         super().__init__(cfg, env_cuda)
         self.gate_cfg = gate
         self.gates = OrderedGates(self.env, gate.aperture_m)
         self.occupancy = VehicleOccupancy(self.env, occupancy) if occupancy else None
+        self.future = future
 
     def get_observations(self):
         obs = super().get_observations()
-        obs["gate"] = self.gates.features(self._current_R_yaw)
+        center, basis, active = self.gates.current()
+        obs["gate"] = gate_features(self.env.p, self._current_R_yaw, center, basis, active)
+        if self.future is not None and self.future.enabled:
+            obs["gate_future"] = gate_future_features(
+                self.env.p, self.env.v, center, basis, self.gates.half_aperture, active,
+                self.future.min_closing_mps,
+            )
         if self.occupancy is not None:
             obs["vehicle_target"] = self.occupancy.targets(self._current_R_yaw)
         return obs
@@ -219,7 +250,7 @@ def zero_projection(input_size, output_size):
 
 
 class GateActorCritic(CustomVisionActorCritic):
-    def __init__(self, *args, occupancy=None, **kwargs):
+    def __init__(self, *args, occupancy=None, gate_future=None, **kwargs):
         super().__init__(*args, **kwargs)
         self.actor_gate = zero_projection(6, self.actor_encoder.output_dim)
         self.critic_gate = zero_projection(6, self.critic_encoder.output_dim)
@@ -229,14 +260,21 @@ class GateActorCritic(CustomVisionActorCritic):
             self.forecast = nn.Sequential(nn.Linear(hidden, 128), nn.LeakyReLU(0.05),
                                           nn.Linear(128, occupancy.output_size))
             self.forecast_velocity = zero_projection(occupancy.output_size, self.actor_head.out_features)
+        self.actor_future = self.critic_future = None
+        if gate_future is not None and gate_future.enabled:
+            self.actor_future = zero_projection(3, self.actor_encoder.output_dim)
+            self.critic_future = zero_projection(3, self.critic_encoder.output_dim)
 
-    def encode(self, obs, encoder, gate):
+    def encode(self, obs, encoder, gate, future):
         depth = obs["depth"].reshape(-1, 1, encoder.img_height, encoder.img_width)
         visual = encoder.stem(depth).reshape(*obs.batch_size, encoder.output_dim)
-        return encoder.act(visual + encoder.v_proj(obs["state"]) + gate(obs["gate"]))
+        features = visual + encoder.v_proj(obs["state"]) + gate(obs["gate"])
+        if future is not None:
+            features = features + future(obs["gate_future"])
+        return encoder.act(features)
 
     def actor_outputs(self, obs, masks=None, hidden_state=None):
-        features = self.encode(obs, self.actor_encoder, self.actor_gate)
+        features = self.encode(obs, self.actor_encoder, self.actor_gate, self.actor_future)
         hidden = self.memory_a(features, masks, hidden_state).squeeze(0)
         actions = self.actor_head(self.act_fn(hidden))
         if self.occupancy is None:
@@ -249,7 +287,7 @@ class GateActorCritic(CustomVisionActorCritic):
         return self.actor_outputs(obs, masks, hidden_state)[0]
 
     def evaluate(self, obs, masks=None, hidden_state=None):
-        features = self.encode(obs, self.critic_encoder, self.critic_gate)
+        features = self.encode(obs, self.critic_encoder, self.critic_gate, self.critic_future)
         hidden = self.memory_c(features, masks, hidden_state).squeeze(0)
         return self.critic_head(self.act_fn(hidden))
 
@@ -274,7 +312,7 @@ class OccupancyPPO(PPO):
             elif 0 < kl_mean < self.desired_kl / 2:
                 self.learning_rate = min(1e-2, self.learning_rate * 1.5)
             for group in self.optimizer.param_groups:
-                group["lr"] = self.learning_rate
+                group["lr"] = self.learning_rate * group.get("lr_scale", 1.0)
 
     def _adapt_stable(self, kl_mean):
         self.kl_ema = self.kl_ema_alpha * self.kl_ema + (1.0 - self.kl_ema_alpha) * kl_mean
@@ -283,7 +321,7 @@ class OccupancyPPO(PPO):
         elif self.kl_ema < self.kl_low:
             self.learning_rate = min(self.lr_max, self.learning_rate * self.lr_factor)
         for group in self.optimizer.param_groups:
-            group["lr"] = self.learning_rate
+            group["lr"] = self.learning_rate * group.get("lr_scale", 1.0)
 
     def update(self):
         policy = self.policy
@@ -352,10 +390,11 @@ class OccupancyPPO(PPO):
 
 
 class HitszRunner(OnPolicyRunner):
-    def __init__(self, env, cfg, out, device, recipe, occupancy):
+    def __init__(self, env, cfg, out, device, recipe, occupancy, future=None):
         self.out = out
         self.recipe = recipe
         self.occupancy = occupancy
+        self.future = future
         self.restored_update = 0
         self.restored_environment_steps = 0
         super().__init__(env, cfg, str(out), device)
@@ -369,12 +408,40 @@ class HitszRunner(OnPolicyRunner):
         self.alg_cfg.setdefault("rnd_cfg", None)
         self.alg_cfg.setdefault("symmetry_cfg", None)
         policy = GateActorCritic(
-            obs, self.cfg["obs_groups"], self.env.num_actions, occupancy=self.occupancy, **self.policy_cfg
+            obs, self.cfg["obs_groups"], self.env.num_actions, occupancy=self.occupancy,
+            gate_future=self.future, **self.policy_cfg,
         )
+        if self.future is not None and self.future.enabled:
+            policy.requires_grad_(False)
+            policy.actor_future.requires_grad_(True)
+            policy.critic_future.requires_grad_(True)
+            if self.future.unfreeze_actor_head:
+                policy.actor_head.requires_grad_(True)
         storage = RolloutStorage("rl", self.env.num_envs, self.cfg["num_steps_per_env"], obs,
                                  [self.env.num_actions], self.device)
         algorithm = OccupancyPPO if self.occupancy is not None else PPO
-        return algorithm(policy, storage, device=self.device, **self.alg_cfg)
+        ppo = algorithm(policy, storage, device=self.device, **self.alg_cfg)
+        if self.future is not None and self.future.unfreeze_actor_head:
+            ppo.optimizer = torch.optim.Adam([
+                {"params": (policy.actor_future.weight, policy.critic_future.weight)},
+                {"params": policy.actor_head.parameters(), "lr": ppo.learning_rate * 0.1, "lr_scale": 0.1},
+            ], lr=ppo.learning_rate, eps=1e-5)
+        return ppo
+
+    def load_base(self, path):
+        checkpoint = torch.load(path, map_location="cpu", weights_only=True)
+        saved_recipe = checkpoint["recipe"]
+        for key in ("variant", "hitsz_commit"):
+            if saved_recipe[key] != self.recipe[key]:
+                raise ValueError(f"Base checkpoint has a different {key}")
+        policy = self.alg.policy
+        allowed_missing = set()
+        if self.future is not None and self.future.enabled:
+            allowed_missing = {"actor_future.weight", "critic_future.weight"}
+        missing, unexpected = policy.load_state_dict(checkpoint["model_state_dict"], strict=False)
+        if set(missing) != allowed_missing or unexpected:
+            raise ValueError(f"Incompatible base weights: missing={missing}, unexpected={unexpected}")
+        self.restore_curriculum(checkpoint["curriculum"])
 
     def environment_steps(self, completed):
         steps_per_update = self.env.num_envs * self.cfg["num_steps_per_env"]
@@ -438,10 +505,13 @@ class HitszRunner(OnPolicyRunner):
         self.restored_environment_steps = ckpt.get(
             "environment_steps", self.restored_update * original_steps_per_update
         )
-        for key, value in ckpt["curriculum"].items():
-            setattr(self.env, key, value)
         random.setstate(ckpt["rng"]["python"])
         torch.set_rng_state(ckpt["rng"]["torch"])
         torch.cuda.set_rng_state(ckpt["rng"]["cuda"], self.device)
+        self.restore_curriculum(ckpt["curriculum"])
+
+    def restore_curriculum(self, curriculum):
+        for key in CURRICULUM_STATE:
+            setattr(self.env, key, curriculum[key])
         self.env._apply_obstacle_level()
         self.env._reset_envs(torch.arange(self.env.num_envs, device=self.device))
