@@ -35,29 +35,27 @@ python -m scripts.hitsz_repro check
 
 ## 2. 基座模型
 
-默认用 **alignment-u2601**（当前候选，fresh384 243/384）：
-
-注意：`u2501` 是 4090 续训的起点和回退，不是本方案默认基座；`u3839`（3839 步）是稳定对照；`alignment-u2701`（2701 步）虽然时间最后，但 fresh384 回落到 228/384，不作为默认。
+默认用 **u3839**（4090 原配方完训，3839 更新，fresh384 237/384，飞行中碰撞 38）。它是最后的原配方完训权重，作为干净基座；`alignment-u2601` 是高度对准候选（243/46/43），作为第二臂对照，不作为默认；`u2501` 回退；`alignment-u2701` 时间最后但回落到 228/70/34，仅作对照。
 
 ```bash
-BASE_CKPT=runs/native-joint-20261124-failure-audit/alignment-u2601.pt
+BASE_CKPT=runs/handover-2026-11-24-4090/original-4090/latest.pt
 sha256sum "$BASE_CKPT"
-# 151fdd00eb749932ad11718aa1f7897161d0690cb6b3c48f11a620118ab892e6
+# cf5d40e8b174e90a499087d91f6136cb1bf9415bc2ee50394bcda97925873815
 ```
 
 备选：
 
 | 名称 | 路径 | sha256 | 说明 |
 |---|---|---|---|
-| alignment-u2601 | `runs/native-joint-20261124-failure-audit/alignment-u2601.pt` | `151fdd...ab892e6` | 默认 |
-| u3839 | `runs/handover-2026-11-24-4090/original-4090/latest.pt` | `cf5d40...873815` | 稳定基座 |
+| **u3839** | `runs/handover-2026-11-24-4090/original-4090/latest.pt` | `cf5d40...873815` | 默认，原配方完训 |
+| alignment-u2601 | `runs/native-joint-20261124-failure-audit/alignment-u2601.pt` | `151fdd...ab892e6` | 候选对照，243/46/43 |
 | u2501 | `runs/handover-2026-11-24-4090/reference/joint-3060-u2501.pt` | `30a169...997ec7` | 已发布回退 |
-| alignment-u2701 | `runs/handover-2026-11-24-4090/height-alignment/latest.pt` | `d051a0...991af2` | 时间最后，但 fresh384 只有 228/384 |
+| alignment-u2701 | `runs/handover-2026-11-24-4090/height-alignment/latest.pt` | `d051a0...991af2` | 时间最后，228/70/34；仅对照 |
 
 规则：
 
-- 同一组 A/B/C 只用一个基座。
-- 如果用 u2701，A0 必须同时跑 u2601 对照；否则分不清基座退化和升维收益。
+- 主基座 u3839；u2601 作为第二臂对照；u2501 回退；u2701 只作时间最后对照。
+- 如果要用 u2601 作主基座，A0 必须同时跑 u3839；否则分不清基座差异和升维收益。
 - 基座参数默认全部冻结；只训练新增投影/动作头/残差头。
 
 ## 3. A0 输入定义
@@ -413,7 +411,7 @@ C（40 维）需要：
 - 远端：`main` + `gh-pages`（仅报告站）
 - 方案：`docs/plan-gate-future-residual.md`
 - 本文：`docs/handover-gate-future-residual.md`
-- 基座：`alignment-u2601`（默认）/ `u3839` / `u2501` / `alignment-u2701`
+- 基座：`u3839`（默认）/ `alignment-u2601`（第二臂）/ `u2501`（回退）/ `alignment-u2701`（时间最后）
 - 关键源码：
   - `ruma_ppo/training/hitsz_joint.py`
   - `ruma_ppo/cli/train_joint.py`
