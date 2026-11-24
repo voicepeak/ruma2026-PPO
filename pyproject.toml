@@ -17,3 +17,8 @@ testpaths = ["tests"]
 [tool.ruff]
 line-length = 120
 target-version = "py311"
+
+[project.scripts]
+ruma-train = "ruma_ppo.cli.train_joint:main"
+ruma-setup = "ruma_ppo.cli.setup_hitsz:main"
+ruma-eval = "ruma_ppo.evaluation.harness:main"
