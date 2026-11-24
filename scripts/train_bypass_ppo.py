@@ -18,7 +18,7 @@ from evaluation.harness import BATCH, SUITES
 from evaluation.rollout import COLLISION
 from hitsz_branches import NEXT_GATE, ROUTE, UP, seed
 from hitsz_ppo import Course, DEVICE, atomic_json, save, update
-from maps.gate_graph import GateGraph
+from ruma_ppo.env.maps.gate_graph import GateGraph
 
 
 LEARNING_RATE = 3e-4

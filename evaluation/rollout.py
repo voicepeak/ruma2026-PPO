@@ -2,11 +2,11 @@
 
 import torch
 
-from control.geometric import GeometricController
-from control.lidar_brake import BrakeConfig, first_path_return, lidar_confirms_clear, stopping_speed
+from ruma_ppo.env.control.geometric import GeometricController
+from ruma_ppo.env.control.lidar_brake import BrakeConfig, first_path_return, lidar_confirms_clear, stopping_speed
 from hitsz_branches import station
-from sim.pwm_env import DT, PWMEnv, clearance
-from sim.render import Renderer, SensorConfig
+from ruma_ppo.env.sim.pwm_env import DT, PWMEnv, clearance
+from ruma_ppo.env.sim.render import Renderer, SensorConfig
 
 
 RUNNING, COLLISION, BOUNDS, MISSED_GATE, SUCCESS, TIMEOUT = range(6)

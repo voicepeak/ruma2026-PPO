@@ -6,11 +6,11 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 
-from control.lidar_bypass import candidate_scores, right_of
+from ruma_ppo.env.control.lidar_bypass import candidate_scores, right_of
 from evaluation.lidar_bypass import LidarBypassFollower
 from evaluation.rollout import BOUNDS, COLLISION, MISSED_GATE, SUCCESS, TIMEOUT, Progress
 from hitsz_branches import station
-from sim.pwm_env import DT
+from ruma_ppo.env.sim.pwm_env import DT
 
 
 PATH_ACTIONS = 5

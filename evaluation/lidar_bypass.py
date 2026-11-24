@@ -3,8 +3,8 @@
 import torch
 import torch.nn.functional as F
 
-from control.lidar_brake import first_path_return, lidar_confirms_clear, stopping_speed
-from control.lidar_bypass import BypassConfig, choose_candidate, lateral_profile, right_of
+from ruma_ppo.env.control.lidar_brake import first_path_return, lidar_confirms_clear, stopping_speed
+from ruma_ppo.env.control.lidar_bypass import BypassConfig, choose_candidate, lateral_profile, right_of
 from evaluation.rollout import LidarBrakeFollower, REFERENCE_LOOKAHEAD_M
 from hitsz_branches import station
 

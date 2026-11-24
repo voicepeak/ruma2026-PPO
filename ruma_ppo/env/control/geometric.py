@@ -5,7 +5,7 @@ import math
 import torch
 import torch.nn.functional as F
 
-from sim.pwm_env import rotate
+from ruma_ppo.env.sim.pwm_env import rotate
 
 
 class GeometricController:

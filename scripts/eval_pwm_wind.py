@@ -13,8 +13,8 @@ import torch
 from evaluation.rollout import Progress, PWMRouteFollower
 from hitsz_ppo import Course, atomic_json
 from scripts.train_bypass_ppo import gate_graph
-from sim.pwm_env import CONTROL_HZ, PWMEnv
-from sim.wind import WindField, WindSpec
+from ruma_ppo.env.sim.pwm_env import CONTROL_HZ, PWMEnv
+from ruma_ppo.env.sim.wind import WindField, WindSpec
 
 
 BATCH = 24

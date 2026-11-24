@@ -17,8 +17,8 @@ from evaluation.lidar_bypass import LidarBypassFollower
 from hitsz_branches import NEXT_GATE, ROUTE, UP, station
 from hitsz_ppo import ActorCritic, Course, DEVICE, HOLD_TICKS
 from evaluation.rollout import LidarBrakeFollower, Progress, PWMRouteFollower
-from maps.gate_graph import GateGraph
-from sim.pwm_env import CONTROL_HZ
+from ruma_ppo.env.maps.gate_graph import GateGraph
+from ruma_ppo.env.sim.pwm_env import CONTROL_HZ
 
 
 BATCH = 48

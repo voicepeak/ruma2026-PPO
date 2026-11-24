@@ -6,7 +6,7 @@ import math
 
 import torch
 
-from sim.pwm_env import CONTROL_HZ, rotate
+from ruma_ppo.env.sim.pwm_env import CONTROL_HZ, rotate
 
 
 @dataclass(frozen=True)
